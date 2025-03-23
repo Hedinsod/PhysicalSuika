@@ -4,6 +4,7 @@ workspace "PhysicalSuika"
 	configurations { "Debug", "Development", "Release" }
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+include "External/premake-glfw.lua"
 
 project "PhysicalSuika"
 	location "PhysicalSuika"
@@ -26,11 +27,13 @@ project "PhysicalSuika"
 
 	includedirs
 	{
+		"External/glfw/include",
 		"%{prj.name}/Source",
 	}
 	
 	links
 	{
+		"GLFW",
 		"winmm.lib"
 	}
 
@@ -40,7 +43,7 @@ project "PhysicalSuika"
 		defines
 		{
 		--	"MR_PLATFORM_WINDOWS",
-		--	"GLFW_INCLUDE_NONE",
+			"GLFW_INCLUDE_NONE",
 		}
 
 	filter "configurations:Debug"
