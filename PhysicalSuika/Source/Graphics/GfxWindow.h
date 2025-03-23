@@ -1,25 +1,25 @@
 #pragma once
 
+#include "Core/Utility.h"
 #include <string>
 
 class SGfxContext;
 
-class IWindow
+class SGfxWindow
 {
 public:
-	IWindow(int InWidth, int InHeight, const std::string& InTitle)
+	SGfxWindow(int32_t InWidth, int32_t InHeight, const std::string& InTitle)
 		: Title(InTitle)
 		, Width(InWidth)
 		, Height(InHeight)
 	{
 	}
 
-	static std::unique_ptr<IWindow> Create(int InWidth, int InHeight, const std::string& InTitle);
 	virtual void Destroy() = 0;
+	virtual void Tick() {}
+
 	virtual void* GetNativeWindow() = 0;
 	SGfxContext* GetGfxContext() { return GfxContext; }
-
-	virtual void Tick() {}
 
 protected:
 	std::string Title;

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Transform.h"
 
-Transform::Transform(Entity* InOwner, float InX, float InY)
+CTransform::CTransform(Entity* InOwner, float InX, float InY)
 	: Owner(InOwner)
 	, Pos({ InX, InY })
 	, Rot({ 1.f, 0.f })
@@ -9,7 +9,7 @@ Transform::Transform(Entity* InOwner, float InX, float InY)
 
 }
 
-void Transform::SetRotation(float Angle)
+void CTransform::SetRotation(float Angle)
 {
 	Rot.x = std::cos(Angle);
 	Rot.y = std::sin(Angle);

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Graphics/Types.h"
+#include "Graphics/Graphics.h"
 
 class Entity;
 
-struct Transform
+struct CTransform
 {
-	Transform(Entity* InOwner, float InX, float InY);
+	CTransform(Entity* InOwner, float InX, float InY);
 
 	void SetRotation(float Angle);
 

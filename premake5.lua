@@ -42,7 +42,6 @@ project "PhysicalSuika"
 
 		defines
 		{
-		--	"MR_PLATFORM_WINDOWS",
 			"GLFW_INCLUDE_NONE",
 		}
 

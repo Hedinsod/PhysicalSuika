@@ -1,5 +1,7 @@
 #pragma once
 
+class SGfxWindow;
+
 struct FColor
 {
 	int Red = 0;
@@ -17,3 +19,20 @@ struct FPoint
 
 	FPoint& operator*=(float Other);
 };
+
+enum class EGfxApi
+{
+	WinApi = 0,
+	OpenGL
+};
+
+class SGraphics
+{
+public:
+	static SGfxWindow* CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle);
+
+private:
+	static EGfxApi CurrentApi;
+
+};
+

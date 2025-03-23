@@ -8,10 +8,10 @@
 class Entity;
 class SGfxContext;
 
-class SGraphics
+class SDraw
 {
 public:
-	SGraphics(SGfxContext* InContext)
+	SDraw(SGfxContext* InContext)
 		: Context(InContext)
 	{
 	}

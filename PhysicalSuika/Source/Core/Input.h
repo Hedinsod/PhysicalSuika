@@ -2,13 +2,15 @@
 
 #include "Utility.h"
 
-enum class EInputCode : UInt32
+enum class EInputCode : uint32_t
 {
-	Left = 0,
+	None = 0,
+	Left,
 	Up,
 	Right,
 	Down,
 	Space,
+	Esc,
 
 	InputCode_Count
 };
@@ -16,21 +18,10 @@ enum class EInputCode : UInt32
 class SInput
 {
 public:
-	static bool IsButtonPressed(EInputCode Code)
-	{
-		return Instance->IsButtonPressed_Impl(Code);
-	}
-
-	static void InputEvent(EInputCode Code, bool bStatus)
-	{
-		Instance->InputEvent_Impl(Code, bStatus);
-	}
-
-protected:
-	virtual void InputEvent_Impl(EInputCode Code, bool bStatus) = 0;
-	virtual bool IsButtonPressed_Impl(EInputCode Code) = 0;
+	static bool IsButtonPressed(EInputCode Code);
+	static void InputEvent(EInputCode Code, bool bStatus);
 
 private:
-	static SInput* Instance;
+	static bool InputData[(uint32_t)EInputCode::InputCode_Count];
 
 };

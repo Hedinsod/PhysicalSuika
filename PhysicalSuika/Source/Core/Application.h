@@ -2,8 +2,7 @@
 
 #include "Utility.h"
 
-
-class IWindow;
+class SGfxWindow;
 class SGame;
 
 
@@ -16,16 +15,16 @@ public:
 	void Run();
 	void Quit() { bQuit = true; };
 
-	IWindow& GetWindow() { return *MainWindow; }
+	SGfxWindow& GetWindow() { return *MainWindow; }
 
 private:
-	std::unique_ptr<IWindow> MainWindow;
+	std::unique_ptr<SGfxWindow> MainWindow;
 
 	// Root Actor
 	//SGame* TheGame;
 
-	Int32 ScreenWidth = 800;
-	Int32 ScreenHeight = 600;
+	int32_t ScreenWidth = 800;
+	int32_t ScreenHeight = 600;
 
 	bool bQuit = false;
 };

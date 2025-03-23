@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Entity.h"
-#include "Graphics/Types.h"
+#include "Graphics/Graphics.h"
 
 struct CollisionBox;
 struct CGeometry;

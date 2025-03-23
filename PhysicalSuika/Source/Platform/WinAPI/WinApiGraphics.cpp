@@ -16,8 +16,12 @@ void SWinApiContext::FillRect(FPoint Pivot, FPoint Size, FColor Color)
 	HBRUSH Brush = CreateSolidBrush(GetRGB(Color));
 	RECT Rect;
 
-	const FPoint End = Pivot + Size;
-	SetRect(&Rect, Pivot.x, Pivot.y, End.x, End.y);
+	const int PivotX = static_cast<int>(Pivot.x);
+	const int PivotY = static_cast<int>(Pivot.y);
+	const int EndX = static_cast<int>(Pivot.x + Size.x);
+	const int EndY = static_cast<int>(Pivot.y + Size.y);
+
+	SetRect(&Rect, PivotX, PivotY, EndX, EndY);
 	::FillRect(hDC, &Rect, Brush);
 	DeleteObject(Brush);
 	ReleaseDC(hWnd, hDC);
@@ -29,8 +33,13 @@ void SWinApiContext::DrawLine(FPoint Start, FPoint End, FColor Color)
 	HPEN Pen = CreatePen(PS_SOLID, 1, GetRGB(Color));
 	HGDIOBJ OldPen = SelectObject(hDC, Pen);
 
-	MoveToEx(hDC, Start.x, Start.y, NULL);
-	LineTo(hDC, End.x, End.y);
+	const int StartX = static_cast<int>(Start.x);
+	const int StartY = static_cast<int>(Start.y);
+	const int EndX = static_cast<int>(End.x);
+	const int EndY = static_cast<int>(End.y);
+
+	MoveToEx(hDC, StartX, StartY, NULL);
+	LineTo(hDC, EndX, EndY);
 
 	SelectObject(hDC, OldPen);
 	DeleteObject(Pen);

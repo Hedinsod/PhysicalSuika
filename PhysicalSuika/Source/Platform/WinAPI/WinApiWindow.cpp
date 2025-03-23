@@ -2,18 +2,12 @@
 
 #include "Core/Application.h"
 #include "Core/Input.h"
-#include "Systems/Graphics.h"
+#include "Systems/Draw.h"
 #include "Platform/WinAPI/WinApiWindow.h"
 #include "Platform/WinAPI/WinApiGraphics.h"
 
-
-std::unique_ptr<IWindow> IWindow::Create(int InWidth, int InHeight, const std::string& InTitle)
-{
-	return std::make_unique<SWinApiWindow>(InWidth, InHeight, InTitle);
-}
-
 SWinApiWindow::SWinApiWindow(int InWidth, int InHeight, const std::string& InTitle)
-	: IWindow(InWidth, InHeight, InTitle)
+	: SGfxWindow(InWidth, InHeight, InTitle)
 	, hWnd(NULL)
 {
 	Create();
@@ -77,48 +71,33 @@ void SWinApiWindow::Tick()
 	}
 }
 
+static EInputCode GetInputCode(WPARAM wParam)
+{
+	switch (wParam)
+	{
+	case VK_LEFT:   return EInputCode::Left;  break;
+	case VK_UP:     return EInputCode::Up;    break;
+	case VK_RIGHT:  return EInputCode::Right; break;
+	case VK_DOWN:   return EInputCode::Down;  break;
+	case VK_SPACE:  return EInputCode::Space; break;
+	case VK_ESCAPE: return EInputCode::Esc;   break;
+	default:        return EInputCode::None;  break;
+	};
+}
+
 LRESULT CALLBACK SWinApiWindow::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
-	case WM_CLOSE:
-	{
-		PostQuitMessage(0);
-		break;
-	}
+	case WM_CLOSE: GApp->Quit(); break;
 	case WM_PAINT:
 	{
 		SGfxContext* Context = GApp->GetWindow().GetGfxContext();
 		Context->FillRect({ 0, 0 }, { 800, 600 }, FColor{ 0,0,0 });
 		break;
 	}
-	case WM_KEYDOWN:
-	{
-		switch (wParam)
-		{
-		case VK_LEFT:  SInput::InputEvent(EInputCode::Left, true);  break;
-		case VK_UP:    SInput::InputEvent(EInputCode::Up, true);    break;
-		case VK_RIGHT: SInput::InputEvent(EInputCode::Right, true); break;
-		case VK_DOWN:  SInput::InputEvent(EInputCode::Down, true);  break;
-		case VK_SPACE: SInput::InputEvent(EInputCode::Space, true); break;
-		case VK_ESCAPE:
-			PostQuitMessage(0);
-			break;
-		}
-		break;
-	}
-	case WM_KEYUP:
-	{
-		switch (wParam)
-		{
-		case VK_LEFT:  SInput::InputEvent(EInputCode::Left, false);  break;
-		case VK_UP:    SInput::InputEvent(EInputCode::Up, false);    break;
-		case VK_RIGHT: SInput::InputEvent(EInputCode::Right, false); break;
-		case VK_DOWN:  SInput::InputEvent(EInputCode::Down, false);  break;
-		case VK_SPACE: SInput::InputEvent(EInputCode::Space, false); break;
-		}
-		break;
-	}
+	case WM_KEYDOWN: SInput::InputEvent(GetInputCode(wParam), true);  break;
+	case WM_KEYUP:   SInput::InputEvent(GetInputCode(wParam), false);  break;
 	}
 
 	return DefWindowProc(hwnd, msg, wParam, lParam);

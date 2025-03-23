@@ -2,20 +2,20 @@
 
 #include "Core/Utility.h"
 #include "Systems/Collision.h"
-#include "Systems/Graphics.h"
+#include "Systems/Draw.h"
 #include <memory>
 
 
 class Engine final
 {
 public:
-	static void Init(SGfxContext* InContext);
+	static void Init();
 	static SCollisionCheck& GetCollision()
 	{
 		GAssert(Instance);
 		return *Instance->Collision;
 	}
-	static SGraphics& GetGraphics()
+	static SDraw& GetGraphics()
 	{
 		GAssert(Instance);
 		return *Instance->Graphics;
@@ -26,5 +26,5 @@ private:
 	static Engine* Instance;
 
 	std::unique_ptr<SCollisionCheck> Collision;
-	std::unique_ptr<SGraphics> Graphics;
+	std::unique_ptr<SDraw> Graphics;
 };

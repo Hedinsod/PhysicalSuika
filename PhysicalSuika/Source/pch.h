@@ -4,13 +4,14 @@
 #include <windows.h>
 
 #define _USE_MATH_DEFINES
-#include <memory>
+#include <iostream>
 #include <vector>
 #include <string>
+#include <memory>
+#include <algorithm>
+#include <stack>
 #include <unordered_set>
 #include <unordered_map>
-#include <stack>
-#include <algorithm>
 #include <cmath>
 
 #include "Core/Utility.h"

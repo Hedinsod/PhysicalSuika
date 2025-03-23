@@ -1,23 +1,24 @@
 #include "pch.h"
 
-#include "Systems/Graphics.h"
+#include "Draw.h"
 #include "Graphics/GfxContext.h"
 #include "Game/Entity.h"
- 
+#include "Graphics/Graphics.h"
 
-CGeometry* SGraphics::CreateGeometry(Entity* InOwner)
+
+CGeometry* SDraw::CreateGeometry(Entity* InOwner)
 {
 	CGeometry* Elem = new CGeometry(InOwner);
 	GeometryPool.insert(Elem);
 
 	return Elem;
 }
-void SGraphics::RemoveGeometry(CGeometry* Geo)
+void SDraw::RemoveGeometry(CGeometry* Geo)
 {
 	GeometryPool.erase(Geo);
 }
 
-void SGraphics::Tick()
+void SDraw::Tick()
 {
 	auto RotatePoint = [](FPoint& P, FPoint Rotation)
 		{
@@ -48,3 +49,5 @@ void SGraphics::Tick()
 		}
 	}
 }
+
+

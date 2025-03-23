@@ -19,10 +19,10 @@ public:
 	virtual void OnOutOfBounds(bool bHorizontal, bool bVertical) {}
 	// virtual void OnKeyPressed(...) {}
 
-	const Transform& GetTransform() { return Trans; }
+	const CTransform& GetTransform() { return Trans; }
 
 protected:
-	Transform Trans;
+	CTransform Trans;
 
 	bool bPendingDelete = false;
 };

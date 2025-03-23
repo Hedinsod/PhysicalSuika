@@ -1,5 +1,5 @@
 #pragma once
-#include "Graphics/Types.h"
+#include "Graphics/Graphics.h"
 #include <vector>
 
 class Entity;
@@ -18,6 +18,11 @@ struct CGeometry
 	void SetPoint(int Index, const FPoint& InPoint);
 
 	std::vector<FVertex> VertexData;
+
+	/*
+	std::vector<float> Vertices;
+	std::vector<FColor> VertexColor;
+	*/
 
 	Entity* Owner;
 };

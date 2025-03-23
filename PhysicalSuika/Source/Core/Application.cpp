@@ -1,9 +1,9 @@
 #include "pch.h"
 
 #include "Core/Application.h"
-#include "Core/Window.h"
+#include "Graphics/GfxWindow.h"
+#include "Graphics/Graphics.h"
 #include "Systems/Engine.h"
-#include "Systems/Graphics.h"
 #include "Game/Game.h"
 
 
@@ -20,8 +20,8 @@ Application::~Application()
 
 void Application::Run()
 {
-	MainWindow = IWindow::Create(ScreenWidth, ScreenHeight, "Phisical Suika");
-	Engine::Init(MainWindow->GetGfxContext());
+	MainWindow.reset(SGraphics::CreateGfxWindow(ScreenWidth, ScreenHeight, "Physical Suika"));
+	Engine::Init();
 
 	GGame = new SGame(ScreenWidth, ScreenHeight);
 	GAssert(GGame);
@@ -41,12 +41,12 @@ void Application::Run()
 
 		lastTime = currentTime;
 
-		MainWindow->Tick();
-
 		GGame->Tick();
-
 		Engine::GetCollision().Tick();
+
+		// TODO: delete, window should deal with graphics
 		Engine::GetGraphics().Tick();
+		MainWindow->Tick();
 
 		GGame->CullEntities();
 	}

@@ -1,15 +1,18 @@
 #include "pch.h"
 #include "Engine.h"
+#include "Core/Application.h"
+#include "Graphics/GfxWindow.h"
 
 Engine* Engine::Instance = nullptr;
 
-void Engine::Init(SGfxContext* InContext)
+void Engine::Init()
 {
 	Instance = new Engine;
 
 	Instance->Collision = std::make_unique<SCollisionCheck>();
 	GAssert(Instance->Collision);
 
-	Instance->Graphics = std::make_unique<SGraphics>(InContext);
+	SGfxContext* Context = GApp->GetWindow().GetGfxContext();
+	Instance->Graphics = std::make_unique<SDraw>(Context);
 	GAssert(Instance->Graphics);
 }
