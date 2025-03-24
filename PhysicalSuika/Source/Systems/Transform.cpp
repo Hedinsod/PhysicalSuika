@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "Transform.h"
 
-CTransform::CTransform(Entity* InOwner, float InX, float InY)
+
+CTransform::CTransform(AActor* InOwner, float InX, float InY)
 	: Owner(InOwner)
 	, Pos({ InX, InY })
 	, Rot({ 1.f, 0.f })

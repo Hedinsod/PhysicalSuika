@@ -2,7 +2,7 @@
 #include "Graphics/Graphics.h"
 #include <vector>
 
-class Entity;
+class AActor;
 
 struct FVertex
 {
@@ -12,7 +12,7 @@ struct FVertex
 
 struct CGeometry
 {
-	CGeometry(Entity* InOwner);
+	CGeometry(AActor* InOwner);
 
 	void AddPoint(const FPoint& InPoint, const FColor& InColor);
 	void SetPoint(int Index, const FPoint& InPoint);
@@ -24,5 +24,5 @@ struct CGeometry
 	std::vector<FColor> VertexColor;
 	*/
 
-	Entity* Owner;
+	AActor* Owner;
 };

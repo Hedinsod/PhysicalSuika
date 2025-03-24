@@ -3,12 +3,12 @@
 #include "Core/Utility.h"
 #include <vector>
 
-class Entity;
+class AActor;
 
 class SGame
 {
 public:
-	SGame(int InWidth, int InHeight);
+	SGame();
 	~SGame();
 
 	template <class TEntity, class... Args>
@@ -17,14 +17,15 @@ public:
 
 	void Tick();
 
-	int GetWidth() const { return SceneWidth; }
-	int GetHeight() const { return SceneHeight; }
+	// ???
+	int GetWidth() const { return 800; }
+	int GetHeight() const { return 600; }
 
 private:
-	const int SceneWidth;
-	const int SceneHeight;
+	const int SceneWidth = 10;
+	const int SceneHeight = 10;
 	
-	std::vector<Entity*> Actors;
+	std::vector<AActor*> Actors;
 };
 
 template <class TEntity, class... Args>

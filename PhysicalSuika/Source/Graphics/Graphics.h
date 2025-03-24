@@ -16,6 +16,8 @@ struct FPoint
 
 	FPoint operator+(const FPoint& Other);
 	FPoint& operator+=(const FPoint& Other);
+	FPoint operator-(const FPoint& Other);
+	FPoint& operator-=(const FPoint& Other);
 
 	FPoint& operator*=(float Other);
 };

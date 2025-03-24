@@ -14,7 +14,7 @@ void CGeometry::SetPoint(int Index, const FPoint& InPoint)
 	VertexData[Index].Vertex = InPoint;
 }
 
-CGeometry::CGeometry(Entity* InOwner)
+CGeometry::CGeometry(AActor* InOwner)
 	: Owner(InOwner)
 {
 }

@@ -2,11 +2,11 @@
 
 #include "Draw.h"
 #include "Graphics/GfxContext.h"
-#include "Game/Entity.h"
+#include "Game/Actor.h"
 #include "Graphics/Graphics.h"
 
 
-CGeometry* SDraw::CreateGeometry(Entity* InOwner)
+CGeometry* SDraw::CreateGeometry(AActor* InOwner)
 {
 	CGeometry* Elem = new CGeometry(InOwner);
 	GeometryPool.insert(Elem);

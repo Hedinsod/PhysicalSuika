@@ -2,22 +2,24 @@
 #include "Systems/Transform.h"
 
 
-class Entity
+class AActor
 {
 public:
-	Entity(float InX, float InY)
+	AActor(float InX, float InY)
 		: Trans(this, InX, InY)
 	{
 	}
-	virtual ~Entity() = default;
+	virtual ~AActor() = default;
 
 	virtual void Tick() = 0;
 
-	// Events
+	// "Events"
 	bool IsPendingDelete() { return bPendingDelete; }
-	virtual void OnCollide(const Entity* Opponent) {}
-	virtual void OnOutOfBounds(bool bHorizontal, bool bVertical) {}
-	// virtual void OnKeyPressed(...) {}
+	virtual void OnCollide(const AActor* Opponent) {}
+	virtual void OnOutOfBounds(bool bHorizontal, bool bVertical)
+	{
+		this->bPendingDelete = true;
+	}
 
 	const CTransform& GetTransform() { return Trans; }
 

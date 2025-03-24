@@ -2,11 +2,11 @@
 
 #include <unordered_set>
 
-class Entity;
+class AActor;
 
 struct CollisionBox
 {
-	CollisionBox(Entity* InOwner, float InTop, float InLeft, float InRight, float InBottom)
+	CollisionBox(AActor* InOwner, float InTop, float InLeft, float InRight, float InBottom)
 		: Top(InTop)
 		, Left(InLeft)
 		, Right(InRight)
@@ -22,7 +22,7 @@ struct CollisionBox
 	float Right;
 	float Bottom;
 
-	Entity* Owner;
+	AActor* Owner;
 };
 
 class SCollisionCheck

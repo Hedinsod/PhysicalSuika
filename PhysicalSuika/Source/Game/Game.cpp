@@ -2,24 +2,23 @@
 
 #include "Systems/Engine.h"
 #include "Game/Game.h"
-#include "Game/Cannon.h"
-#include "Game/Clock.h"
-#include "Game/Star.h"
+#include "Game/Actor.h"
+#include "Game/Glass.h"
+#include "Game/Fruit.h"
+#include "Game/Hand.h"
 
 
-SGame::SGame(int InWidth, int InHeight)
-	: SceneWidth(InWidth)
-	, SceneHeight(InHeight)
+
+SGame::SGame()
 {
-	AddEntity<ECannon>(SceneWidth / 2.f, SceneHeight - 50.f);
-	AddEntity<EClock>(700.f, 100.f, 10.f);
-
-	AddEntity<EStar>(400.f, 400.f, 10.f);
+	AddEntity<AGlass>(400.f, 550.f);
+	AddEntity<AHand>(400.f, 50.f);
+	AddEntity<AFruit>(400.f, 350.f);
 }
 
 SGame::~SGame()
 {
-	for (Entity* Ent : Actors)
+	for (AActor* Ent : Actors)
 	{
 		delete Ent;
 	}
@@ -29,19 +28,17 @@ SGame::~SGame()
 
 void SGame::CullEntities()
 {
-	auto Range = std::remove_if(Actors.begin(), Actors.end(),
-		[](Entity* Actor)
+	for (auto It = Actors.begin(); It != Actors.end(); It++)
+	{
+		AActor* Actor = *It;
+		if (Actor->IsPendingDelete())
 		{
-			if (Actor->IsPendingDelete())
-			{
-				delete Actor;
-				return true;
-			}
+			delete Actor;
+			It = Actors.erase(It);
+		}
 
-			return false;
-		});
-
-	Actors.erase(Range, Actors.end());
+		if (It == Actors.end()) break;
+	}
 }
 
 void SGame::Tick()

@@ -2,7 +2,7 @@
 
 #include "Systems/Collision.h"
 #include "Game/Game.h"
-#include "Game/Entity.h"
+#include "Game/Actor.h"
 
 
 CollisionBox CollisionBox::GetTransformedBox()

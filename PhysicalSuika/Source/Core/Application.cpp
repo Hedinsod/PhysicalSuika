@@ -23,7 +23,7 @@ void Application::Run()
 	MainWindow.reset(SGraphics::CreateGfxWindow(ScreenWidth, ScreenHeight, "Physical Suika"));
 	Engine::Init();
 
-	GGame = new SGame(ScreenWidth, ScreenHeight);
+	GGame = new SGame();
 	GAssert(GGame);
 
 	DWORD lastTime = timeGetTime();

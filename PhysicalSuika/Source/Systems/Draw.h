@@ -5,7 +5,7 @@
 #include <unordered_set>
 
 
-class Entity;
+class AActor;
 class SGfxContext;
 
 class SDraw
@@ -16,7 +16,7 @@ public:
 	{
 	}
 
-	CGeometry* CreateGeometry(Entity* InOwner);
+	CGeometry* CreateGeometry(AActor* InOwner);
 	void RemoveGeometry(CGeometry* Geo);
 
 	void Tick();
