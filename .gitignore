@@ -9,3 +9,13 @@ Intermediate/*
 *.vcxproj.filters
 *.vcxproj.user
 *.suo
+
+# Bin
+*.log
+*.tlog
+*.obj
+*.lib
+*.recipe
+*.idb
+*.pdb
+

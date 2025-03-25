@@ -5,6 +5,7 @@ workspace "PhysicalSuika"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 include "External/premake-glfw.lua"
+include "External/GLAD/premake-glad.lua"
 
 project "PhysicalSuika"
 	location "PhysicalSuika"
@@ -28,12 +29,14 @@ project "PhysicalSuika"
 	includedirs
 	{
 		"External/glfw/include",
+		"External/glad/include",
 		"%{prj.name}/Source",
 	}
 	
 	links
 	{
 		"GLFW",
+		"GLAD",
 		"winmm.lib"
 	}
 
