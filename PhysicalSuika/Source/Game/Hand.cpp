@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "Hand.h"
-#include "Systems/Engine.h"
-#include "Core/Input.h"
 #include "Game.h"
 #include "Fruit.h"
+#include "Core/Input.h"
+#include "Renderer/GeometryComp.h"
+#include "Systems/Engine.h"
 
 AHand::AHand(float InX, float InY)
 	: AActor(InX, InY)
@@ -11,15 +12,22 @@ AHand::AHand(float InX, float InY)
 	Geo = Engine::GetGraphics().CreateGeometry(this);
 
 	FColor Color({ 200, 165, 100 });
-	Geo->AddPoint({ -10, 15 }, Color);
-	Geo->AddPoint({ -15, 7 }, Color);
-	Geo->AddPoint({ -10, 0 }, Color);
-	Geo->AddPoint({ -3, 0 }, Color);
-	Geo->AddPoint({ 0, -3 }, Color);
-	Geo->AddPoint({ +3, 0 }, Color);
-	Geo->AddPoint({ 10, 0 }, Color);
-	Geo->AddPoint({ 13, 7 }, Color);
-	Geo->AddPoint({ 10, 15 }, Color);
+
+	Geo->SetVertices({
+		-10, 15,
+		-15,  7,
+		-10,  0,
+		 -3,  0,
+		  0, -3,
+		  3,  0,
+		 10,  0,
+		 13,  7,
+		 10, 15
+		});
+	Geo->SetIndecies({
+		0, 1, 2, 3, 4, 5, 6, 7, 8
+		});
+	Geo->BuildGeometry();
 
 	//	Engine::GetCollision().AddCollisionBox()
 }

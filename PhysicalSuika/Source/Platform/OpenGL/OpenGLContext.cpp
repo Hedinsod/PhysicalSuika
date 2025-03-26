@@ -18,13 +18,3 @@ void SOpenGLContext::SwapBuffers()
 {
 	glfwSwapBuffers(Window);
 }
-
-void SOpenGLContext::FillRect(FPoint Corner1, FPoint Corner2, FColor Color)
-{
-
-}
-
-void SOpenGLContext::DrawLine(FPoint Start, FPoint End, FColor color)
-{
-
-}

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Graphics.h"
-#include "Platform/WinAPI/WinApiWindow.h"
-#include "Platform/OpenGL/OpenGLWindow.h"
+#include "Platform/WinAPI/WinApiGraphics.h"
+#include "Platform/OpenGL/OpenGLGraphics.h"
 
 FPoint FPoint::operator+(const FPoint& Other)
 {
@@ -48,17 +48,17 @@ FPoint& FPoint::operator*=(float Other)
 }
 
 // ***********************************************************************************
-EGfxApi SGraphics::CurrentApi = EGfxApi::WinApi;
+EGfxApi SGraphics::CurrentApi = EGfxApi::None;
+SGraphicsApi* SGraphics::Api = nullptr;
 
-SGfxWindow* SGraphics::CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle)
+void SGraphics::Init(EGfxApi InApi)
 {
+	CurrentApi = InApi;
 	switch (CurrentApi)
 	{
-	case EGfxApi::WinApi: return new SWinApiWindow(InWidth, InHeight, InTitle); break;
-	case EGfxApi::OpenGL: return new SOpenGLWindow(InWidth, InHeight, InTitle); break;
+	case EGfxApi::WinApi: Api = new SWinApiGraphics; break;
+	case EGfxApi::OpenGL: Api = new SOpenGLGraphics; break;
 
 	default: GAssert(false); break;
 	}
-
-	return nullptr;
 }

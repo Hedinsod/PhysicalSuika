@@ -2,7 +2,7 @@
 
 #include "Actor.h"
 
-struct CGeometry;
+class CGeometry;
 struct CollisionBox;
 
 class AFruit : public AActor

@@ -33,16 +33,12 @@ void SOpenGLWindow::Create()
 	// Input
 	glfwSetKeyCallback(NativeWindow, SOpenGLWindow::ProcessInput);
 	//glfwSetWindowSizeCallback(NativeWindow, window_size_callback);
-	/*
+	
 	glfwSetWindowCloseCallback(NativeWindow, [](GLFWwindow* Window)
 		{
-			SWindowData* Data = static_cast<SWindowData*>(glfwGetWindowUserPointer(Window));
-
-			CWindowCloseEvent CloseEvent;
-			Data->EventCallback(CloseEvent);
+			GApp->Quit();
 		});
-	*/
-
+	
 	/*
 	glfwSetCursorPosCallback(NativeWindow, [](GLFWwindow* Window, double XPos, double YPos)
 		{

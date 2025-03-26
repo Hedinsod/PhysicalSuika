@@ -2,9 +2,9 @@
 
 #include "Core/Application.h"
 #include "Core/Input.h"
-#include "Systems/Draw.h"
+#include "Graphics/Graphics.h"
 #include "Platform/WinAPI/WinApiWindow.h"
-#include "Platform/WinAPI/WinApiGraphics.h"
+#include "Platform/WinAPI/WinApiContext.h"
 
 SWinApiWindow::SWinApiWindow(int InWidth, int InHeight, const std::string& InTitle)
 	: SGfxWindow(InWidth, InHeight, InTitle)
@@ -92,8 +92,7 @@ LRESULT CALLBACK SWinApiWindow::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPAR
 	case WM_CLOSE: GApp->Quit(); break;
 	case WM_PAINT:
 	{
-		SGfxContext* Context = GApp->GetWindow().GetGfxContext();
-		Context->FillRect({ 0, 0 }, { 800, 600 }, FColor{ 0,0,0 });
+		SGraphics::Clear();  // FillRect({ 0, 0 }, { 800, 600 }, FColor{ 0,0,0 });
 		break;
 	}
 	case WM_KEYDOWN: SInput::InputEvent(GetInputCode(wParam), true);  break;

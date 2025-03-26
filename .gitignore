@@ -2,6 +2,8 @@
 Bin/*
 Intermediate/*
 .vs/*
+External/glad/Intermediate/*
+External/glad/Bin/*
 
 # project files
 *.sln

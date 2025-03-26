@@ -2,26 +2,20 @@
 
 #include "Graphics/Graphics.h"
 
-class SWinApiGraphics : public SGraphicsApi
+class SOpenGLGraphics : public SGraphicsApi
 {
 public:
+	// Fabrics
 	virtual SGfxWindow* CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle) override;
-	virtual SGfxVertexDataPtr CreateVertexData() override;
-
-	// Fake
 	virtual SGfxShaderPtr CreateShader(const std::string& VertexSource, const std::string& FragmentSource) override;
 	virtual SGfxVertexBufferPtr CreateVertexBuffer(const std::vector<float>& VertexData) override;
 	virtual SGfxIndexBufferPtr CreateIndexBuffer(const std::vector<uint32_t>& IndexData) override;
+	virtual SGfxVertexDataPtr CreateVertexData() override;
 
 	// Render Commands
 	virtual void DrawIndexed(const SGfxVertexDataPtr& VA) override;
-	virtual void SetClearColor(const FColor& InColor) override { ClearColor = InColor; }
-	virtual void Clear() override { FillRect({ 0, 0 }, { 800, 600 }, ClearColor); }
+	virtual void SetClearColor(const FColor& InColor) override;
+	virtual void Clear() override;
 
-private:
-	HWND hWnd = 0;
-	FColor ClearColor;
-
-	void FillRect(FPoint Pivot, FPoint Size, FColor Color);
-	void DrawLine(FPoint Start, FPoint End, FColor Color);
 };
+

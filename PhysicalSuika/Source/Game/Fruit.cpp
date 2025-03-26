@@ -1,20 +1,26 @@
 #include "pch.h"
 #include "Fruit.h"
 #include "Systems/Engine.h"
+#include "Renderer/GeometryComp.h"
 
 AFruit::AFruit(float InX, float InY)
 	: AActor(InX, InY)
 {
-	Geo = Engine::GetGraphics().CreateGeometry(this);
-
 	FColor Color({ 250, 5, 5 });
-	Geo->AddPoint({  -5, +10 }, Color);
-	Geo->AddPoint({ -10,   0 }, Color);
-	Geo->AddPoint({  -5, -10 }, Color);
-	Geo->AddPoint({   5, -10 }, Color);
-	Geo->AddPoint({  10,   0 }, Color);
-	Geo->AddPoint({   5, +10 }, Color);
-	Geo->AddPoint({  -5, +10 }, Color);
+	Geo = Engine::GetGraphics().CreateGeometry(this);
+	Geo->SetVertices({ 
+		  -5,  10,
+		 -10,   0,
+		  -5, -10,
+		   5, -10,
+		  10,   0,
+		   5, +10,
+		  -5, +10
+		});
+	Geo->SetIndecies({
+		0, 1, 2, 3, 4, 5, 6
+		});
+	Geo->BuildGeometry();
 
 	Box = new CollisionBox(this, 10, -10, 10, -10);
 	Engine::GetCollision().AddCollisionBox(Box);

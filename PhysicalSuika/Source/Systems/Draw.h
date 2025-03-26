@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Core/Utility.h"
-#include "Systems/GeometryComponent.h"
 #include <unordered_set>
 
 
 class AActor;
 class SGfxContext;
+class CGeometry;
 
 class SDraw
 {

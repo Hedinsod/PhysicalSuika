@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Glass.h"
 #include "Systems/Engine.h"
+#include "Renderer/GeometryComp.h"
 
 AGlass::AGlass(float InX, float InY)
 	: AActor(InX, InY)
@@ -8,10 +9,17 @@ AGlass::AGlass(float InX, float InY)
 	Geo = Engine::GetGraphics().CreateGeometry(this);
 
 	FColor GlassColor({ 125, 125, 125 });
-	Geo->AddPoint({ -150, -500 }, GlassColor);
-	Geo->AddPoint({ -150,   0 }, GlassColor);
-	Geo->AddPoint({  150,   0 }, GlassColor);
-	Geo->AddPoint({  150, -500 }, GlassColor);
+
+	Geo->SetVertices({
+		-150, -500,
+		-150,    0,
+		 150,    0,
+		 150, -500
+		});
+	Geo->SetIndecies({
+		0, 1, 2, 3
+		});
+	Geo->BuildGeometry();
 
 	Left = new CollisionBox(this, 0, -151, -150, -500);
 	Right = new CollisionBox(this, 0, 150, 151, -500);

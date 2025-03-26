@@ -2,7 +2,7 @@
 
 #include "Actor.h"
 
-struct CGeometry;
+class CGeometry;
 
 class AHand : public AActor
 {

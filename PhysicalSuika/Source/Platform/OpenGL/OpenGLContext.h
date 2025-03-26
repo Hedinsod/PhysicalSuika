@@ -10,9 +10,6 @@ public:
 	SOpenGLContext(GLFWwindow* InWindow);
 	virtual void SwapBuffers() override;
 
-	virtual void FillRect(FPoint Pivot, FPoint Size, FColor Color) override;
-	virtual void DrawLine(FPoint Start, FPoint End, FColor color) override;
-
 private:
 	GLFWwindow* Window;
 

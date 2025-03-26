@@ -1,6 +1,13 @@
 #pragma once
 
+#include <memory>
+#include <string>
+
 class SGfxWindow;
+class SGfxShader;
+class SGfxVertexBuffer;
+class SGfxIndexBuffer;
+class SGfxVertexData;
 
 struct FColor
 {
@@ -22,19 +29,76 @@ struct FPoint
 	FPoint& operator*=(float Other);
 };
 
+typedef std::shared_ptr<SGfxShader> SGfxShaderPtr;
+typedef std::shared_ptr<SGfxVertexBuffer> SGfxVertexBufferPtr;
+typedef std::shared_ptr<SGfxIndexBuffer> SGfxIndexBufferPtr;
+typedef std::shared_ptr<SGfxVertexData> SGfxVertexDataPtr;
+
 enum class EGfxApi
 {
-	WinApi = 0,
+	None = 0,
+	WinApi,
 	OpenGL
+};
+
+class SGraphicsApi
+{
+public:
+	virtual SGfxWindow* CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle) = 0;
+	virtual SGfxShaderPtr CreateShader(const std::string& VertexSource, const std::string& FragmentSource) = 0;
+	virtual SGfxVertexBufferPtr CreateVertexBuffer(const std::vector<float>& VertexData) = 0;
+	virtual SGfxIndexBufferPtr CreateIndexBuffer(const std::vector<uint32_t>& IndexData) = 0;
+	virtual SGfxVertexDataPtr CreateVertexData() = 0;
+
+	virtual void DrawIndexed(const SGfxVertexDataPtr& VA) = 0;
+	virtual void SetClearColor(const FColor& InColor) = 0;
+	virtual void Clear() = 0;
 };
 
 class SGraphics
 {
 public:
-	static SGfxWindow* CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle);
+	static void Init(EGfxApi InApi);
+
+	// Fabrics
+	inline static SGfxWindow* CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle)
+	{
+		return Api->CreateGfxWindow(InWidth, InHeight, InTitle);
+	}
+	inline static SGfxShaderPtr CreateShader(const std::string& VertexSource, const std::string& FragmentSource)
+	{
+		return Api->CreateShader(VertexSource, FragmentSource);
+	}
+	inline static SGfxVertexBufferPtr CreateVertexBuffer(const std::vector<float>& VertexData)
+	{
+		return Api->CreateVertexBuffer(VertexData);
+	}
+	inline static SGfxIndexBufferPtr CreateIndexBuffer(const std::vector<uint32_t>& IndexData)
+	{
+		return Api->CreateIndexBuffer(IndexData);
+	}
+	inline static SGfxVertexDataPtr CreateVertexData()
+	{
+		return Api->CreateVertexData();
+	}
+
+	// Render Commands
+	inline static void DrawIndexed(const SGfxVertexDataPtr& VertexData)
+	{
+		return Api->DrawIndexed(VertexData);
+	}
+	inline static void SetClearColor(const FColor& InColor)
+	{
+		return Api->SetClearColor(InColor);
+	}
+	inline static void Clear()
+	{
+		return Api->Clear();
+	}
 
 private:
 	static EGfxApi CurrentApi;
+	static SGraphicsApi* Api;
 
 };
 
