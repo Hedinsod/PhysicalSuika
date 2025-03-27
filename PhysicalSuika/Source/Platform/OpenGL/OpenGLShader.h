@@ -11,6 +11,8 @@ public:
 	virtual void Bind() override;
 	virtual void Unbind() override;
 
+	virtual void UploadUniform(const char* ParameterName, const glm::mat4x4& mat) override;
+
 private:
 	uint32_t ShaderId;
 

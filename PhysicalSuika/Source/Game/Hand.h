@@ -7,7 +7,7 @@ class CGeometry;
 class AHand : public AActor
 {
 public:
-	AHand(float InX, float InY);
+	AHand(glm::vec2 InPos);
 	virtual ~AHand() override;
 
 	void Tick();

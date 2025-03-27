@@ -3,27 +3,27 @@
 #include "Systems/Engine.h"
 #include "Renderer/GeometryComp.h"
 
-AGlass::AGlass(float InX, float InY)
-	: AActor(InX, InY)
+AGlass::AGlass(glm::vec2 InPos)
+	: AActor(InPos, "Glass\n")
 {
 	Geo = Engine::GetGraphics().CreateGeometry(this);
 
 	FColor GlassColor({ 125, 125, 125 });
 
 	Geo->SetVertices({
-		-150, -500,
-		-150,    0,
-		 150,    0,
-		 150, -500
+		 -50, 160,
+		 -50,  0,
+		  50,  0,
+		  50, 160
 		});
 	Geo->SetIndecies({
 		0, 1, 2, 3
 		});
 	Geo->BuildGeometry();
 
-	Left = new CollisionBox(this, 0, -151, -150, -500);
-	Right = new CollisionBox(this, 0, 150, 151, -500);
-	Bottom = new CollisionBox(this, 1, -150, 150, 0);
+	Left = new CollisionBox(this, 160, -53, -50, 0);
+	Right = new CollisionBox(this, 160, 50, 53, 0);
+	Bottom = new CollisionBox(this, 3, 0, 0, 0);
 	Engine::GetCollision().AddCollisionBox(Left);
 	Engine::GetCollision().AddCollisionBox(Right);
 	Engine::GetCollision().AddCollisionBox(Bottom);

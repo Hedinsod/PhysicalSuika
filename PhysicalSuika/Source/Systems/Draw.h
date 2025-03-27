@@ -7,6 +7,7 @@
 class AActor;
 class SGfxContext;
 class CGeometry;
+class ACamera;
 
 class SDraw
 {
@@ -19,7 +20,7 @@ public:
 	CGeometry* CreateGeometry(AActor* InOwner);
 	void RemoveGeometry(CGeometry* Geo);
 
-	void Tick();
+	void Tick(const std::shared_ptr<ACamera>& Camera);
 
 private:
 	std::unordered_set<CGeometry*> GeometryPool;

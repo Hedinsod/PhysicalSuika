@@ -33,9 +33,9 @@ SGfxVertexDataPtr SOpenGLGraphics::CreateVertexData()
 }
 
 // Render Commands
-void SOpenGLGraphics::DrawIndexed(const SGfxVertexDataPtr& VA)
+void SOpenGLGraphics::DrawIndexed(const SGfxVertexDataPtr& VertexData)
 {
-	glDrawElements(GL_LINE_LOOP, VA->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_LINE_STRIP, VertexData->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
 }
 
 void SOpenGLGraphics::SetClearColor(const FColor& InColor)

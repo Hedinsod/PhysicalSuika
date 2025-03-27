@@ -12,6 +12,8 @@ public:
 	{
 	}
 
+	const AActor& GetOwner() const { return *Owner; }
+
 private:
 	AActor* Owner;
 

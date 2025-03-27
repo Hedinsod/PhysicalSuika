@@ -11,7 +11,7 @@ SGfxBufferLayout Mixed = {
 };
 
 SGfxBufferLayout Plain = {
-	{ "Whatever", EGfxShaderData::Float3 }
+	{ "Whatever", EGfxShaderData::Float2 }
 };
 
 CGeometry::CGeometry(AActor* InOwner)
@@ -33,5 +33,5 @@ void CGeometry::BuildGeometry()
 {
 	VertexData = SGraphics::CreateVertexData();
 	VertexData->AddVertexData(Vertices, Plain);
-	VertexData->SetIndexData({ 0, 1, 2 });
+	VertexData->SetIndexData(Indecies);
 }

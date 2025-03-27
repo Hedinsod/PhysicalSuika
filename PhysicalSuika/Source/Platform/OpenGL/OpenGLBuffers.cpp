@@ -112,6 +112,10 @@ SOpenGLVertexArray::SOpenGLVertexArray()
 {
 	glGenVertexArrays(1, &ArrayId);
 }
+SOpenGLVertexArray::~SOpenGLVertexArray()
+{
+	glBindVertexArray(0);
+}
 
 void SOpenGLVertexArray::Bind()
 {

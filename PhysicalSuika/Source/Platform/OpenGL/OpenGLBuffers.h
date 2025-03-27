@@ -39,7 +39,7 @@ class SOpenGLVertexArray : public SGfxVertexData
 {
 public:
 	SOpenGLVertexArray();
-	virtual ~SOpenGLVertexArray() = default;
+	virtual ~SOpenGLVertexArray();
 
 	virtual void Bind() override;
 	virtual void Unbind() override;

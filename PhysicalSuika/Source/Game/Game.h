@@ -4,6 +4,7 @@
 #include <vector>
 
 class AActor;
+class ACamera;
 
 class SGame
 {
@@ -18,14 +19,22 @@ public:
 	void Tick();
 
 	// ???
-	int GetWidth() const { return 800; }
-	int GetHeight() const { return 600; }
+	float GetWidth() const { return Right - Left; }
+	float GetHeight() const { return Top - Bottom; }
+
+	std::shared_ptr<ACamera> GetCamera()
+	{
+		return Camera;
+	};
+
+	float Top, Bottom, Left, Right;
 
 private:
-	const int SceneWidth = 10;
-	const int SceneHeight = 10;
-	
 	std::vector<AActor*> Actors;
+	std::shared_ptr<ACamera> Camera;
+
+	
+
 };
 
 template <class TEntity, class... Args>

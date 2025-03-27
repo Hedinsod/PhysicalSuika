@@ -33,11 +33,12 @@ void Application::Run()
 
 	DWORD lastTime = timeGetTime();
 
-//	SGraphics::SetClearColor({ 100, 100, 100 });
-//	SGraphics::Clear();
+	SGraphics::SetClearColor({ 220, 030, 220 });
 
 	while (!bQuit)
 	{
+		SGraphics::Clear();
+
 		const DWORD kSleepTimeMs = 20;
 		const DWORD currentTime = timeGetTime();
 		const DWORD timeSinceLast = currentTime - lastTime;
@@ -52,8 +53,7 @@ void Application::Run()
 		GGame->Tick();
 		Engine::GetCollision().Tick();
 
-		// TODO: delete, window should deal with graphics
-		Engine::GetGraphics().Tick();
+		Engine::GetGraphics().Tick(GGame->GetCamera());
 		MainWindow->Tick();
 
 		GGame->CullEntities();

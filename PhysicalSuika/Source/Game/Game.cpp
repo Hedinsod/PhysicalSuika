@@ -6,14 +6,22 @@
 #include "Game/Glass.h"
 #include "Game/Fruit.h"
 #include "Game/Hand.h"
-
+#include "Renderer/Camera.h"
+#include "Renderer/Renderer.h"
 
 
 SGame::SGame()
+	: Top(170)
+	, Bottom(-15)
+	, Left(-140)
+	, Right(140)
 {
-	AddEntity<AGlass>(400.f, 550.f);
-	AddEntity<AHand>(400.f, 50.f);
-	AddEntity<AFruit>(400.f, 350.f);
+	// 800x600 -> 240x180
+	Camera = std::make_shared<ACamera>(Top, Left, Bottom, Right, glm::vec2(0.f, 0.f));
+
+	AddEntity<AGlass>(glm::vec2{ 0.f, 0.f });
+	AddEntity<AHand>(glm::vec2{ 0.f, 160.f });
+	AddEntity<AFruit>(glm::vec2{ 15.f, 80.f });
 }
 
 SGame::~SGame()
@@ -28,17 +36,18 @@ SGame::~SGame()
 
 void SGame::CullEntities()
 {
-	for (auto It = Actors.begin(); It != Actors.end(); It++)
-	{
-		AActor* Actor = *It;
+	auto FwdIt = std::remove_if(Actors.begin(), Actors.end(), [](AActor* Actor){
 		if (Actor->IsPendingDelete())
 		{
 			delete Actor;
-			It = Actors.erase(It);
+			return true;
 		}
 
-		if (It == Actors.end()) break;
-	}
+		return false;
+	});
+
+	if (FwdIt != Actors.end())
+		Actors.erase(FwdIt);
 }
 
 void SGame::Tick()

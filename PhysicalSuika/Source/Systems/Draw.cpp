@@ -21,11 +21,12 @@ void SDraw::RemoveGeometry(CGeometry* Geo)
 	delete Geo;
 }
 
-void SDraw::Tick()
+void SDraw::Tick(const std::shared_ptr<ACamera>& Camera)
 {
+	SRenderer::Begin(Camera);
 	for (CGeometry* Geo : GeometryPool)
 	{
-		SRenderer::Sumbit(Geo);
+		SRenderer::Sumbit(Geo, Geo->GetOwner().GetTransform());
 	}
 }
 

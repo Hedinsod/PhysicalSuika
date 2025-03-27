@@ -1,13 +1,14 @@
 #pragma once
-#include "Systems/Transform.h"
+#include "Renderer/Transform.h"
 
 
 class AActor
 {
 public:
-	AActor(float InX, float InY)
-		: Trans(this, InX, InY)
+	AActor(glm::vec2 InPos, const char* Name)
+		: tag(Name)
 	{
+		Trans.SetPos(InPos);
 	}
 	virtual ~AActor() = default;
 
@@ -21,12 +22,14 @@ public:
 		this->bPendingDelete = true;
 	}
 
-	const CTransform& GetTransform() { return Trans; }
-
+	const CTransform& GetTransform() const { return Trans; }
+	std::string tag;
 protected:
 	CTransform Trans;
 
 	bool bPendingDelete = false;
+
+	
 };
 
 

@@ -3,15 +3,16 @@
 #include "Systems/Collision.h"
 #include "Game/Game.h"
 #include "Game/Actor.h"
+#include "Renderer/Transform.h"
 
 
 CollisionBox CollisionBox::GetTransformedBox()
 {
 	return CollisionBox(Owner,
-		Owner->GetTransform().Pos.y + Top,
-		Owner->GetTransform().Pos.x + Left,
-		Owner->GetTransform().Pos.x + Right,
-		Owner->GetTransform().Pos.y + Bottom);
+		Owner->GetTransform().GetPos().y + Top,
+		Owner->GetTransform().GetPos().x + Left,
+		Owner->GetTransform().GetPos().x + Right,
+		Owner->GetTransform().GetPos().y + Bottom);
 }
 
 void SCollisionCheck::AddCollisionBox(CollisionBox* Box)
@@ -36,11 +37,11 @@ void SCollisionCheck::Tick()
 
 		bool bVertical = false;
 		bool bHorizontal = false;
-		if (BoxT.Right > GGame->GetWidth() || BoxT.Left < 0)
+		if (BoxT.Right > GGame->Right || BoxT.Left < GGame->Left)
 		{
 			bHorizontal = true;
 		}
-		if (BoxT.Top > GGame->GetHeight() || BoxT.Bottom < 0)
+		if (BoxT.Top > GGame->Top || BoxT.Bottom < GGame->Bottom)
 		{
 			bVertical = true;
 		}

@@ -8,7 +8,7 @@ struct CollisionBox;
 class AFruit : public AActor
 {
 public:
-	AFruit(float InX, float InY);
+	AFruit(glm::vec2 InPos);
 	virtual ~AFruit() override;
 	virtual void OnCollide(const AActor* Opponent) override;
 

@@ -3,12 +3,14 @@
 #include "Systems/Engine.h"
 #include "Renderer/GeometryComp.h"
 
-AFruit::AFruit(float InX, float InY)
-	: AActor(InX, InY)
+
+AFruit::AFruit(glm::vec2 InPos)
+	: AActor(InPos, "Fruit\n")
 {
 	FColor Color({ 250, 5, 5 });
 	Geo = Engine::GetGraphics().CreateGeometry(this);
-	Geo->SetVertices({ 
+	
+	Geo->SetVertices({
 		  -5,  10,
 		 -10,   0,
 		  -5, -10,
@@ -20,6 +22,25 @@ AFruit::AFruit(float InX, float InY)
 	Geo->SetIndecies({
 		0, 1, 2, 3, 4, 5, 6
 		});
+	
+	/*
+	Geo->SetVertices({
+		 -0.8,    0,
+		    0,  0.8,
+		  0.8,    0,
+		    0, -0.8
+		});
+	Geo->SetIndecies({
+		0, 1, 2, 3
+		});
+		*/
+	
+	/*
+	Geo->SetIndecies({
+		0, 1, 2, 2, 3, 0
+		});
+		*/
+
 	Geo->BuildGeometry();
 
 	Box = new CollisionBox(this, 10, -10, 10, -10);
@@ -29,16 +50,17 @@ AFruit::AFruit(float InX, float InY)
 AFruit::~AFruit()
 {
 	Engine::GetCollision().RemoveCollisionBox(Box);
+	delete Box;
 	Engine::GetGraphics().RemoveGeometry(Geo);
 }
 
 void AFruit::Tick()
 {
-	static const FPoint Velocity{ 0, 5 };
+	static const glm::vec2 Velocity{ 0, -1 };
 
 	if (!bStop)
 	{
-		Trans.Pos += Velocity;
+		Trans.Translate(Velocity);
 	}
 }
 

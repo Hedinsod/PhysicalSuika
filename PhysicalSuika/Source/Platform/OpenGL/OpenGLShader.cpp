@@ -2,6 +2,7 @@
 #include "OpenGLShader.h"
 
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 
 SOpenGLShader::SOpenGLShader(const std::string& VertexSource, const std::string& FragmentSource)
@@ -126,4 +127,10 @@ void SOpenGLShader::Bind()
 void SOpenGLShader::Unbind()
 {
 	glUseProgram(0);
+}
+
+void SOpenGLShader::UploadUniform(const char* ParameterName, const glm::mat4& mat)
+{
+	GLint Loc = glGetUniformLocation(ShaderId, ParameterName);
+	glUniformMatrix4fv(Loc, 1, GL_FALSE, glm::value_ptr(mat));
 }

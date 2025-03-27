@@ -8,7 +8,7 @@ struct CollisionBox;
 class AGlass : public AActor
 {
 public:
-	AGlass(float InX, float InY);
+	AGlass(glm::vec2 InPos);
 	virtual ~AGlass() override;
 
 	void Tick();

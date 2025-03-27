@@ -30,6 +30,7 @@ project "PhysicalSuika"
 	{
 		"External/glfw/include",
 		"External/glad/include",
+		"External/glm",
 		"%{prj.name}/Source",
 	}
 	
