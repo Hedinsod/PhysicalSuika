@@ -19,23 +19,31 @@ AGlass::AGlass(glm::vec2 InPos)
 	Geo->SetIndecies({
 		0, 1, 2, 3
 		});
+	Geo->SetColors({
+		0.6f, 0.6f, 0.6f,
+		0.6f, 0.6f, 0.6f,
+		0.6f, 0.6f, 0.6f,
+		0.6f, 0.6f, 0.6f,
+		});
 	Geo->BuildGeometry();
 
-	Left = new CollisionBox(this, 160, -53, -50, 0);
-	Right = new CollisionBox(this, 160, 50, 53, 0);
-	Bottom = new CollisionBox(this, 3, 0, 0, 0);
-	Engine::GetCollision().AddCollisionBox(Left);
-	Engine::GetCollision().AddCollisionBox(Right);
-	Engine::GetCollision().AddCollisionBox(Bottom);
+	Left = Engine::GetCollision().AddPhysics(this);
+	Left->SetupBoundingBox(-51, 160, -50, 0);
+
+	Right = Engine::GetCollision().AddPhysics(this);
+	Right->SetupBoundingBox(50, 160, 51, 0);
+
+	Bottom = Engine::GetCollision().AddPhysics(this);
+	Bottom->SetupBoundingBox(-50, 0, 50, -1);
 }
 
 AGlass::~AGlass()
 {
 	Engine::GetGraphics().RemoveGeometry(Geo);
 
-	Engine::GetCollision().RemoveCollisionBox(Left);
-	Engine::GetCollision().RemoveCollisionBox(Right);
-	Engine::GetCollision().RemoveCollisionBox(Bottom);
+	Engine::GetCollision().RemovePhysics(Left);
+	Engine::GetCollision().RemovePhysics(Right);
+	Engine::GetCollision().RemovePhysics(Bottom);
 }
 
 void AGlass::Tick()

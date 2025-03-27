@@ -16,7 +16,7 @@ public:
 
 	// "Events"
 	bool IsPendingDelete() { return bPendingDelete; }
-	virtual void OnCollide(const AActor* Opponent) {}
+	virtual void OnCollide(AActor& Opponent) {}
 	virtual void OnOutOfBounds(bool bHorizontal, bool bVertical)
 	{
 		this->bPendingDelete = true;

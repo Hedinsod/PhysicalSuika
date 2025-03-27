@@ -22,41 +22,32 @@ AFruit::AFruit(glm::vec2 InPos)
 	Geo->SetIndecies({
 		0, 1, 2, 3, 4, 5, 6
 		});
-	
-	/*
-	Geo->SetVertices({
-		 -0.8,    0,
-		    0,  0.8,
-		  0.8,    0,
-		    0, -0.8
+
+	Geo->SetColors({
+		0.8f, 0.1f, 0.1f,
+		0.8f, 0.1f, 0.1f,
+		0.8f, 0.1f, 0.1f,
+		0.8f, 0.1f, 0.1f,
+		0.8f, 0.1f, 0.1f,
+		0.8f, 0.1f, 0.1f,
+		0.8f, 0.1f, 0.1f
 		});
-	Geo->SetIndecies({
-		0, 1, 2, 3
-		});
-		*/
-	
-	/*
-	Geo->SetIndecies({
-		0, 1, 2, 2, 3, 0
-		});
-		*/
 
 	Geo->BuildGeometry();
 
-	Box = new CollisionBox(this, 10, -10, 10, -10);
-	Engine::GetCollision().AddCollisionBox(Box);
+	Box = Engine::GetCollision().AddPhysics(this);
+	Box->SetupBoundingBox(-10, 10, 10, -10);
 }
 
 AFruit::~AFruit()
 {
-	Engine::GetCollision().RemoveCollisionBox(Box);
-	delete Box;
+	Engine::GetCollision().RemovePhysics(Box);
 	Engine::GetGraphics().RemoveGeometry(Geo);
 }
 
 void AFruit::Tick()
 {
-	static const glm::vec2 Velocity{ 0, -1 };
+	static const glm::vec2 Velocity{ 0, -1.0f };
 
 	if (!bStop)
 	{
@@ -64,7 +55,7 @@ void AFruit::Tick()
 	}
 }
 
-void AFruit::OnCollide(const AActor* Opponent)
+void AFruit::OnCollide(AActor& Opponent)
 {
 	bStop = true;
 }

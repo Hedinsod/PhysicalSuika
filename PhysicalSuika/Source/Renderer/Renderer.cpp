@@ -27,11 +27,12 @@ const std::string SRenderer::BasicPixelShader = R"(
 			#version 330 core
 
 			layout(location = 0) out vec4 Color;
-			in vec3 v_Color;
+			//in vec3 v_Color;
 				
 			void main()
 			{
-				Color = vec4(0.2, 0.8, 0.2, 1.0);
+				//Color = vec4(v_Color, 1.0);
+				Color = vec4(0, 0, 0, 1.0);
 			})";
 
 std::shared_ptr<SGfxShader> SRenderer::Shader;

@@ -3,7 +3,7 @@
 #include "Actor.h"
 
 class CGeometry;
-struct CollisionBox;
+class CPhysicsComp;
 
 class AGlass : public AActor
 {
@@ -16,8 +16,8 @@ public:
 private:
 	CGeometry* Geo;
 
-	CollisionBox* Left;
-	CollisionBox* Right;
-	CollisionBox* Bottom;
+	CPhysicsComp* Left;
+	CPhysicsComp* Right;
+	CPhysicsComp* Bottom;
 
 };

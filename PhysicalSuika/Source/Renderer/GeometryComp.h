@@ -2,30 +2,16 @@
 #include "Graphics/Graphics.h"
 #include <vector>
 
-class AActor;
-
-class CComponent
-{
-public:
-	CComponent(AActor* InOwner)
-		: Owner(InOwner)
-	{
-	}
-
-	const AActor& GetOwner() const { return *Owner; }
-
-private:
-	AActor* Owner;
-
-};
+#include "Systems/Components.h"
 
 class CGeometry : public CComponent
 {
 public:
 	CGeometry(AActor* InOwner);
 
-	void SetVertices(const std::vector<float> InVertices);
-	void SetIndecies(const std::vector<uint32_t> InIndecies);
+	void SetVertices(const std::vector<float>& InVertices);
+	void SetIndecies(const std::vector<uint32_t>& InIndecies);
+	void SetColors(const std::vector<float>& InColors);
 
 	SGfxVertexDataPtr GetVertexData() const { return VertexData; }
 	void BuildGeometry();

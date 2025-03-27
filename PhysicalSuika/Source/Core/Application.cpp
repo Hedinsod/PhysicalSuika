@@ -33,7 +33,8 @@ void Application::Run()
 
 	DWORD lastTime = timeGetTime();
 
-	SGraphics::SetClearColor({ 220, 030, 220 });
+	//SGraphics::SetClearColor({ 220, 030, 220 });
+	SGraphics::SetClearColor({ 250, 250, 250 });
 
 	while (!bQuit)
 	{
