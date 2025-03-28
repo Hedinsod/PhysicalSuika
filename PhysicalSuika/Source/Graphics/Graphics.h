@@ -9,13 +9,31 @@ class SGfxVertexBuffer;
 class SGfxIndexBuffer;
 class SGfxVertexData;
 
-struct FColor
+struct FColorRGB
 {
 	int Red = 0;
 	int Green = 0;
 	int Blue = 0;
 };
 
+struct FColorLinear
+{
+	FColorLinear() = default;
+	FColorLinear(float InR, float InG, float InB)
+		: Red(InR), Green(InG), Blue(InB)
+	{
+	}
+	FColorLinear(const FColorRGB& InColor)
+		: Red(InColor.Red / 255.f), Green(InColor.Green / 255.f), Blue(InColor.Blue / 255.f)
+	{
+	}
+
+	float Red = 0;
+	float Green = 0;
+	float Blue = 0;
+};
+
+/*
 struct FPoint
 {
 	float x;
@@ -28,6 +46,7 @@ struct FPoint
 
 	FPoint& operator*=(float Other);
 };
+*/
 
 typedef std::shared_ptr<SGfxShader> SGfxShaderPtr;
 typedef std::shared_ptr<SGfxVertexBuffer> SGfxVertexBufferPtr;
@@ -51,7 +70,7 @@ public:
 	virtual SGfxVertexDataPtr CreateVertexData() = 0;
 
 	virtual void DrawIndexed(const SGfxVertexDataPtr& VA) = 0;
-	virtual void SetClearColor(const FColor& InColor) = 0;
+	virtual void SetClearColor(const FColorRGB& InColor) = 0;
 	virtual void Clear() = 0;
 };
 
@@ -87,7 +106,7 @@ public:
 	{
 		return Api->DrawIndexed(VertexData);
 	}
-	inline static void SetClearColor(const FColor& InColor)
+	inline static void SetClearColor(const FColorRGB& InColor)
 	{
 		return Api->SetClearColor(InColor);
 	}

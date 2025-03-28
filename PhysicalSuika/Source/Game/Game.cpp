@@ -21,7 +21,6 @@ SGame::SGame()
 
 	AddEntity<AGlass>(glm::vec2{ 0.f, 0.f });
 	AddEntity<AHand>(glm::vec2{ 0.f, 160.f });
-	AddEntity<AFruit>(glm::vec2{ 15.f, 80.f });
 }
 
 SGame::~SGame()

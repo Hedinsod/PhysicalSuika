@@ -6,7 +6,6 @@ class AActor
 {
 public:
 	AActor(glm::vec2 InPos, const char* Name)
-		: tag(Name)
 	{
 		Trans.SetPos(InPos);
 	}
@@ -23,7 +22,8 @@ public:
 	}
 
 	const CTransform& GetTransform() const { return Trans; }
-	std::string tag;
+	CTransform& GetTransform() { return Trans; }
+
 protected:
 	CTransform Trans;
 

@@ -3,6 +3,7 @@
 #include "Platform/WinAPI/WinApiGraphics.h"
 #include "Platform/OpenGL/OpenGLGraphics.h"
 
+/*
 FPoint FPoint::operator+(const FPoint& Other)
 {
 	FPoint Result(*this);
@@ -46,6 +47,7 @@ FPoint& FPoint::operator*=(float Other)
 
 	return *this;
 }
+*/
 
 // ***********************************************************************************
 EGfxApi SGraphics::CurrentApi = EGfxApi::None;

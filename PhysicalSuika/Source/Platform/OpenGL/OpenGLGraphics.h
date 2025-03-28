@@ -14,7 +14,7 @@ public:
 
 	// Render Commands
 	virtual void DrawIndexed(const SGfxVertexDataPtr& VA) override;
-	virtual void SetClearColor(const FColor& InColor) override;
+	virtual void SetClearColor(const FColorRGB& InColor) override;
 	virtual void Clear() override;
 
 };

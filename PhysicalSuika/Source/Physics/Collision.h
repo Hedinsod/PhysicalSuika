@@ -1,53 +1,40 @@
 #pragma once
 
-#include "Systems/Components.h"
+#include "PhysicsComp.h"
 #include <unordered_set>
 
-#include <glm/glm.hpp>
 
-class AActor;
-
-struct FBoundingBox
+struct FManifold
 {
-	glm::vec2 Max;
-	glm::vec2 Min;
-};
-
-// Axis Aligned Bounding Box - AABB
-class CPhysicsComp : public CComponent
-{
-public:
-	CPhysicsComp(AActor* InOwner)
-		: CComponent(InOwner)
-	{
-	}
-
-	inline void SetupBoundingBox(float Left, float Top, float Right, float Bottom)
-	{
-		Box.Max.x = Right;
-		Box.Max.y = Top;
-		Box.Min.x = Left;
-		Box.Min.y = Bottom;
-	}
-
-	inline const FBoundingBox& GetBoundingBox() { return Box; }
-
-private:
-	FBoundingBox Box;
-
+	CPhysicsComp* BodyA;
+	CPhysicsComp* BodyB;
+	float         Penetration;
+	glm::vec2     Normal;
 };
 
 class SCollisionCheck
 {
 public:
-	CPhysicsComp* AddPhysics(AActor* Owner);
+	CPhysicsComp* AddPhysics(AActor* Owner, float InMass, float InRestitution);
 	void RemovePhysics(CPhysicsComp* Comp);
 
-	void Tick();
+	void Tick(float DeltaTime);
+
+	void BroadPass();
+	void NarrowPass();
 
 private:
-	bool SimpleCollision(const FBoundingBox& BoxA, const FBoundingBox& BoxB);
+	bool SimpleCollision(const FBoxCollider& FirstAABB, const FBoxCollider& SecondAABB);
+	bool GenManifold(FManifold& Manifold);
+		
+	void ResolveCollision(FManifold& Manifold); //CPhysicsComp& A, CPhysicsComp& B, const glm::vec2& CollisionVector);
+	void PositionalCorrection(FManifold& Manifold);
 
+
+	// All bodies of the scene
 	std::unordered_set<CPhysicsComp*> PhComps;
 
+	// Cache
+	std::vector<std::pair<CPhysicsComp*, CPhysicsComp*>> Pairs;
+	std::vector<FManifold> Manifolds;
 };

@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "Core/Application.h"
+#include "Timestep.h"
 #include "Graphics/GfxWindow.h"
 #include "Graphics/Graphics.h"
 #include "Systems/Engine.h"
@@ -31,29 +32,26 @@ void Application::Run()
 	GGame = new SGame();
 	GAssert(GGame);
 
-	DWORD lastTime = timeGetTime();
+	STimestep Step(TargetFPS, MaxFrametimeMs);
 
-	//SGraphics::SetClearColor({ 220, 030, 220 });
-	SGraphics::SetClearColor({ 250, 250, 250 });
+	const FColorRGB Background = { 250, 250, 250 };
+	SGraphics::SetClearColor(Background);
 
 	while (!bQuit)
 	{
-		SGraphics::Clear();
+		Step.FrameStart();
 
-		const DWORD kSleepTimeMs = 20;
-		const DWORD currentTime = timeGetTime();
-		const DWORD timeSinceLast = currentTime - lastTime;
-
-		if (timeSinceLast < kSleepTimeMs)
-		{
-			Sleep(kSleepTimeMs - timeSinceLast);
-		}
-
-		lastTime = currentTime;
-
+		// TODO: Pass dT to logic!
 		GGame->Tick();
-		Engine::GetCollision().Tick();
 
+		do  // Allow phisics to catch up
+		{
+			Engine::GetCollision().Tick(Step.GetStep());
+		}
+		while (Step.Update());
+
+		SGraphics::Clear();
+		// Rendering Pass
 		Engine::GetGraphics().Tick(GGame->GetCamera());
 		MainWindow->Tick();
 

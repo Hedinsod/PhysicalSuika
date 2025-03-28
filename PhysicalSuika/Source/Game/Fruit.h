@@ -16,6 +16,8 @@ public:
 
 private:
 	CGeometry* Geo;
+	CGeometry* GeoBox;
+
 	CPhysicsComp* Box;
 
 	bool bStop = false;

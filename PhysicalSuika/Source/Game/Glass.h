@@ -15,6 +15,7 @@ public:
 
 private:
 	CGeometry* Geo;
+	CGeometry* GeoBox;
 
 	CPhysicsComp* Left;
 	CPhysicsComp* Right;

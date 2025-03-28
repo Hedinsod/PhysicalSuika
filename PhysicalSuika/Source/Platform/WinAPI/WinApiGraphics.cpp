@@ -40,12 +40,12 @@ void SWinApiGraphics::DrawIndexed(const SGfxVertexDataPtr& VA)
 
 
 // Some actuall code
-static inline unsigned int GetRGB(FColor C)
+static inline unsigned int GetRGB(FColorRGB C)
 {
 	return C.Red + (C.Green << 8) + (C.Blue << 16);
 }
 
-void SWinApiGraphics::FillRect(FPoint Pivot, FPoint Size, FColor Color)
+void SWinApiGraphics::FillRect(glm::vec2 Pivot, glm::vec2 Size, FColorRGB Color)
 {
 	HDC hDC = GetDC(hWnd);
 	HBRUSH Brush = CreateSolidBrush(GetRGB(Color));
@@ -62,7 +62,7 @@ void SWinApiGraphics::FillRect(FPoint Pivot, FPoint Size, FColor Color)
 	ReleaseDC(hWnd, hDC);
 }
 
-void SWinApiGraphics::DrawLine(FPoint Start, FPoint End, FColor Color)
+void SWinApiGraphics::DrawLine(glm::vec2 Start, glm::vec2 End, FColorRGB Color)
 {
 	HDC hDC = GetDC(hWnd);
 	HPEN Pen = CreatePen(PS_SOLID, 1, GetRGB(Color));

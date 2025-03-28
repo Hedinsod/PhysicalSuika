@@ -11,7 +11,7 @@ AHand::AHand(glm::vec2 InPos)
 {
 	Geo = Engine::GetGraphics().CreateGeometry(this);
 
-	FColor Color({ 200, 165, 100 });
+	FColorRGB Color({ 200, 165, 100 });
 
 	Geo->SetVertices({
 		-10, -15,

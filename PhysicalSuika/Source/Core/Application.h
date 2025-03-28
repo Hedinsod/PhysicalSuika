@@ -23,9 +23,13 @@ private:
 	// Root Actor
 	//SGame* TheGame;
 
+	bool bQuit = false;
+
+	// Settings
 	int32_t ScreenWidth = 800;
 	int32_t ScreenHeight = 600;
 
-	bool bQuit = false;
+	static constexpr float TargetFPS = 60.f;
+	static constexpr float MaxFrametimeMs = 200.f;
 };
 extern Application* GApp;

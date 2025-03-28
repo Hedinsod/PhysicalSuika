@@ -38,9 +38,10 @@ void SOpenGLGraphics::DrawIndexed(const SGfxVertexDataPtr& VertexData)
 	glDrawElements(GL_LINE_STRIP, VertexData->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
 }
 
-void SOpenGLGraphics::SetClearColor(const FColor& InColor)
+void SOpenGLGraphics::SetClearColor(const FColorRGB& InColor)
 {
-	glClearColor(InColor.Red/255.f, InColor.Green/255.f, InColor.Blue/255.f, 1.0f);
+	FColorLinear LinearColor(InColor);
+	glClearColor(LinearColor.Red, LinearColor.Green, LinearColor.Blue, 1.0f);
 }
 
 void SOpenGLGraphics::Clear()

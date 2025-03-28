@@ -2,6 +2,8 @@
 
 #include "Graphics/Graphics.h"
 
+#include <glm/glm.hpp>
+
 class SWinApiGraphics : public SGraphicsApi
 {
 public:
@@ -15,13 +17,13 @@ public:
 
 	// Render Commands
 	virtual void DrawIndexed(const SGfxVertexDataPtr& VA) override;
-	virtual void SetClearColor(const FColor& InColor) override { ClearColor = InColor; }
+	virtual void SetClearColor(const FColorRGB& InColor) override { ClearColor = InColor; }
 	virtual void Clear() override { FillRect({ 0, 0 }, { 800, 600 }, ClearColor); }
 
 private:
 	HWND hWnd = 0;
-	FColor ClearColor;
+	FColorRGB ClearColor;
 
-	void FillRect(FPoint Pivot, FPoint Size, FColor Color);
-	void DrawLine(FPoint Start, FPoint End, FColor Color);
+	void FillRect(glm::vec2 Pivot, glm::vec2 Size, FColorRGB Color);
+	void DrawLine(glm::vec2 Start, glm::vec2 End, FColorRGB Color);
 };
