@@ -19,7 +19,3 @@ FBoxCollider FCircleCollider::GenerateAABB(const glm::vec2& Pos)
 
 	return Result;
 }
-
-
-
-

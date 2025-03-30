@@ -19,6 +19,7 @@ struct FColliderShape
 	{ }
 
 	virtual FBoxCollider GenerateAABB(const glm::vec2& Pos) = 0;
+	virtual int32_t GetShapeIndex() = 0;
 
 	glm::vec2 Pivot{ 0 };
 };
@@ -34,6 +35,7 @@ struct FBoxCollider : public FColliderShape
 	}
 
 	virtual FBoxCollider GenerateAABB(const glm::vec2& Pos) override;
+	virtual int32_t GetShapeIndex() override { return 0; }
 
 	glm::vec2 Max{ 0 };
 	glm::vec2 Min{ 0 };
@@ -48,6 +50,7 @@ struct FCircleCollider : public FColliderShape
 	}
 
 	virtual FBoxCollider GenerateAABB(const glm::vec2& Pos) override;
+	virtual int32_t GetShapeIndex() override { return 1; }
 
 	float Radius = 0.0f;
 };
@@ -57,6 +60,7 @@ struct FCircleCollider : public FColliderShape
 // ******** Physics Component *************************************************
 // ****************************************************************************
 
+extern const float GSlop;
 
 class CPhysicsComp : public CComponent
 {
@@ -67,10 +71,11 @@ public:
 		: CComponent(InOwner)
 		, InvMass(InMass == 0 ? 0 : 1.f / InMass)
 		, Restitution(InRestitution)
-		, Gravity(0, -0.98f * InMass)
+	//	, Gravity(0, -9.8f * InMass)  // TODO: const it somehow!
 		, Velocity(0)
 		, Forces(0)
-		, Layers(0)
+		, Layers(1)
+		, GravityScale( 2.f )
 	{
 	}
 	~CPhysicsComp()
@@ -89,10 +94,12 @@ public:
 	}
 	void SetLayer(uint32_t InLayer)
 	{
-		Layers |= InLayer;
+		Layers = InLayer;
 	}
 
-	inline const FColliderShape* GetCollider() { return Shape; }
+	template <class T>
+	inline const T* GetCollider() { return static_cast<T>(Shape); }
+
 	inline CTransform& GetTransform() { return GetOwner().GetTransform(); }
 
 	inline FBoxCollider GenerateAABB()
@@ -111,12 +118,14 @@ private:
 
 	float InvMass;
 	float Restitution;
-	glm::vec2 Gravity;
+//	glm::vec2 Gravity;
 
 	glm::vec2 Velocity;
 	glm::vec2 Forces;
 
 	uint32_t Layers;
+
+	float GravityScale;
 
 };
 

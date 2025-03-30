@@ -10,58 +10,44 @@ AFruit::AFruit(glm::vec2 InPos)
 	FColorRGB Color({ 250, 5, 5 });
 	Geo = Engine::GetGraphics().CreateGeometry(this);
 	
+	std::vector<float> Points;
+	std::vector<uint32_t> Inds;
+	uint32_t i = 0;
+	for (float a = 0.f; a <= 360.f; a += 5.f)
+	{
+		Points.push_back(glm::sin(glm::radians(a)));
+		Points.push_back(glm::cos(glm::radians(a)));
+		Inds.push_back(i++);
+	}
+	Inds.push_back(0);
+	Geo->SetVertices(Points);
+	Geo->SetIndecies(Inds);
+	/*
 	Geo->SetVertices({
-		  -5,  10,
-		 -10,   0,
-		  -5, -10,
-		   5, -10,
-		  10,   0,
-		   5, +10,
-		  -5, +10
+		 -0.5f,  1.f,
+		 -1.0f,  0.f,
+		 -0.5f, -1.f,
+		  0.5f, -1.f,
+		  1.0f,  0.f,
+		  0.5f,  1.f,
+		 -0.5f,  1.f
 		});
-	Geo->SetIndecies({
+		*/
+	/*Geo->SetIndecies({
 		0, 1, 2, 3, 4, 5, 6
-		});
+		});*/
 	Geo->BuildGeometry();
 
-	GeoBox = Engine::GetGraphics().CreateGeometry(this);
-	GeoBox->SetVertices({
-		-10,  10,
-		 10,  10,
-		 10, -10,
-		-10, -10});
-	GeoBox->SetIndecies({
-		0, 1, 2, 3, 0
-		});
-	GeoBox->BuildGeometry();
-
-	Box = Engine::GetCollision().AddPhysics(this, 0.4f, 0.4f);
-	Box->SetupBoxCollider({ 0, 0 }, -10, 10, 10, -10);
-	Box->SetLayer(1);
-
-	//Box->Velocity = { 0, -1.0f }; // manually set initial velocity
+	Box = Engine::GetCollision().AddPhysics(this, 0.8f, 0.4f);
+	Box->SetupCircleCollider({ 0, 0 }, 1.f);
 }
 
 AFruit::~AFruit()
 {
 	Engine::GetCollision().RemovePhysics(Box);
 	Engine::GetGraphics().RemoveGeometry(Geo);
-	Engine::GetGraphics().RemoveGeometry(GeoBox);
 }
 
 void AFruit::Tick()
 {
-	/*
-	static const glm::vec2 Velocity{ 0, -1.0f };
-
-	if (!bStop)
-	{
-		Trans.Translate(Velocity);
-	}
-	*/
-}
-
-void AFruit::OnCollide(AActor& Opponent)
-{
-	bStop = true;
 }

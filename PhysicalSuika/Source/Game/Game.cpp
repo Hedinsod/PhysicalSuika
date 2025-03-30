@@ -11,16 +11,16 @@
 
 
 SGame::SGame()
-	: Top(170)
-	, Bottom(-15)
-	, Left(-140)
-	, Right(140)
+	: Top(17.0f)
+	, Bottom(-1.5f)
+	, Left(-14.0f)
+	, Right(14.0f)
 {
 	// 800x600 -> 240x180
 	Camera = std::make_shared<ACamera>(Top, Left, Bottom, Right, glm::vec2(0.f, 0.f));
 
 	AddEntity<AGlass>(glm::vec2{ 0.f, 0.f });
-	AddEntity<AHand>(glm::vec2{ 0.f, 160.f });
+	AddEntity<AHand>(glm::vec2{ 0.f, 16.0f });
 }
 
 SGame::~SGame()

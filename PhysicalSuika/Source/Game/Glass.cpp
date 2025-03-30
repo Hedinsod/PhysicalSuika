@@ -11,46 +11,29 @@ AGlass::AGlass(glm::vec2 InPos)
 	FColorRGB GlassColor({ 125, 125, 125 });
 
 	Geo->SetVertices({
-		 -50, 160,
-		 -50,   0,
-		  50,   0,
-		  50, 160
+		 -5.0f, 16.0f,
+		 -5.0f,  0.0f,
+		  5.0f,  0.0f,
+		  5.0f, 16.0f
 		});
 	Geo->SetIndecies({
 		0, 1, 2, 3
 		});
 	Geo->BuildGeometry();
 
-	/*
-	GeoBox = Engine::GetGraphics().CreateGeometry(this);
-	GeoBox->SetVertices({
-		-75,  0,
-		 75,  0,
-		 75, -1,
-		-75, -1 });
-	GeoBox->SetIndecies({
-		0, 1, 2, 3, 0
-		});
-	GeoBox->BuildGeometry();
-	*/
-
 	Left = Engine::GetCollision().AddPhysics(this, 0.f, 0.9f);
-	Left->SetupBoxCollider({ -50.5, 80 }, -51, 160, -50, 0);
-	Left->SetLayer(1 | 2);
+	Left->SetupBoxCollider({ -5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
 
 	Right = Engine::GetCollision().AddPhysics(this, 0.f, 0.9f);
-	Right->SetupBoxCollider({ 50.5, 80 }, 50, 160, 51, 0);
-	Right->SetLayer(1 | 4);
+	Right->SetupBoxCollider({ 5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
 
 	Bottom = Engine::GetCollision().AddPhysics(this, 0.f, 0.9f);
-	Bottom->SetupBoxCollider({ 0, -0.5 }, -50, 0, 50, -1);
-	Bottom->SetLayer(1 | 8);
+	Bottom->SetupBoxCollider({ 0.f, -0.5f }, -5.0f, 0.5f, 5.0f, -0.5f);
 }
 
 AGlass::~AGlass()
 {
 	Engine::GetGraphics().RemoveGeometry(Geo);
-	//Engine::GetGraphics().RemoveGeometry(GeoBox);
 
 	Engine::GetCollision().RemovePhysics(Left);
 	Engine::GetCollision().RemovePhysics(Right);
