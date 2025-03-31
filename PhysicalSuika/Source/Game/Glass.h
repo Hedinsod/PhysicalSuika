@@ -1,9 +1,10 @@
 #pragma once
 
 #include "Actor.h"
+#include "Physics/RigidBodyComp.h"
+
 
 class CGeometry;
-class CPhysicsComp;
 
 class AGlass : public AActor
 {
@@ -16,8 +17,8 @@ public:
 private:
 	CGeometry* Geo;
 
-	CPhysicsComp* Left;
-	CPhysicsComp* Right;
-	CPhysicsComp* Bottom;
+	CBodyHandle Left;
+	CBodyHandle Right;
+	CBodyHandle Bottom;
 
 };

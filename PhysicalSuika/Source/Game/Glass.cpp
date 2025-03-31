@@ -21,23 +21,35 @@ AGlass::AGlass(glm::vec2 InPos)
 		});
 	Geo->BuildGeometry();
 
-	Left = Engine::GetCollision().AddPhysics(this, 0.f, 0.9f);
-	Left->SetupBoxCollider({ -5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
+	FRigidBodyDesc Desc;
+	Desc.ColliderShape = EColliderShape::Box;
+	Desc.Mass = 0.f;
+	Desc.Restitution = 0.9f;
+	Desc.StaticFriction = 0.3f;
+	Desc.DynamicFriction = 0.1f;
+	Desc.Layers = 1;
 
-	Right = Engine::GetCollision().AddPhysics(this, 0.f, 0.9f);
-	Right->SetupBoxCollider({ 5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
+	Left = Engine::GetCollision().CreateRigidBody(this, Desc);
+	CRigidBodyComp& LeftBody = Engine::GetCollision().GetRigidBody(Left);
+	//LeftBody.SetupBoxCollider({ -5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
+	LeftBody.SetupCollider<FBoxCollider>({ -5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
 
-	Bottom = Engine::GetCollision().AddPhysics(this, 0.f, 0.9f);
-	Bottom->SetupBoxCollider({ 0.f, -0.5f }, -5.0f, 0.5f, 5.0f, -0.5f);
+	Right = Engine::GetCollision().CreateRigidBody(this, Desc);
+	CRigidBodyComp& RightBody = Engine::GetCollision().GetRigidBody(Right);
+	RightBody.SetupCollider<FBoxCollider>({ 5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
+
+	Bottom = Engine::GetCollision().CreateRigidBody(this, Desc);
+	CRigidBodyComp& BottomBody = Engine::GetCollision().GetRigidBody(Bottom);
+	BottomBody.SetupCollider<FBoxCollider>({ 0.f, -0.5f }, -5.0f, 0.5f, 5.0f, -0.5f);
 }
 
 AGlass::~AGlass()
 {
 	Engine::GetGraphics().RemoveGeometry(Geo);
 
-	Engine::GetCollision().RemovePhysics(Left);
-	Engine::GetCollision().RemovePhysics(Right);
-	Engine::GetCollision().RemovePhysics(Bottom);
+	Engine::GetCollision().RemoveRigidBody(Left);
+	Engine::GetCollision().RemoveRigidBody(Right);
+	Engine::GetCollision().RemoveRigidBody(Bottom);
 }
 
 void AGlass::Tick()

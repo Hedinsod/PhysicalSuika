@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Actor.h"
+#include "Physics/RigidBodyComp.h"
 
 class CGeometry;
-class CPhysicsComp;
 
 class AFruit : public AActor
 {
@@ -15,8 +15,7 @@ public:
 
 private:
 	CGeometry* Geo;
-
-	CPhysicsComp* Box;
+	CBodyHandle Box;
 
 	bool bStop = false;
 };

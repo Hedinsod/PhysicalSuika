@@ -38,13 +38,23 @@ AFruit::AFruit(glm::vec2 InPos)
 		});*/
 	Geo->BuildGeometry();
 
-	Box = Engine::GetCollision().AddPhysics(this, 0.8f, 0.4f);
-	Box->SetupCircleCollider({ 0, 0 }, 1.f);
+	FRigidBodyDesc Desc;
+	Desc.ColliderShape = EColliderShape::Box;
+	Desc.Mass = 0.3f;
+	Desc.Restitution = 0.1f;
+	Desc.StaticFriction = 0.3f;
+	Desc.DynamicFriction = 0.1f;
+	Desc.Layers = 1;
+	Box = Engine::GetCollision().CreateRigidBody(this, Desc);
+
+	// TODO: fix this!
+	CRigidBodyComp& Body = Engine::GetCollision().GetRigidBody(Box);
+	Body.SetupCollider<FCircleCollider>({ 0, 0 }, 1.f);
 }
 
 AFruit::~AFruit()
 {
-	Engine::GetCollision().RemovePhysics(Box);
+	Engine::GetCollision().RemoveRigidBody(Box);
 	Engine::GetGraphics().RemoveGeometry(Geo);
 }
 

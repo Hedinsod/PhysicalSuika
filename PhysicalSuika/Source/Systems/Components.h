@@ -9,6 +9,10 @@ public:
 		: Owner(InOwner)
 	{
 	}
+	CComponent(const CComponent&) = default;
+	CComponent(CComponent&&) = default;
+	virtual ~CComponent() = default;
+
 
 	const AActor& GetOwner() const { return *Owner; }
 	AActor& GetOwner() { return *Owner; }

@@ -9,7 +9,7 @@ void Engine::Init()
 {
 	Instance = new Engine;
 
-	Instance->Collision = std::make_unique<SCollisionCheck>();
+	Instance->Collision = std::make_unique<SPhScene>(4);
 	GAssert(Instance->Collision);
 
 	SGfxContext* Context = GApp->GetWindow().GetGfxContext();
