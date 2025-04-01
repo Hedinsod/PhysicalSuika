@@ -1,52 +1,37 @@
 #include "pch.h"
+
 #include "RigidBodyComp.h"
+#include "PhyMaterialLibrary.h"
 
 
-CRigidBodyComp::CRigidBodyComp(AActor* InOwner, CBodyHandle NewId, const FRigidBodyDesc& Desc)
+CRigidBodyComp::CRigidBodyComp(AActor* InOwner, CBodyHandle NewId, uint32_t InMaterialId, FColliderShape* InShape, uint32_t InLayers)
 	: CComponent(InOwner)
 	, Id(NewId)
-	, Layers(1)
-	, Velocity(0)
-	, Forces(0)
+	, Shape(InShape)
+	, MaterialId(InMaterialId)
+	, Layers(InLayers)
 {
-	Shape = nullptr;  // TODO: Initialize. Somehow.
-
-	/*
-	switch (Desc.ColliderShape)
+	const FPhysicalMaterial& Material = SPhyMatirialLibrary::GetMaterial(MaterialId);
+	if (Material.Density != 0)
 	{
-	case EColliderShape::Box: SetupCollider<FColliderShape>(glm::vec2 InPivot, Args... args); break;
-	case EColliderShape::Circle: SetupCollider<FColliderShape>(glm::vec2 InPivot, Args... args); break;
-	default: GAssert(false, "Unknown collider shape.");
+		auto MassPair = Shape->CalculateMass(Material.Density);
+		InvMass = MassPair.first;
+		InvInertia = MassPair.second;
 	}
-	*/
-
-	PhyMat.InvMass = Desc.Mass == 0 ? 0 : 1.f / Desc.Mass;
-	PhyMat.Restitution = Desc.Restitution;
-	PhyMat.StaticFriction = Desc.StaticFriction;
-	PhyMat.DynamicFriction = Desc.DynamicFriction;
-	PhyMat.GravityScale = 3.0f;
 }
 
 CRigidBodyComp::CRigidBodyComp(const CRigidBodyComp& Other)
 	: CComponent(Other.Owner)
-	, Id(Other.Id)
 	, Shape(Other.Shape->Clone())
-	, PhyMat(Other.PhyMat)
-	, Layers(Other.Layers)
-	, Velocity(Other.Velocity)
-	, Forces(Other.Forces)
 {
+	BasicCopy(Other);
 }
 
 CRigidBodyComp::CRigidBodyComp(CRigidBodyComp&& Other) noexcept
 	: CComponent(Other.Owner)
-	, Id(Other.Id)
 	, Shape(Other.Shape)
-	, PhyMat(Other.PhyMat)
-	, Layers(Other.Layers)
-	, Velocity(Other.Velocity)
-	, Forces(Other.Forces)
 {
+	BasicCopy(Other);
 	Other.Shape = nullptr;
 }
 
@@ -61,15 +46,9 @@ CRigidBodyComp& CRigidBodyComp::operator=(const CRigidBodyComp& Other)
 	if (this == &Other)
 		return *this;
 
-	Owner = Other.Owner;
-	Id = Other.Id;
-	PhyMat = Other.PhyMat;
-	Layers = Other.Layers;
+	BasicCopy(Other);
 
-	Velocity = Other.Velocity;
-	Forces = Other.Forces;
-
-	delete Shape;
+	if (Shape) delete Shape;
 	Shape = Other.Shape->Clone();
 
 	return *this;
@@ -79,17 +58,49 @@ CRigidBodyComp& CRigidBodyComp::operator=(CRigidBodyComp&& Other) noexcept
 	if (this == &Other)
 		return *this;
 
-	Owner = Other.Owner;
-	Id = Other.Id;
-	PhyMat = Other.PhyMat;
-	Layers = Other.Layers;
-
-	Velocity = Other.Velocity;
-	Forces = Other.Forces;
+	BasicCopy(Other);
 	
-	delete Shape;
+	if (Shape) delete Shape;
 	Shape = Other.Shape;
 	Other.Shape = nullptr;
 
 	return *this;
+}
+
+void CRigidBodyComp::BasicCopy(const CRigidBodyComp& Other)
+{
+	Owner = Other.Owner;
+	Id = Other.Id;
+	MaterialId = Other.MaterialId;
+	Layers = Other.Layers;
+
+	InvMass = Other.InvMass;
+	InvInertia = Other.InvInertia;
+
+	Position = Other.Position;
+	Velocity = Other.Velocity;
+	Forces = Other.Forces;
+
+	Orientation = Other.Orientation;
+	AngularVelocity = Other.AngularVelocity;
+	Torque = Other.Torque;
+}
+
+void CRigidBodyComp::IntegrateVelocity(float TimeStep)
+{
+	static const glm::vec2 Gravity(0.f, -9.8);
+
+	const FPhysicalMaterial& Mat = SPhyMatirialLibrary::GetMaterial(MaterialId);
+
+	// Symplectic Euler 
+	glm::vec2 Acceleration = Forces * InvMass + Gravity * Mat.GravityScale;
+	Velocity += Acceleration * TimeStep;
+
+	AngularVelocity += Torque * InvInertia * TimeStep;
+}
+
+void CRigidBodyComp::IntegratePosition(float TimeStep)
+{
+	GetTransform().Translate(Velocity * TimeStep);
+	GetTransform().RotRad(AngularVelocity * TimeStep);
 }

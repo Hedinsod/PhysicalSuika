@@ -18,4 +18,7 @@ private:
 	CBodyHandle Box;
 
 	bool bStop = false;
+
+	static bool bMatCreated;
+	static uint32_t MatId;
 };

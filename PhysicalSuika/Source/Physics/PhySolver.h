@@ -2,8 +2,10 @@
 
 #include "RigidBodyComp.h"
 #include <unordered_set>
+#include <array>
 
 
+// WIP: Will be replaced with contact graph nodes
 struct FManifold
 {
 	mutable CBodyHandle  FirstId = -1;
@@ -11,8 +13,11 @@ struct FManifold
 
 	mutable float        Penetration = 0;
 	mutable glm::vec2    Normal{ 0.0f };
-	mutable float        Impulse = 0.0f;
+	mutable float        NormalImpulse = 0.0f;
+	mutable float        TangentImpulse = 0.0f;
 	mutable bool         bCollision = true;
+
+	mutable std::array<glm::vec2, 2> ContactPoints;
 
 	// hash table shenanigans
 	size_t operator()(const FManifold& M) const
@@ -29,37 +34,24 @@ struct FManifold
 	}
 };
 
-
-class SPhScene
+class SPhySolver
 {
 public:
-	SPhScene(int32_t InStepsNumber);
+	SPhySolver();
 
-	CBodyHandle CreateRigidBody(AActor* Owner, const FRigidBodyDesc& Desc);
-	void RemoveRigidBody(CBodyHandle Handle);
-	CRigidBodyComp& GetRigidBody(CBodyHandle Handle);
-
-	void Tick(float DeltaTime);
-
-	// Internal stuff
-	void BroadPass();
-	void NarrowPass();
+	void AddPair(CRigidBodyComp& InFirst, CRigidBodyComp& InSecond);
+	void WarmUp();
+	void SolveContacts();
 
 private:
-	bool SimpleCollision(const FBoxCollider& FirstAABB, const FBoxCollider& SecondAABB);
 	bool GenManifold_BoxBox(const FManifold& Manifold);
 	bool GenManifold_BoxCircle(const FManifold& Manifold);
 	bool GenManifold_CircleBox(const FManifold& Manifold);
 	bool GenManifold_CircleCircle(const FManifold& Manifold);
-		
+
 	void ResolveCollision(const FManifold& Manifold);
 
-	const int32_t StepsNumber = 0;
-
-	// All bodies of the scene
-	std::vector<int32_t> IdToIndex;
-	std::vector<CRigidBodyComp> BodyPool;
-
+private:
 	// TODO: replace with contact graph
 	std::unordered_set<FManifold, FManifold> Contacts;
 

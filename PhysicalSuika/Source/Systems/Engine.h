@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Utility.h"
-#include "Physics/PhScene.h"
+#include "Physics/PhyScene.h"
 #include "Systems/Draw.h"
 #include <memory>
 
@@ -10,10 +10,10 @@ class Engine final
 {
 public:
 	static void Init();
-	static SPhScene& GetCollision()
+	static SPhyScene& GetPhyScene()
 	{
 		GAssert(Instance);
-		return *Instance->Collision;
+		return *Instance->PhyScene;
 	}
 	static SDraw& GetGraphics()
 	{
@@ -25,6 +25,6 @@ private:
 	Engine() = default;
 	static Engine* Instance;
 
-	std::unique_ptr<SPhScene> Collision;
+	std::unique_ptr<SPhyScene> PhyScene;
 	std::unique_ptr<SDraw> Graphics;
 };

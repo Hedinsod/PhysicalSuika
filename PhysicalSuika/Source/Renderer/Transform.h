@@ -36,9 +36,16 @@ public:
 		Angle = glm::radians(InAngle);
 		UpdateRotation();
 	}
+	// Rotates actor by Angle degrees CCW
 	inline void Rotate(float InAngle)
 	{
 		Angle += glm::radians(InAngle);
+		UpdateRotation();
+	}
+	// Rotate() but angle is in radians
+	inline void RotRad(float InAngle)
+	{
+		Angle += InAngle;
 		UpdateRotation();
 	}
 

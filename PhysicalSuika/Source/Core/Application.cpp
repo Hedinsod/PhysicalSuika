@@ -46,7 +46,7 @@ void Application::Run()
 
 		do  // Allow phisics to catch up
 		{
-			Engine::GetCollision().Tick(Step.GetStep());
+			Engine::GetPhyScene().Tick(Step.GetStep());
 		}
 		while (Step.Update());
 

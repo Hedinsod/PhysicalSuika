@@ -14,17 +14,20 @@ struct FBoxCollider;
 struct FColliderShape
 {
 	FColliderShape() = default;
+	FColliderShape(glm::vec2 InPivot) : Pivot(InPivot) {}
 	FColliderShape(const FColliderShape&) = default;
 	FColliderShape(FColliderShape&&) = default;
-	FColliderShape(glm::vec2 InPivot)
-		: Pivot(InPivot)
+	
+	template <class T, typename... Args>
+	static inline FColliderShape* Create(glm::vec2 InPivot, Args... args)
 	{
+		return new T(InPivot, args...);
 	}
 
-	virtual FColliderShape* Clone() = 0;
-
+	virtual FColliderShape* Clone() const = 0;
 	virtual FBoxCollider GenerateAABB(const glm::vec2& Pos) const = 0;
-	virtual int32_t GetShapeIndex() const = 0;
+	virtual std::pair<float, float> CalculateMass(float Density) const = 0;
+	virtual uint16_t GetShapeIndex() const = 0;
 
 	glm::vec2 Pivot{ 0 };
 };
@@ -32,19 +35,21 @@ struct FColliderShape
 struct FBoxCollider : public FColliderShape
 {
 	FBoxCollider() = default;
-	FBoxCollider(const FBoxCollider&) = default;
-	FBoxCollider(FBoxCollider&&) = default;
 	FBoxCollider(glm::vec2 InPivot, float Left, float Top, float Right, float Bottom)
 		: FColliderShape(InPivot)
 		, Max(Right, Top)
 		, Min(Left, Bottom)
 	{
 	}
+	FBoxCollider(const FBoxCollider&) = default;
+	FBoxCollider(FBoxCollider&&) = default;
 
-	virtual FColliderShape* Clone() override;
+
+	virtual FColliderShape* Clone() const override;
+	virtual std::pair<float, float> CalculateMass(float Density) const override;
+	virtual uint16_t GetShapeIndex() const { return (uint16_t)EColliderShape::Box; }
 
 	virtual FBoxCollider GenerateAABB(const glm::vec2& Pos) const override;
-	virtual int32_t GetShapeIndex() const override { return 0; }
 
 	glm::vec2 Max{ 0 };
 	glm::vec2 Min{ 0 };
@@ -53,18 +58,18 @@ struct FBoxCollider : public FColliderShape
 struct FCircleCollider : public FColliderShape
 {
 	FCircleCollider() = default;
-	FCircleCollider(const FCircleCollider&) = default;
-	FCircleCollider(FCircleCollider&&) = default;
 	FCircleCollider(glm::vec2 InPivot, float InRadius)
 		: FColliderShape(InPivot)
 		, Radius(InRadius)
 	{
 	}
+	FCircleCollider(const FCircleCollider&) = default;
+	FCircleCollider(FCircleCollider&&) = default;
 
-	virtual FColliderShape* Clone() override;
-
+	virtual FColliderShape* Clone() const override;
+	virtual std::pair<float, float> CalculateMass(float Density) const override;
+	virtual uint16_t GetShapeIndex() const { return (uint16_t)EColliderShape::Circle; }
 	virtual FBoxCollider GenerateAABB(const glm::vec2& Pos) const override;
-	virtual int32_t GetShapeIndex() const override { return 1; }
 
 	float Radius = 0.0f;
 };

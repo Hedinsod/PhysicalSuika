@@ -21,4 +21,6 @@ private:
 	CBodyHandle Right;
 	CBodyHandle Bottom;
 
+	static bool bMatCreated;
+	static uint32_t MatId;
 };
