@@ -12,7 +12,12 @@ void Engine::Init()
 	Instance->PhyScene = std::make_unique<SPhyScene>(4);
 	GAssert(Instance->PhyScene);
 
-	SGfxContext* Context = GApp->GetWindow().GetGfxContext();
-	Instance->Graphics = std::make_unique<SDraw>(Context);
+	Instance->Graphics = std::make_unique<SDraw>();
 	GAssert(Instance->Graphics);
+}
+
+void Engine::Shutdown()
+{
+	delete Instance;
+	Instance = nullptr;
 }

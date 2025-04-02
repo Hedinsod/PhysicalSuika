@@ -12,11 +12,6 @@ class ACamera;
 class SDraw
 {
 public:
-	SDraw(SGfxContext* InContext)
-		: Context(InContext)
-	{
-	}
-
 	CGeometry* CreateGeometry(AActor* InOwner);
 	void RemoveGeometry(CGeometry* Geo);
 
@@ -24,5 +19,5 @@ public:
 
 private:
 	std::unordered_set<CGeometry*> GeometryPool;
-	SGfxContext* Context;
+
 };

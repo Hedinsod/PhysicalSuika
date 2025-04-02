@@ -9,20 +9,25 @@
 #include <GLFW/glfw3.h>
 
 
+int32_t SOpenGLWindow::Counter;
+
 SOpenGLWindow::SOpenGLWindow(int32_t InWidth, int32_t InHeight, const std::string& InTitle)
 	: SGfxWindow(InWidth, InHeight, InTitle)
 {
 	Create();
 }
 
+SOpenGLWindow::~SOpenGLWindow()
+{
+	Destroy();
+}
+
 void SOpenGLWindow::Create()
 {
-	if (!bInit)
+	if (Counter == 0)
 	{
 		GAssert(glfwInit());
 		glfwSetErrorCallback(ProcessError);
-
-		bInit = true;
 	}
 
 	// Actual window
@@ -49,6 +54,7 @@ void SOpenGLWindow::Create()
 	*/
 
 	glfwSwapInterval(1); // enable VSync
+	Counter++;
 }
 
 void SOpenGLWindow::Destroy()
@@ -58,8 +64,11 @@ void SOpenGLWindow::Destroy()
 	delete GfxContext;
 	GfxContext = nullptr;
 
-	// done once!
-	//glfwTerminate();
+	Counter--;
+	if (Counter == 0)
+	{
+		glfwTerminate();
+	}
 }
 
 void SOpenGLWindow::Tick()

@@ -9,6 +9,7 @@ class SOpenGLWindow : public SGfxWindow
 {
 public:
 	SOpenGLWindow(int32_t InWidth, int32_t InHeight, const std::string& InTitle);
+	~SOpenGLWindow();
 
 	void Create();
 	virtual void Destroy() override;
@@ -22,6 +23,6 @@ private:
 
 	GLFWwindow* NativeWindow = nullptr;
 
-	bool bInit = false;
+	static int32_t Counter;
 
 };

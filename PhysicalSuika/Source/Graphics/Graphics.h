@@ -33,21 +33,6 @@ struct FColorLinear
 	float Blue = 0;
 };
 
-/*
-struct FPoint
-{
-	float x;
-	float y;
-
-	FPoint operator+(const FPoint& Other);
-	FPoint& operator+=(const FPoint& Other);
-	FPoint operator-(const FPoint& Other);
-	FPoint& operator-=(const FPoint& Other);
-
-	FPoint& operator*=(float Other);
-};
-*/
-
 typedef std::shared_ptr<SGfxShader> SGfxShaderPtr;
 typedef std::shared_ptr<SGfxVertexBuffer> SGfxVertexBufferPtr;
 typedef std::shared_ptr<SGfxIndexBuffer> SGfxIndexBufferPtr;
@@ -63,6 +48,8 @@ enum class EGfxApi
 class SGraphicsApi
 {
 public:
+	virtual ~SGraphicsApi() = default;
+
 	virtual SGfxWindow* CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle) = 0;
 	virtual SGfxShaderPtr CreateShader(const std::string& VertexSource, const std::string& FragmentSource) = 0;
 	virtual SGfxVertexBufferPtr CreateVertexBuffer(const std::vector<float>& VertexData) = 0;
@@ -78,6 +65,10 @@ class SGraphics
 {
 public:
 	static void Init(EGfxApi InApi);
+	static void Shutdown()
+	{
+		delete Api;
+	}
 
 	// Fabrics
 	inline static SGfxWindow* CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle)
@@ -120,4 +111,3 @@ private:
 	static SGraphicsApi* Api;
 
 };
-

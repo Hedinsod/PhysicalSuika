@@ -13,25 +13,29 @@ SGame* GGame = nullptr;
 
 Application::Application()
 {
-}
-
-Application::~Application()
-{
-	MainWindow->Destroy();
-}
-
-void Application::Run()
-{
 	SGraphics::Init(EGfxApi::OpenGL);
 
 	MainWindow.reset(SGraphics::CreateGfxWindow(ScreenWidth, ScreenHeight, "Physical Suika"));
-	Engine::Init();
 
+	Engine::Init();
 	SRenderer::Init();
 
 	GGame = new SGame();
 	GAssert(GGame);
+}
 
+Application::~Application()
+{
+	delete GGame;
+
+	Engine::Shutdown();
+
+	MainWindow->Destroy();
+	SGraphics::Shutdown();
+}
+
+void Application::Run()
+{
 	STimestep Step(TargetFPS, MaxFrametimeMs);
 
 	const FColorRGB Background = { 250, 250, 250 };
@@ -57,6 +61,4 @@ void Application::Run()
 
 		GGame->CullEntities();
 	}
-
-	delete GGame;
 }

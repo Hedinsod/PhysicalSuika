@@ -10,6 +10,8 @@ class Engine final
 {
 public:
 	static void Init();
+	static void Shutdown();
+
 	static SPhyScene& GetPhyScene()
 	{
 		GAssert(Instance);

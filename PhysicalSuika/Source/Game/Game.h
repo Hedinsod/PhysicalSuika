@@ -33,8 +33,6 @@ private:
 	std::vector<AActor*> Actors;
 	std::shared_ptr<ACamera> Camera;
 
-	
-
 };
 
 template <class TEntity, class... Args>
