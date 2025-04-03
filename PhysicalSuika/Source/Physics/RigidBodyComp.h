@@ -15,7 +15,7 @@ class CRigidBodyComp : public CComponent
 
 public:
 	// Constructors
-	CRigidBodyComp(AActor* InOwner, CBodyHandle NewId, uint32_t InMaterialId, FColliderShape* ShapeDesc, uint32_t Layers = 1);
+	CRigidBodyComp(AActor* InOwner, uint32_t InMaterialId, FColliderShape* ShapeDesc, uint32_t Layers = 1);
 	CRigidBodyComp(const CRigidBodyComp& Other);
 	CRigidBodyComp(CRigidBodyComp&& Other) noexcept;
 	
@@ -23,6 +23,12 @@ public:
 
 	CRigidBodyComp& operator=(const CRigidBodyComp& Other);
 	CRigidBodyComp& operator=(CRigidBodyComp&& Other) noexcept;
+
+	inline void SetId(CBodyHandle NewId)
+	{
+		GAssert(Id == -1);
+		Id = NewId;
+	}
 
 	// Getters
 	template <class T>
@@ -67,7 +73,7 @@ private:
 	void BasicCopy(const CRigidBodyComp& Other);
 
 	// *** Data
-	CBodyHandle Id;
+	CBodyHandle Id = -1;
 
 	// Collider
 	FColliderShape* Shape = nullptr;

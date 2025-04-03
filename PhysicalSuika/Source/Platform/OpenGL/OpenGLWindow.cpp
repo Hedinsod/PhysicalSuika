@@ -81,7 +81,8 @@ void SOpenGLWindow::Tick()
 // static callbacks
 void SOpenGLWindow::ProcessError(int32_t ErrorCode, const char* Description)
 {
-	std::cerr << "Error:" << Description << std::endl;
+	Utility::Log("SOpenGLWindow Error");
+	Utility::Log(Description);
 }
 
 static EInputCode GetInputCode(int32_t GlfwCode)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Containers/SparseArray.h"
 #include "RigidBodyComp.h"
 #include "PhySolver.h"
 
@@ -32,7 +33,6 @@ private:
 	std::unique_ptr<SPhySolver> Solver;
 
 	// All bodies of the scene
-	std::vector<int32_t> IdToIndex;
-	std::vector<CRigidBodyComp> BodyPool;
+	TSparseArray<CRigidBodyComp> BodyPool;
 
 };

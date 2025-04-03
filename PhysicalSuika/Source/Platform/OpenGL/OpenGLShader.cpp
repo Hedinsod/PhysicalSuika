@@ -32,8 +32,8 @@ SOpenGLShader::SOpenGLShader(const std::string& VertexSource, const std::string&
 		// We don't need the shader anymore.
 		glDeleteShader(VertexShader);
 
-		std::cerr << "SOpenGLShader(): Vertex Shader compilation failed:\n"
-		          << InfoLog.data() << std::endl;
+		Utility::Log("SOpenGLShader(): Vertex Shader compilation failed:");
+		Utility::Log(InfoLog.data());
 		
 		GAssert(false);
 		return;
@@ -65,8 +65,8 @@ SOpenGLShader::SOpenGLShader(const std::string& VertexSource, const std::string&
 		// Either of them. Don't leak shaders.
 		glDeleteShader(VertexShader);
 
-		std::cerr << "SOpenGLShader(): Fragment Shader compilation failed:\n"
-		          << InfoLog.data() << std::endl;
+		Utility::Log("SOpenGLShader(): Fragment Shader compilation failed:");
+		Utility::Log(InfoLog.data());
 
 		// In this simple ShaderId, we'll just leave
 		return;
@@ -102,8 +102,9 @@ SOpenGLShader::SOpenGLShader(const std::string& VertexSource, const std::string&
 		glDeleteShader(VertexShader);
 		glDeleteShader(FragmentShader);
 
-		std::cerr << "SOpenGLShader(): Shader link failed:\n"
-		          << InfoLog.data() << std::endl;
+
+		Utility::Log("SOpenGLShader(): Shader link failed:");
+		Utility::Log(InfoLog.data());
 
 		// In this simple ShaderId, we'll just leave
 		return;

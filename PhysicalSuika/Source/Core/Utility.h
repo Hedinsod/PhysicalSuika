@@ -23,6 +23,9 @@ namespace Utility
 	{
 		return glm::vec2(-f * v.y, f * v.x);
 	}
+
+	void Log(const std::string& Message);
+
 }
 
 // see https://github.com/scottt/debugbreak
@@ -37,13 +40,19 @@ namespace Utility
 #endif
 
 #if defined( _DEBUG )
-//void Log(const char* condition, const char* fileName, int lineNumber); <-- some log function!
-#define GAssert( condition )                                                                                    \
-	do                                                                                                          \
-	{                                                                                                           \
-		if (!( condition )) /* { && Log( #condition, __FILE__, (int)__LINE__ ) ); GBreakPoint; } */             \
-			GBreakPoint;                                                                                        \
-	}                                                                                                           \
+namespace Utility
+{
+	void AssertLog(const char* condition, const char* fileName, int32_t lineNumber);
+}
+#define GAssert( Condition )                                                        \
+	do                                                                              \
+	{                                                                               \
+		if (!( Condition ))                                                         \
+		{                                                                           \
+			Utility::AssertLog( #Condition, __FILE__, (int32_t)__LINE__ );          \
+			GBreakPoint;                                                            \
+		}                                                                           \
+	}                                                                               \
 	while ( 0 )
 #else
 #define GAssert( ... ) ( (void)0 )

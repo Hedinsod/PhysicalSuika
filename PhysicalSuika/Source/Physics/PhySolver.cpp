@@ -100,11 +100,6 @@ void SPhySolver::ResolveCollision(const FManifold& Manifold)
 
 	glm::vec2 ContactImpulse = NormalImpulse * Manifold.Normal;
 
-	if (First.InvMass != 0 && Second.InvMass != 0)
-	{
-		std::cerr << "AGA!" << std::endl;
-	}
-
 	// Apply
 	First.Velocity -= First.InvMass * ContactImpulse;
 	First.AngularVelocity -= First.InvInertia * Utility::cross2(FirstRadius, ContactImpulse);

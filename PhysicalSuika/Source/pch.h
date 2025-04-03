@@ -7,7 +7,6 @@
 #include <windows.h>
 
 #define _USE_MATH_DEFINES
-#include <iostream>
 #include <vector>
 #include <string>
 #include <memory>

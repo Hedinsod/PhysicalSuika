@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <random>
+#include <iostream>
 
 namespace Utility
 {
@@ -22,5 +23,19 @@ namespace Utility
 		int Random = dist(rng);
 
 		return (Random % (Up - Low)) + Low + Correction;
+	}
+
+#if defined( _DEBUG )
+	void AssertLog(const char* Condition, const char* FileName, int32_t LineNumber)
+	{
+		std::cerr << "Assertion failed: " << Condition 
+		          << " in " << FileName
+		          << ", at " << LineNumber << std::endl;
+	}
+#endif
+
+	void Log(const std::string& Message)
+	{
+		std::cerr << Message << std::endl;
 	}
 }

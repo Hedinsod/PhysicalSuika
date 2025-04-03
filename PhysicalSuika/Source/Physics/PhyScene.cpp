@@ -16,39 +16,21 @@ SPhyScene::SPhyScene(int32_t InStepsNumber)
 
 CBodyHandle SPhyScene::CreateRigidBody(AActor* Owner, uint32_t InMaterialId, FColliderShape* InShape, uint32_t InLayers /*= 1*/)
 {
-	// Always add new Id
-	CBodyHandle BodyId = (CBodyHandle)IdToIndex.size();
-	int32_t NextFreeIndex = (int32_t)BodyPool.size();    // TODO: BodyPool.GetFreeIndex()
-
-	IdToIndex.emplace(IdToIndex.begin() + BodyId, NextFreeIndex);
-	BodyPool.emplace(BodyPool.begin() + NextFreeIndex, Owner, BodyId, InMaterialId, InShape, InLayers);
+	CBodyHandle BodyId = BodyPool.Emplace(Owner, InMaterialId, InShape, InLayers);
+	BodyPool[BodyId].SetId(BodyId);
 
 	return BodyId;
 }
 
 CRigidBodyComp& SPhyScene::GetRigidBody(CBodyHandle Handle)  // Why would anybody need that ?
 {
-	GAssert(Handle >= 0 && Handle < (CBodyHandle)IdToIndex.size());
-	const int32_t Index = IdToIndex[Handle];
-
-	GAssert(Index >= 0 && Index < BodyPool.size());
-	return BodyPool[Index];
+	return BodyPool[Handle];
 }
 
 void SPhyScene::RemoveRigidBody(CBodyHandle Handle)
 {
-	// Deal with handle first
-	uint32_t Index = IdToIndex[Handle];
-	IdToIndex[Handle] = -1;
-
-	// Swap and remove the body
-	size_t LastIndex = BodyPool.size() - 1;
-	if (Index != LastIndex)
-	{
-		std::swap(BodyPool[Index], BodyPool[LastIndex]);
-		IdToIndex[BodyPool[Index].GetId()] = Index;
-	}
-	BodyPool.erase(BodyPool.end() - 1);
+	// Just remove it from sparse array as it is perfectly stable index-wise
+	BodyPool.Remove(Handle);
 }
 
 bool SPhyScene::SimpleCollision(const FBoxCollider& FirstAABB, const FBoxCollider& SecondAABB)
@@ -61,7 +43,7 @@ bool SPhyScene::SimpleCollision(const FBoxCollider& FirstAABB, const FBoxCollide
 
 void SPhyScene::Tick(float DeltaTimeMs)
 {
-	if (BodyPool.empty())
+	if (BodyPool.Size() == 0)
 		return;
 
 	// TODO: should physics run sub-steps & catch up on its own?
@@ -98,12 +80,17 @@ void SPhyScene::Tick(float DeltaTimeMs)
 
 void SPhyScene::BroadPass()
 {
-	for (int32_t i = 0; i < BodyPool.size(); i++)
+	//for (int32_t i = 0; i < BodyPool.Size(); i++)
+	for (auto It = BodyPool.begin(); It != BodyPool.end(); It++)
 	{
-		CRigidBodyComp& First = BodyPool[i];
-		for (int32_t j = i+1; j < BodyPool.size(); j++)
+		//for (int32_t j = i+1; j < BodyPool.Size(); j++)
+		for (auto Jt = BodyPool.begin(); Jt != BodyPool.end(); Jt++)
 		{
-			CRigidBodyComp& Second = BodyPool[j];
+			if (It == Jt)
+				continue;
+
+			CRigidBodyComp& First = *It;
+			CRigidBodyComp& Second = *Jt;
 
 			// TODO: Do I even need Layers?
 			if (!(First.GetLayers() & Second.GetLayers()))

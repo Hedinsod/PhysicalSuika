@@ -9,6 +9,7 @@
 #include "Renderer/Camera.h"
 #include "Renderer/Renderer.h"
 
+// #include <glm/gtc/matrix_transform.hpp>
 
 SGame::SGame()
 	: Top(17.0f)
@@ -30,29 +31,33 @@ SGame::~SGame()
 		delete Ent;
 	}
 
-	Actors.clear();
+	Actors.Clear();
+}
+
+bool SGame::ClipOutOfBoundaries(AActor* Actor)
+{
+	glm::vec2 Pos = Actor->GetTransform().GetPos();
+
+	return Pos.y > Top || Pos.y < Bottom || Pos.x < Left || Pos.x > Right;
 }
 
 void SGame::CullEntities()
 {
-	auto FwdIt = std::remove_if(Actors.begin(), Actors.end(), [](AActor* Actor){
-		if (Actor->IsPendingDelete())
+	for (auto It = Actors.begin(); It != Actors.end(); It++)
+	{
+		if ((*It)->IsPendingDelete() || ClipOutOfBoundaries(*It))
 		{
-			delete Actor;
-			return true;
+			delete *It;
+			*It = nullptr;
+			Actors.Remove(It);
 		}
-
-		return false;
-	});
-
-	if (FwdIt != Actors.end())
-		Actors.erase(FwdIt);
+	}
 }
 
 void SGame::Tick()
 {
-	for (int i = 0; i < Actors.size(); i++)
+	for (AActor* Actor : Actors)
 	{
-		Actors[i]->Tick();
+		Actor->Tick();
 	}
 }

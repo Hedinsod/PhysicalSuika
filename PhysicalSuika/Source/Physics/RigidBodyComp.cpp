@@ -4,9 +4,8 @@
 #include "PhyMaterialLibrary.h"
 
 
-CRigidBodyComp::CRigidBodyComp(AActor* InOwner, CBodyHandle NewId, uint32_t InMaterialId, FColliderShape* InShape, uint32_t InLayers)
+CRigidBodyComp::CRigidBodyComp(AActor* InOwner, uint32_t InMaterialId, FColliderShape* InShape, uint32_t InLayers)
 	: CComponent(InOwner)
-	, Id(NewId)
 	, Shape(InShape)
 	, MaterialId(InMaterialId)
 	, Layers(InLayers)
