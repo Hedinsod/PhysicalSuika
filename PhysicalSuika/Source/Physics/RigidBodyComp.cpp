@@ -2,6 +2,7 @@
 
 #include "RigidBodyComp.h"
 #include "PhyMaterialLibrary.h"
+#include "Systems/Engine.h"
 
 
 CRigidBodyComp::CRigidBodyComp(AActor* InOwner, uint32_t InMaterialId, FColliderShape* InShape, uint32_t InLayers)
@@ -36,6 +37,8 @@ CRigidBodyComp::CRigidBodyComp(CRigidBodyComp&& Other) noexcept
 
 CRigidBodyComp::~CRigidBodyComp()
 {
+	OnDestruction.Broadcast(Contacts);
+
 	if (Shape)
 		delete Shape;
 }

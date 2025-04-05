@@ -3,11 +3,16 @@
 #include "Systems/Components.h"
 #include "Game/Actor.h"
 #include "Colliders.h"
+#include "Core/Event.h"
 
 #include <glm/glm.hpp>
 
+#include <list>
+
 
 typedef int32_t CBodyHandle;
+
+EVENT_OneParam(FRigidBodyEvent_OnDestruction, std::list<uint32_t> /*ContactsToDelete*/)
 
 class CRigidBodyComp : public CComponent
 {
@@ -65,9 +70,28 @@ public:
 		return Shape->GenerateAABB(GetTransform().GetPos());
 	}
 
+	inline uint16_t GetShapeIndex()
+	{
+		return Shape->GetShapeIndex();
+	}
+
 	// Stuff
 	void IntegrateVelocity(float TimeStep);
 	void IntegratePosition(float TimeStep);
+
+	inline void AddContact(uint32_t ContactId)
+	{
+		Contacts.push_back(ContactId);
+	}
+	inline void RemoveContact(uint32_t ContactId)
+	{
+		Contacts.remove(ContactId);
+	}
+
+	inline void SetOnDestructionEventHandler(const FRigidBodyEvent_OnDestruction::EventCallbackFn& InCallback)
+	{
+		OnDestruction.Subscribe(InCallback);
+	}
 
 private:
 	void BasicCopy(const CRigidBodyComp& Other);
@@ -92,4 +116,8 @@ private:
 	float Orientation = 0.0f;
 	float AngularVelocity = 0.0f;
 	float Torque = 0.0f;
+
+	std::list<uint32_t> Contacts;
+
+	FRigidBodyEvent_OnDestruction OnDestruction;
 };

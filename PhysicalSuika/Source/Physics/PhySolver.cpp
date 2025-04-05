@@ -4,70 +4,54 @@
 #include "Systems/Engine.h"
 #include "PhyMaterialLibrary.h"
 
+#include <sstream>
+
 
 SPhySolver::SPhySolver()
 {
-	GenManifoldTable[0][0] = std::bind(&SPhySolver::GenManifold_BoxBox, this, std::placeholders::_1);
-	GenManifoldTable[0][1] = std::bind(&SPhySolver::GenManifold_BoxCircle, this, std::placeholders::_1);
-	GenManifoldTable[1][0] = std::bind(&SPhySolver::GenManifold_CircleBox, this, std::placeholders::_1);
-	GenManifoldTable[1][1] = std::bind(&SPhySolver::GenManifold_CircleCircle, this, std::placeholders::_1);
-}
-
-void SPhySolver::AddPair(CRigidBodyComp& InFirst, CRigidBodyComp& InSecond)
-{
-	FManifold NewManifold(InFirst.Id, InSecond.Id);
-
-	auto It = Contacts.find(NewManifold);
-	if (It == Contacts.end())
-	{
-		Contacts.insert(NewManifold);
-	}
-	else
-	{
-		; // Technically std::set is readonly structure
-		// Fortunately I don't need to do anything here
-	}
+	GenManifoldTable[0][0] = std::bind(&SPhySolver::GenManifold_BoxBox, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	GenManifoldTable[0][1] = std::bind(&SPhySolver::GenManifold_BoxCircle, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	GenManifoldTable[1][0] = std::bind(&SPhySolver::GenManifold_CircleBox, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	GenManifoldTable[1][1] = std::bind(&SPhySolver::GenManifold_CircleCircle, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 }
 
 void SPhySolver::WarmUp()
 {
-	for (const FManifold& Manifold : Contacts)
-	{
-		CRigidBodyComp& FirstBody = Engine::GetPhyScene().GetRigidBody(Manifold.FirstId);
-		CRigidBodyComp& SecondBody = Engine::GetPhyScene().GetRigidBody(Manifold.SecondId);
-		if (GenManifoldTable[FirstBody.Shape->GetShapeIndex()][SecondBody.Shape->GetShapeIndex()](Manifold))
-		{
-			FirstBody.Velocity -= Manifold.NormalImpulse * FirstBody.InvMass * Manifold.Normal;
-			SecondBody.Velocity += Manifold.NormalImpulse * SecondBody.InvMass * Manifold.Normal;
+	// TODO: add all precalculations here
 
-			FirstBody.AngularVelocity -= Manifold.TangentImpulse * FirstBody.InvInertia;
-			SecondBody.AngularVelocity += Manifold.TangentImpulse * SecondBody.InvInertia;
+	for (FContact& Contact : ContactGraph)
+	{
+		CRigidBodyComp& FirstBody = Engine::GetPhyScene().GetRigidBody(Contact.FirstId);
+		CRigidBodyComp& SecondBody = Engine::GetPhyScene().GetRigidBody(Contact.SecondId);
+
+		if (GenManifoldTable[FirstBody.Shape->GetShapeIndex()][SecondBody.Shape->GetShapeIndex()](FirstBody, SecondBody, Contact.Manifold))
+		{
+			// Apply impulses form previous calculation
+			FirstBody.Velocity -= Contact.Manifold.NormalImpulse * FirstBody.InvMass * Contact.Manifold.Normal;
+			SecondBody.Velocity += Contact.Manifold.NormalImpulse * SecondBody.InvMass * Contact.Manifold.Normal;
+
+			FirstBody.AngularVelocity -= Contact.Manifold.TangentImpulse * FirstBody.InvInertia;
+			SecondBody.AngularVelocity += Contact.Manifold.TangentImpulse * SecondBody.InvInertia;
+		}
+		else
+		{
+			ContactGraph.RemoveContact(Contact.Id);
 		}
 	}
 }
 
 void SPhySolver::SolveContacts()
 {
-	for (auto it = Contacts.begin(); it != Contacts.end();)
+	for (FContact& Contact : ContactGraph)
 	{
-		if (it->bCollision)
-		{
-			ResolveCollision(*it++);
-		}
-		else
-		{
-			it = Contacts.erase(it);
-		}
+		CRigidBodyComp& First = Engine::GetPhyScene().GetRigidBody(Contact.FirstId);
+		CRigidBodyComp& Second = Engine::GetPhyScene().GetRigidBody(Contact.SecondId);
+		ResolveCollision(First, Second, Contact.Manifold);
 	}
 }
 
-void SPhySolver::ResolveCollision(const FManifold& Manifold)
+void SPhySolver::ResolveCollision(CRigidBodyComp& First, CRigidBodyComp& Second, FManifold& Manifold)
 {
-	// TODO: Calculate per contact
-
-	CRigidBodyComp& First = Engine::GetPhyScene().GetRigidBody(Manifold.FirstId);
-	CRigidBodyComp& Second = Engine::GetPhyScene().GetRigidBody(Manifold.SecondId);
-
 	glm::vec2 FirstPos = First.GetTransform().GetPos() + First.Shape->Pivot;
 	glm::vec2 SecondPos = Second.GetTransform().GetPos() + Second.Shape->Pivot;
 
@@ -204,11 +188,8 @@ void FindClosestPoint(const FPolygonShape& First, int32_t FaceIndex, const FPoly
 }
 
 
-bool SPhySolver::GenManifold_BoxBox(const FManifold& Manifold)
+bool SPhySolver::GenManifold_BoxBox(CRigidBodyComp& First, CRigidBodyComp& Second, FManifold& Manifold)
 {
-	CRigidBodyComp& First = Engine::GetPhyScene().GetRigidBody(Manifold.FirstId);
-	CRigidBodyComp& Second = Engine::GetPhyScene().GetRigidBody(Manifold.SecondId);
-
 	const FBoxCollider& FirstBox = First.GetCollider<FBoxCollider>();
 	const FBoxCollider& SecondBox = Second.GetCollider<FBoxCollider>();
 
@@ -235,8 +216,7 @@ bool SPhySolver::GenManifold_BoxBox(const FManifold& Manifold)
 			}
 			Manifold.Penetration = Overlap.x;
 
-			Manifold.bCollision = true;
-			return Manifold.bCollision;
+			return true;
 		}
 		else
 		{
@@ -251,31 +231,21 @@ bool SPhySolver::GenManifold_BoxBox(const FManifold& Manifold)
 			}
 			Manifold.Penetration = Overlap.y;
 
-			Manifold.bCollision = true;
-			return Manifold.bCollision;
+			return true;
 
 		}
 	}
 
-	Manifold.bCollision = false;
-	return Manifold.bCollision;
+	return false;
 }
 
-bool SPhySolver::GenManifold_CircleBox(const FManifold& Manifold)
+bool SPhySolver::GenManifold_CircleBox(CRigidBodyComp& First, CRigidBodyComp& Second, FManifold& Manifold)
 {
-	// Interesting trick
-	CBodyHandle Temp = Manifold.FirstId;
-	Manifold.FirstId = Manifold.SecondId;
-	Manifold.SecondId = Temp;
-
-	return GenManifold_BoxCircle(Manifold);
+	return GenManifold_BoxCircle(Second, First, Manifold);
 }
 
-bool SPhySolver::GenManifold_BoxCircle(const FManifold& Manifold)
+bool SPhySolver::GenManifold_BoxCircle(CRigidBodyComp& First, CRigidBodyComp& Second, FManifold& Manifold)
 {
-	CRigidBodyComp& First = Engine::GetPhyScene().GetRigidBody(Manifold.FirstId);
-	CRigidBodyComp& Second = Engine::GetPhyScene().GetRigidBody(Manifold.SecondId);
-
 	// Calculate Shapes
 	glm::vec2 FirstPos = First.GetTransform().GetPos() + First.Shape->Pivot;
 	glm::vec2 SecondPos = Second.GetTransform().GetPos() + Second.Shape->Pivot;
@@ -333,8 +303,7 @@ bool SPhySolver::GenManifold_BoxCircle(const FManifold& Manifold)
 	// Circle not inside the AABB 
 	if (d > r * r && !bInside)
 	{
-		Manifold.bCollision = false;
-		return Manifold.bCollision;
+		return false;
 	}
 
 	// Avoided sqrt until we needed 
@@ -356,16 +325,12 @@ bool SPhySolver::GenManifold_BoxCircle(const FManifold& Manifold)
 	// Arbitrary one point of contact
 	Manifold.ContactPoints[0] = Closest + FirstPos;
 
-	Manifold.bCollision = true;
-	return Manifold.bCollision;
+	return true;
 }
 
-bool SPhySolver::GenManifold_CircleCircle(const FManifold& Manifold)
+bool SPhySolver::GenManifold_CircleCircle(CRigidBodyComp& First, CRigidBodyComp& Second, FManifold& Manifold)
 {
 	// Calculate Shapes
-	CRigidBodyComp& First = Engine::GetPhyScene().GetRigidBody(Manifold.FirstId);
-	CRigidBodyComp& Second = Engine::GetPhyScene().GetRigidBody(Manifold.SecondId);
-
 	const FCircleCollider& FirstCircle = First.GetCollider<FCircleCollider>();
 	const FCircleCollider& SecondCircle = Second.GetCollider<FCircleCollider>();
 
@@ -380,8 +345,7 @@ bool SPhySolver::GenManifold_CircleCircle(const FManifold& Manifold)
 	float Dist2 = glm::dot(Direction, Direction);
 	if (Dist2 > Radius2)
 	{
-		Manifold.bCollision = false;
-		return Manifold.bCollision;
+		return false;
 	}
 
 	// Circles have collided, now compute manifold 
@@ -394,8 +358,7 @@ bool SPhySolver::GenManifold_CircleCircle(const FManifold& Manifold)
 		Manifold.ContactPoints[0] = Direction - SecondCircle.Radius * Manifold.Normal;
 		Manifold.ContactPoints[0] += PosA;
 
-		Manifold.bCollision = true;
-		return Manifold.bCollision;
+		return true;
 	}
 	else    // Circles are on same position 
 	{
@@ -406,7 +369,6 @@ bool SPhySolver::GenManifold_CircleCircle(const FManifold& Manifold)
 		Manifold.ContactPoints[0] = Direction - SecondCircle.Radius * Manifold.Normal;
 		Manifold.ContactPoints[0] += PosA;
 
-		Manifold.bCollision = true;
-		return Manifold.bCollision;
+		return true;
 	}
 }
