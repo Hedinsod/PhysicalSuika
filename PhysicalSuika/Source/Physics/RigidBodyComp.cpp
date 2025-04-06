@@ -103,6 +103,6 @@ void CRigidBodyComp::IntegrateVelocity(float TimeStep)
 
 void CRigidBodyComp::IntegratePosition(float TimeStep)
 {
-	GetTransform().Translate(Velocity * TimeStep);
-	GetTransform().RotRad(AngularVelocity * TimeStep);
+	Owner->GetTransform().Translate(Velocity * TimeStep);
+	Owner->GetTransform().RotRad(AngularVelocity * TimeStep);
 }

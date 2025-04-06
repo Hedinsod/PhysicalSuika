@@ -13,6 +13,7 @@
 typedef int32_t CBodyHandle;
 
 EVENT_OneParam(FRigidBodyEvent_OnDestruction, std::list<uint32_t> /*ContactsToDelete*/)
+EVENT_OneParam(FRigidBodyEvent_OnCollision, AActor* /* Opponent */)
 
 class CRigidBodyComp : public CComponent
 {
@@ -41,6 +42,8 @@ public:
 	{
 		return *static_cast<T*>(Shape);
 	}
+
+	// 
 	inline void SetLayers(uint32_t InLayer)
 	{
 		Layers = InLayer;
@@ -50,26 +53,35 @@ public:
 		return Layers;
 	}
 
+	// 
 	inline bool IsStatic()
 	{
 		return InvMass == 0;
 	}
+
+	// 
+	inline void Disable()
+	{
+		bDisabled = true;
+	}
+	inline bool IsDisabled()
+	{
+		return bDisabled;
+	}
+
+	// 
 	inline CBodyHandle GetId()
 	{
 		return Id;
 	}
 
-	// TODO: Current position for each body!
-	inline CTransform& GetTransform()
-	{
-		return GetOwner().GetTransform();
-	}
-
+	// 
 	inline FBoxCollider GenerateAABB()
 	{
-		return Shape->GenerateAABB(GetTransform().GetPos());
+		return Shape->GenerateAABB(GetOwner().GetTransform().GetPos());
 	}
 
+	// 
 	inline uint16_t GetShapeIndex()
 	{
 		return Shape->GetShapeIndex();
@@ -79,6 +91,7 @@ public:
 	void IntegrateVelocity(float TimeStep);
 	void IntegratePosition(float TimeStep);
 
+	// Contacts
 	inline void AddContact(uint32_t ContactId)
 	{
 		Contacts.push_back(ContactId);
@@ -88,9 +101,14 @@ public:
 		Contacts.remove(ContactId);
 	}
 
+	// Events
 	inline void SetOnDestructionEventHandler(const FRigidBodyEvent_OnDestruction::EventCallbackFn& InCallback)
 	{
 		OnDestruction.Subscribe(InCallback);
+	}
+	inline void SetOnCollisionEventHandler(const FRigidBodyEvent_OnCollision::EventCallbackFn& InCallback)
+	{
+		OnCollision.Subscribe(InCallback);
 	}
 
 private:
@@ -117,7 +135,10 @@ private:
 	float AngularVelocity = 0.0f;
 	float Torque = 0.0f;
 
+	bool bDisabled = false;
+
 	std::list<uint32_t> Contacts;
 
 	FRigidBodyEvent_OnDestruction OnDestruction;
+	FRigidBodyEvent_OnCollision OnCollision;
 };

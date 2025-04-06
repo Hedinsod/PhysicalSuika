@@ -17,14 +17,18 @@ SPhySolver::SPhySolver()
 
 void SPhySolver::WarmUp()
 {
-	// TODO: add all precalculations here
-
 	for (FContact& Contact : ContactGraph)
 	{
 		CRigidBodyComp& FirstBody = Engine::GetPhyScene().GetRigidBody(Contact.FirstId);
 		CRigidBodyComp& SecondBody = Engine::GetPhyScene().GetRigidBody(Contact.SecondId);
 
-		if (GenManifoldTable[FirstBody.Shape->GetShapeIndex()][SecondBody.Shape->GetShapeIndex()](FirstBody, SecondBody, Contact.Manifold))
+		// Put any pre-calculations here:
+		// Positions
+		FirstBody.Position = FirstBody.Owner->GetTransform().GetPos() + FirstBody.Shape->Pivot;
+		SecondBody.Position = SecondBody.Owner->GetTransform().GetPos() + SecondBody.Shape->Pivot;
+
+		if (!FirstBody.IsDisabled() && !SecondBody.IsDisabled() && 
+			GenManifoldTable[FirstBody.Shape->GetShapeIndex()][SecondBody.Shape->GetShapeIndex()](FirstBody, SecondBody, Contact.Manifold))
 		{
 			// Apply impulses form previous calculation
 			FirstBody.Velocity -= Contact.Manifold.NormalImpulse * FirstBody.InvMass * Contact.Manifold.Normal;
@@ -46,17 +50,22 @@ void SPhySolver::SolveContacts()
 	{
 		CRigidBodyComp& First = Engine::GetPhyScene().GetRigidBody(Contact.FirstId);
 		CRigidBodyComp& Second = Engine::GetPhyScene().GetRigidBody(Contact.SecondId);
+
+		if (First.IsDisabled() || Second.IsDisabled())
+			continue;
+
+		// Add Slot here
+		First.OnCollision.Broadcast(Second.Owner);
+		Second.OnCollision.Broadcast(First.Owner);
+
 		ResolveCollision(First, Second, Contact.Manifold);
 	}
 }
 
 void SPhySolver::ResolveCollision(CRigidBodyComp& First, CRigidBodyComp& Second, FManifold& Manifold)
 {
-	glm::vec2 FirstPos = First.GetTransform().GetPos() + First.Shape->Pivot;
-	glm::vec2 SecondPos = Second.GetTransform().GetPos() + Second.Shape->Pivot;
-
-	glm::vec2 FirstRadius = Manifold.ContactPoints[0] - FirstPos;
-	glm::vec2 SecondRadius = Manifold.ContactPoints[0] - SecondPos;
+	glm::vec2 FirstRadius = Manifold.ContactPoints[0] - First.Position;
+	glm::vec2 SecondRadius = Manifold.ContactPoints[0] - Second.Position;
 
 	float FirstNormalRadius = glm::dot(FirstRadius, Manifold.Normal);
 	float SecondNormalRadius = glm::dot(SecondRadius, Manifold.Normal);
@@ -135,67 +144,12 @@ void SPhySolver::ResolveCollision(CRigidBodyComp& First, CRigidBodyComp& Second,
 // ********** Manifold Generators *********************************************
 // ****************************************************************************
 
-struct FPolygonShape
-{
-	std::vector<glm::vec2> Vertices;
-	std::vector<glm::vec2> Normals;
-
-	glm::vec2 Pivot;
-};
-
-static glm::vec2 GetSupport(const FPolygonShape& Polygon, const glm::vec2& Direction)
-{
-	float MaxProjection = std::numeric_limits<float>::min();
-	glm::vec2 MaxVertex{0};
-	for (uint32_t i = 0; i < Polygon.Vertices.size(); ++i)
-	{
-		glm::vec2 Vert = Polygon.Vertices[i];
-		float Projection = glm::dot(Vert, Direction);
-		if (Projection > MaxProjection)
-		{
-			MaxVertex = Vert;
-			MaxProjection = Projection;
-		}
-	}
-	return MaxVertex;
-}
-
-static std::pair<uint32_t, float> FindAxisLeastPenetration(const FPolygonShape& First, const FPolygonShape& Second)
-{
-	float LeastPenetration = std::numeric_limits<float>::min();
-	uint32_t FaceIndex;
-	for (uint32_t i = 0; i < First.Normals.size(); ++i)
-	{
-		glm::vec2 Normal = First.Normals[i];
-		glm::vec2 Support = GetSupport(Second, -Normal);
-		glm::vec2 Vertex = First.Vertices[i]; // first point on the face i
-		
-		float Penetration = glm::dot(Normal, Support - Vertex);
-
-		// Store greatest distance 
-		if (Penetration > LeastPenetration)
-		{
-			LeastPenetration = Penetration;
-			FaceIndex = i;
-		}
-	}
-	return { FaceIndex, LeastPenetration };
-}
-
-void FindClosestPoint(const FPolygonShape& First, int32_t FaceIndex, const FPolygonShape& Second)
-{
-
-}
-
-
 bool SPhySolver::GenManifold_BoxBox(CRigidBodyComp& First, CRigidBodyComp& Second, FManifold& Manifold)
 {
 	const FBoxCollider& FirstBox = First.GetCollider<FBoxCollider>();
 	const FBoxCollider& SecondBox = Second.GetCollider<FBoxCollider>();
 
-	glm::vec2 FirstPos = First.GetTransform().GetPos() + First.Shape->Pivot;
-	glm::vec2 SecondPos = Second.GetTransform().GetPos() + Second.Shape->Pivot;
-	glm::vec2 Direction = SecondPos - FirstPos;
+	glm::vec2 Direction = Second.Position - First.Position;
 
 	glm::vec2 Overlap = (FirstBox.Max - FirstBox.Min) * 0.5f + (SecondBox.Max - SecondBox.Min) * 0.5f;
 	Overlap -= glm::abs(Direction);
@@ -246,18 +200,14 @@ bool SPhySolver::GenManifold_CircleBox(CRigidBodyComp& First, CRigidBodyComp& Se
 
 bool SPhySolver::GenManifold_BoxCircle(CRigidBodyComp& First, CRigidBodyComp& Second, FManifold& Manifold)
 {
-	// Calculate Shapes
-	glm::vec2 FirstPos = First.GetTransform().GetPos() + First.Shape->Pivot;
-	glm::vec2 SecondPos = Second.GetTransform().GetPos() + Second.Shape->Pivot;
-
 	// Alarm: actually calculating shape for the second time!
 	FBoxCollider Box = First.GetCollider<FBoxCollider>();
-	Box.Min += FirstPos;
-	Box.Max += FirstPos;
+	Box.Min += First.Position;
+	Box.Max += First.Position;
 	const FCircleCollider& Circle = Second.GetCollider<FCircleCollider>();
 
 	// 
-	glm::vec2 Direction = SecondPos - FirstPos;
+	glm::vec2 Direction = Second.Position - First.Position;
 	glm::vec2 Closest = Direction;
 
 	// Calculate half extents along each axis 
@@ -323,7 +273,7 @@ bool SPhySolver::GenManifold_BoxCircle(CRigidBodyComp& First, CRigidBodyComp& Se
 	}
 
 	// Arbitrary one point of contact
-	Manifold.ContactPoints[0] = Closest + FirstPos;
+	Manifold.ContactPoints[0] = Closest + First.Position;
 
 	return true;
 }
@@ -334,11 +284,8 @@ bool SPhySolver::GenManifold_CircleCircle(CRigidBodyComp& First, CRigidBodyComp&
 	const FCircleCollider& FirstCircle = First.GetCollider<FCircleCollider>();
 	const FCircleCollider& SecondCircle = Second.GetCollider<FCircleCollider>();
 
-	glm::vec2 PosA = First.GetTransform().GetPos() + FirstCircle.Pivot;
-	glm::vec2 PosB = Second.GetTransform().GetPos() + SecondCircle.Pivot;
-
 	//
-	glm::vec2 Direction = PosB - PosA;
+	glm::vec2 Direction = Second.Position - First.Position;
 	float Radius = FirstCircle.Radius + SecondCircle.Radius;
 	float Radius2 = Radius * Radius;
 
@@ -356,7 +303,7 @@ bool SPhySolver::GenManifold_CircleCircle(CRigidBodyComp& First, CRigidBodyComp&
 		Manifold.Normal = glm::normalize(Direction);
 
 		Manifold.ContactPoints[0] = Direction - SecondCircle.Radius * Manifold.Normal;
-		Manifold.ContactPoints[0] += PosA;
+		Manifold.ContactPoints[0] += First.Position;
 
 		return true;
 	}
@@ -367,7 +314,7 @@ bool SPhySolver::GenManifold_CircleCircle(CRigidBodyComp& First, CRigidBodyComp&
 		Manifold.Normal = glm::vec2(1, 0);
 
 		Manifold.ContactPoints[0] = Direction - SecondCircle.Radius * Manifold.Normal;
-		Manifold.ContactPoints[0] += PosA;
+		Manifold.ContactPoints[0] += First.Position;
 
 		return true;
 	}

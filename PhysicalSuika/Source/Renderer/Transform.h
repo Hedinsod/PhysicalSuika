@@ -12,6 +12,7 @@ public:
 	{
 	}
 
+	// Position
 	inline void SetFullPos(glm::vec3 NewPos)
 	{
 		Pos = NewPos;
@@ -31,6 +32,7 @@ public:
 	}
 	inline glm::vec2 GetPos() const { return { Pos.x, Pos.y }; };
 
+	// Rotation
 	inline void SetRot(float InAngle)
 	{
 		Angle = glm::radians(InAngle);
@@ -49,6 +51,14 @@ public:
 		UpdateRotation();
 	}
 
+	// Scale
+	inline void SetScale(glm::vec2 InScale)
+	{
+		S = glm::scale(glm::mat4(1.0f), { InScale.x, InScale.y, 1.0f } );
+		TRS = T * R * S;
+	}
+
+	// For shaders
 	glm::mat4x4 GetModel() const
 	{
 		return TRS;
@@ -73,4 +83,5 @@ private:
 
 	glm::vec3 Pos{ 0.f, 0.f, 0.f };
 	float Angle = 0.0f;
+
 };

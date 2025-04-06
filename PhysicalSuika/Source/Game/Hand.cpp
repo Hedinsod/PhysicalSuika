@@ -53,7 +53,9 @@ void AHand::Tick()
 	{
 		glm::vec2 Spawn = Trans.GetPos() + glm::vec2{ 0.f, -1.5f };
 
-		GGame->AddEntity<AFruit>(Spawn);
+		uint16_t TypeRand = Utility::GetRandom(1, 6);
+
+		GGame->AddEntity<AFruit>(Spawn, (EFruitType)TypeRand);
 		SpawnCooldown = SpawnCooldownStart;
 	}
 }

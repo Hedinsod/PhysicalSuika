@@ -25,6 +25,7 @@ int32_t FContactGraph::AddContact(CRigidBodyComp& InFirst, CRigidBodyComp& InSec
 		Contacts[ContactId].Id = ContactId;
 		Contacts[ContactId].Hash = Hash;
 
+		// TODO: should be done once per body!
 		InFirst.SetOnDestructionEventHandler(std::bind(&FContactGraph::RemoveAllContacts, this, std::placeholders::_1));
 		InFirst.AddContact(ContactId);
 		InSecond.SetOnDestructionEventHandler(std::bind(&FContactGraph::RemoveAllContacts, this, std::placeholders::_1));

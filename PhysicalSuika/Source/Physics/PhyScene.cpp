@@ -56,7 +56,7 @@ void SPhyScene::Tick(float DeltaTimeMs)
 		// 1. Integrate Forces & Gravity
 		for (CRigidBodyComp& Body : BodyPool)
 		{
-			if (!Body.IsStatic())
+			if (!Body.IsStatic() && !Body.IsDisabled())
 			{
 				Body.IntegrateVelocity(TimeStep);
 			}
@@ -70,7 +70,7 @@ void SPhyScene::Tick(float DeltaTimeMs)
 		// 3. Integrate Position
 		for (CRigidBodyComp& Body : BodyPool)
 		{
-			if (!Body.IsStatic())
+			if (!Body.IsStatic() && !Body.IsDisabled())
 			{
 				Body.IntegratePosition(TimeStep);
 			}
@@ -80,10 +80,8 @@ void SPhyScene::Tick(float DeltaTimeMs)
 
 void SPhyScene::BroadPass()
 {
-	//for (int32_t i = 0; i < BodyPool.Size(); i++)
 	for (auto It = BodyPool.begin(); It != BodyPool.end(); It++)
 	{
-		//for (int32_t j = i+1; j < BodyPool.Size(); j++)
 		for (auto Jt = BodyPool.begin(); Jt != BodyPool.end(); Jt++)
 		{
 			if (It == Jt)
@@ -98,6 +96,10 @@ void SPhyScene::BroadPass()
 
 			// Skip static pairs
 			if (First.IsStatic() && Second.IsStatic())
+				continue;
+
+			// Disabled bodies don't form pairs
+			if (First.IsDisabled() || Second.IsDisabled())
 				continue;
 
 			const FBoxCollider FirstBox = First.GenerateAABB();
