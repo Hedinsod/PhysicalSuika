@@ -42,15 +42,13 @@ namespace Utility
 	void AssertLog(const char* condition, const char* fileName, int32_t lineNumber);
 }
 #define GAssert( Condition )                                                        \
-	do                                                                              \
 	{                                                                               \
 		if (!( Condition ))                                                         \
 		{                                                                           \
 			Utility::AssertLog( #Condition, __FILE__, (int32_t)__LINE__ );          \
 			GBreakPoint;                                                            \
 		}                                                                           \
-	}                                                                               \
-	while ( 0 )
+	}
 #else
 #define GAssert( ... ) ( (void)0 )
 #endif

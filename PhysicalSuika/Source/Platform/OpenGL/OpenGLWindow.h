@@ -17,6 +17,8 @@ public:
 
 	virtual void* GetNativeWindow() override { return (void*)NativeWindow; }
 
+	void OnResize(int32_t InWidth, int32_t InHeight);
+
 private:
 	static void ProcessError(int32_t ErrorCode, const char* Description);
 	static void ProcessInput(GLFWwindow* window, int key, int scancode, int action, int mods);

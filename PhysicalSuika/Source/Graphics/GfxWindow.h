@@ -21,6 +21,9 @@ public:
 	virtual void* GetNativeWindow() = 0;
 	SGfxContext* GetGfxContext() { return GfxContext; }
 
+	// "Events"
+	virtual void OnResize(int32_t InWidth, int32_t InHeight) = 0;
+
 protected:
 	std::string Title;
 	int Width;

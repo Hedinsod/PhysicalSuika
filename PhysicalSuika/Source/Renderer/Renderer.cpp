@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Renderer.h"
 #include "GeometryComp.h"
-#include "Camera.h"
+#include "Game/Camera.h"
 #include "Graphics/Graphics.h"
 #include "Graphics/GfxBuffers.h"
 #include "Graphics/GfxShader.h"

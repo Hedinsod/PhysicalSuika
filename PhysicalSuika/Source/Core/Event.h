@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #define EVENT_OneParam(_Event_TypeName, _ParamType)                                \
 	struct _Event_TypeName {                                                       \
 		using EventCallbackFn = std::function<void(_ParamType)>;                   \
@@ -9,3 +11,23 @@
 		void Subscribe(const EventCallbackFn& InCallback) {                        \
 			InvocationItem = InCallback; }                                         \
 		EventCallbackFn InvocationItem = nullptr; };                               
+
+
+#define EVENT_TwoParam(_Event_TypeName1, _ParamType1, _ParamType2)                 \
+	struct _Event_TypeName1 {                                                      \
+		using EventCallbackFn = std::function<void(_ParamType1, _ParamType2)>;     \
+		void Broadcast(_ParamType1 Param1, _ParamType2 Param2) {                   \
+			for (auto& InvocationItem : InvocationList)	{                          \
+				if (InvocationItem) {		                                       \
+					InvocationItem(std::forward<_ParamType1>(Param1),              \
+					    std::forward<_ParamType2>(Param2)); }                      \
+			}                                                                      \
+		}                                                                          \
+		void Subscribe(const EventCallbackFn& InCallback) {                        \
+			InvocationList.push_back(InCallback); }                                \
+		std::vector<EventCallbackFn> InvocationList; };
+	
+	
+	/*	void Unsubscribe(const EventCallbackFn& InCallback) {                      \
+			InvocationList.erase(InCallback); }                                    \ */
+		

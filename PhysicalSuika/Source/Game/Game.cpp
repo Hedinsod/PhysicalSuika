@@ -2,14 +2,12 @@
 
 #include "Systems/Engine.h"
 #include "Game/Game.h"
-#include "Game/Actor.h"
+#include "Game/Camera.h"
 #include "Game/Glass.h"
 #include "Game/Fruit.h"
 #include "Game/Hand.h"
-#include "Renderer/Camera.h"
 #include "Renderer/Renderer.h"
 
-// #include <glm/gtc/matrix_transform.hpp>
 
 SGame::SGame()
 	: Top(17.0f)
@@ -17,8 +15,7 @@ SGame::SGame()
 	, Left(-14.0f)
 	, Right(14.0f)
 {
-	// 800x600 -> 240x180
-	Camera = std::make_shared<ACamera>(Top, Left, Bottom, Right, glm::vec2(0.f, 0.f));
+	Camera = AddEntity<ACamera>(glm::vec2{ 0.f, 8.f }, 1.0f, 10.0f);
 
 	AddEntity<AGlass>(glm::vec2{ 0.f, 0.f });
 	AddEntity<AHand>(glm::vec2{ 0.f, 16.0f });
@@ -26,12 +23,6 @@ SGame::SGame()
 
 SGame::~SGame()
 {
-/*
-	for (std::shared_ptr<AActor> Ent : Actors)
-	{
-		delete Ent;
-	}
-*/
 	Actors.Clear();
 }
 

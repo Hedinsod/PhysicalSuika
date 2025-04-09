@@ -6,7 +6,7 @@
 #include <unordered_set>
 
 
-// Achtung: This structure [probably] shuld be perfectly nullified
+// Achtung: This structure [probably] should be perfectly nullified
 struct FManifold
 {
 	float        Penetration = 0;
@@ -14,7 +14,7 @@ struct FManifold
 	float        NormalImpulse = 0.0f;
 	float        TangentImpulse = 0.0f;
 
-	std::array<glm::vec2, 2> ContactPoints;
+	std::array<glm::vec2, 2> ContactPoints{};
 };
 
 struct FContact

@@ -7,7 +7,7 @@
 #include "Platform/OpenGL/OpenGLContext.h"
 
 #include <GLFW/glfw3.h>
-
+#include <GLAD/glad.h>
 
 int32_t SOpenGLWindow::Counter;
 
@@ -32,13 +32,19 @@ void SOpenGLWindow::Create()
 
 	// Actual window
 	NativeWindow = glfwCreateWindow(Width, Height, Title.c_str(), NULL, NULL);
+
 	GAssert(NativeWindow);
 	GfxContext = new SOpenGLContext(NativeWindow);
+	glfwSetWindowUserPointer(NativeWindow, this);
 
 	// Input
 	glfwSetKeyCallback(NativeWindow, SOpenGLWindow::ProcessInput);
-	//glfwSetWindowSizeCallback(NativeWindow, window_size_callback);
-	
+	glfwSetWindowSizeCallback(NativeWindow, [](GLFWwindow* Window, int InWidth, int InHeight)
+		{
+			SOpenGLWindow* Self = static_cast<SOpenGLWindow*>(glfwGetWindowUserPointer(Window));
+			
+			Self->OnResize(InWidth, InHeight);
+		});
 	glfwSetWindowCloseCallback(NativeWindow, [](GLFWwindow* Window)
 		{
 			GApp->Quit();
@@ -77,6 +83,13 @@ void SOpenGLWindow::Tick()
 	GfxContext->SwapBuffers();
 }
 
+void SOpenGLWindow::OnResize(int32_t InWidth, int32_t InHeight)
+{
+	Width = InWidth;
+	Height = InHeight;
+
+	GApp->OnResize(Width, Height);
+}
 
 // static callbacks
 void SOpenGLWindow::ProcessError(int32_t ErrorCode, const char* Description)
@@ -95,6 +108,7 @@ static EInputCode GetInputCode(int32_t GlfwCode)
 	case GLFW_KEY_DOWN:   return EInputCode::Down;  break;
 	case GLFW_KEY_SPACE:  return EInputCode::Space; break;
 	case GLFW_KEY_ESCAPE: return EInputCode::Esc;   break;
+
 	default:              return EInputCode::None;  break;
 	};
 }

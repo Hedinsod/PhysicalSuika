@@ -220,7 +220,6 @@ private:
 			void* NewData = std::malloc(sizeof(ElementType) * NewCapacity);
 
 			// 2. Copy
-			/*
 			for (Iterator It = begin(); It != end(); It++)
 			{
 				ElementType* Array = static_cast<ElementType*>(NewData);

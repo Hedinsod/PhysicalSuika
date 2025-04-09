@@ -23,21 +23,18 @@ public:
 
 	void Tick(float DeltaTimeMs);
 
-	// ???
-	float GetWidth() const { return Right - Left; }
-	float GetHeight() const { return Top - Bottom; }
-
 	std::shared_ptr<ACamera> GetCamera()
 	{
 		return Camera;
 	};
 
-	float Top, Bottom, Left, Right;
-
 private:
 	TSparseArray<std::shared_ptr<AActor>> Actors;
 
 	std::shared_ptr<ACamera> Camera;
+
+	// for clipping
+	float Top, Bottom, Left, Right;
 
 };
 

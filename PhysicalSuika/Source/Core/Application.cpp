@@ -12,6 +12,10 @@
 
 Application::Application()
 {
+}
+
+void Application::Init()
+{
 	SGraphics::Init(EGfxApi::OpenGL);
 
 	MainWindow.reset(SGraphics::CreateGfxWindow(ScreenWidth, ScreenHeight, "Physical Suika"));
@@ -21,6 +25,8 @@ Application::Application()
 
 	TheGame = new SGame();
 	GAssert(TheGame);
+
+	OnResize(ScreenWidth, ScreenHeight);
 }
 
 Application::~Application()
@@ -47,6 +53,9 @@ void Application::Run()
 		// Physics
 		Engine::GetPhyScene().Tick(Step);
 
+		// Game logic
+		TheGame->Tick(Step.GetFullStep());
+
 		// Render everything
 		SGraphics::Clear();
 		Engine::GetGraphics().Tick(TheGame->GetCamera());
@@ -54,10 +63,12 @@ void Application::Run()
 		// Poll input and swap buffers
 		MainWindow->Tick();
 
-		// Game logic
-		TheGame->Tick(Step.GetFullStep());
-
 		// Delete unused
 		TheGame->CullEntities();
 	}
+}
+
+void Application::OnResize(int32_t InScreenWidth, int32_t InScreenHeight)
+{
+	OnResizeEvent.Broadcast(InScreenWidth, InScreenHeight);
 }
