@@ -2,7 +2,6 @@
 
 #include "PhySolver.h"
 #include "Systems/Engine.h"
-#include "PhyMaterialLibrary.h"
 
 #include <sstream>
 
@@ -118,8 +117,8 @@ void SPhySolver::ResolveCollision(CRigidBodyComp& First, CRigidBodyComp& Second,
 
 	float TangentImpulseM = CommonMassT * (-TangentVelocity);
 
-	const FPhysicalMaterial& Mat1 = SPhyMatirialLibrary::GetMaterial(First.MaterialId);
-	const FPhysicalMaterial& Mat2 = SPhyMatirialLibrary::GetMaterial(Second.MaterialId);
+	const FMaterial& Mat1 = Engine::GetMaterialLibrary().Get(First.MaterialTag);
+	const FMaterial& Mat2 = Engine::GetMaterialLibrary().Get(Second.MaterialTag);
 	float Friction = (Mat1.Friction + Mat2.Friction) / 2;
 
 	// Compute friction impulse

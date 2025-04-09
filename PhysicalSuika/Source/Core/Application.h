@@ -20,8 +20,8 @@ public:
 private:
 	std::unique_ptr<SGfxWindow> MainWindow;
 
-	// Root Actor
-	//SGame* TheGame;
+	// Scene - holds all actors of the game
+	SGame* TheGame;
 
 	bool bQuit = false;
 

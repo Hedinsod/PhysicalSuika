@@ -12,8 +12,6 @@ public:
 	AGlass(glm::vec2 InPos);
 	virtual ~AGlass() override;
 
-	void Tick();
-
 private:
 	CGeometry* Geo;
 
@@ -21,6 +19,4 @@ private:
 	CBodyHandle Right;
 	CBodyHandle Bottom;
 
-	static bool bMatCreated;
-	static uint32_t MatId;
 };

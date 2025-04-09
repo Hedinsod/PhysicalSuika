@@ -2,16 +2,21 @@
 #include "Renderer/Transform.h"
 
 
+class SGame;
+
 class AActor
 {
 public:
-	AActor(glm::vec2 InPos, const char* Name)
+	AActor(glm::vec2 InPos)
 	{
 		Trans.SetPos(InPos);
 	}
 	virtual ~AActor() = default;
 
-	virtual void Tick() = 0;
+	void RegisterGame(SGame* InGame) { Game = InGame; }
+	SGame* GetGame() { return Game; }
+
+	virtual void Tick(float DeltaTime) {}
 
 	// "Events"
 	bool IsPendingDelete() { return bPendingDelete; }
@@ -27,6 +32,9 @@ protected:
 	CTransform Trans;
 
 	bool bPendingDelete = false;
+
+private:
+	SGame* Game = nullptr;
 
 };
 

@@ -2,6 +2,7 @@
 
 #include "Actor.h"
 
+class AFruit;
 class CGeometry;
 
 class AHand : public AActor
@@ -10,14 +11,15 @@ public:
 	AHand(glm::vec2 InPos);
 	virtual ~AHand() override;
 
-	void Tick();
+	virtual void Tick(float DeltaTimeMs) override;
 
 	virtual void OnCollide(const AActor* Opponent) {}
 	
-
 private:
+	std::shared_ptr<AFruit> Preview;
+
 	CGeometry* Geo;
 
-	const int32_t SpawnCooldownStart = 50;
-	int32_t SpawnCooldown = 0;
+	const float SpawnCooldownStart = 1000.0f;
+	float SpawnCooldown = 0.0f;
 };

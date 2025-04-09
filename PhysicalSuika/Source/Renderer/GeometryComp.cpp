@@ -11,12 +11,14 @@ SGfxBufferLayout Mixed = {
 };
 
 SGfxBufferLayout Plain2 = {
-	{ "Whatever", EGfxShaderData::Float2 }
+	{ "Vertices", EGfxShaderData::Float2 }
 };
 
+/*
 SGfxBufferLayout Plain3 = {
 	{ "Whatever", EGfxShaderData::Float3 }
 };
+*/
 
 CGeometry::CGeometry(AActor* InOwner)
 	: CComponent(InOwner)
@@ -28,20 +30,14 @@ void CGeometry::SetVertices(const std::vector<float>& InVertices)
 	Vertices = InVertices;
 }
 
-void CGeometry::SetIndecies(const std::vector<uint32_t>& InIndecies)
+void CGeometry::SetIndices(const std::vector<uint32_t>& InIndices)
 {
-	Indecies = InIndecies;
-}
-
-void CGeometry::SetColors(const std::vector<float>& InColors)
-{
-	Colors = InColors;
+	Indices = InIndices;
 }
 
 void CGeometry::BuildGeometry()
 {
 	VertexData = SGraphics::CreateVertexData();
 	VertexData->AddVertexData(Vertices, Plain2);
-	//VertexData->AddVertexData(Colors, Plain3);
-	VertexData->SetIndexData(Indecies);
+	VertexData->SetIndexData(Indices);
 }

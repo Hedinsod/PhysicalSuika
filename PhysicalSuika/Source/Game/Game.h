@@ -6,18 +6,22 @@
 class AActor;
 class ACamera;
 
+// Effectively it is Scene class
+// Stores all actors, adds and removes them
+// 
 class SGame
 {
 public:
 	SGame();
 	~SGame();
 
+	// Adding and deleting actors
 	template <class TEntity, class... Args>
-	void AddEntity(Args... args);
-	bool ClipOutOfBoundaries(AActor* Actor);
+	std::shared_ptr<TEntity> AddEntity(Args... args);
+	bool ClipOutOfBoundaries(std::shared_ptr<AActor> Actor);
 	void CullEntities();
 
-	void Tick();
+	void Tick(float DeltaTimeMs);
 
 	// ???
 	float GetWidth() const { return Right - Left; }
@@ -31,19 +35,20 @@ public:
 	float Top, Bottom, Left, Right;
 
 private:
-	//std::vector<AActor*> Actors;
-	TSparseArray<AActor*> Actors;
+	TSparseArray<std::shared_ptr<AActor>> Actors;
 
 	std::shared_ptr<ACamera> Camera;
 
 };
 
 template <class TEntity, class... Args>
-void SGame::AddEntity(Args... args)
+std::shared_ptr<TEntity> SGame::AddEntity(Args... args)
 {
-	TEntity* NewEntity = new TEntity(args...);
+	std::shared_ptr<TEntity> NewEntity = std::make_shared<TEntity>(args...);
 	GAssert(NewEntity);
 	Actors.Push(NewEntity);
-}
 
-extern SGame* GGame;
+	NewEntity->RegisterGame(this);
+
+	return NewEntity;
+}

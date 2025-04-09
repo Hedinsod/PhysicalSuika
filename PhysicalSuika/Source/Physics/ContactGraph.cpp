@@ -31,9 +31,11 @@ int32_t FContactGraph::AddContact(CRigidBodyComp& InFirst, CRigidBodyComp& InSec
 		InSecond.SetOnDestructionEventHandler(std::bind(&FContactGraph::RemoveAllContacts, this, std::placeholders::_1));
 		InSecond.AddContact(ContactId);
 
+		GAssert(Tracker.size() == Contacts.Count());
 		return ContactId;
 	}
 
+	GAssert(Tracker.size() == Contacts.Count());
 	return -1;
 }
 
@@ -48,6 +50,8 @@ void FContactGraph::RemoveContact(int32_t ContactId)
 
 	Tracker.erase(Contact.Hash);
 	Contacts.Remove(ContactId);
+
+	GAssert(Tracker.size() == Contacts.Count());
 }
 
 void FContactGraph::RemoveAllContacts(std::list<uint32_t> ContactsToDelete)

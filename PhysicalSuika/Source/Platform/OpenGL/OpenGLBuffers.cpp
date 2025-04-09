@@ -127,10 +127,10 @@ void SOpenGLVertexArray::Unbind()
 	glBindVertexArray(0);
 }
 
-SGfxVertexBufferPtr SOpenGLVertexArray::AddVertexData(const std::vector<float>& VertexData,
+std::shared_ptr<SGfxVertexBuffer> SOpenGLVertexArray::AddVertexData(const std::vector<float>& VertexData,
                                                       const SGfxBufferLayout& InLayout)
 {
-	SGfxVertexBufferPtr NewVertexBuffer = SGfxVertexData::AddVertexData(VertexData, InLayout);
+	std::shared_ptr<SGfxVertexBuffer> NewVertexBuffer = SGfxVertexData::AddVertexData(VertexData, InLayout);
 
 	glBindVertexArray(ArrayId);
 	NewVertexBuffer->Bind();

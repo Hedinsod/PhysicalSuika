@@ -26,9 +26,15 @@ public:
 	AFruit(glm::vec2 InPos, EFruitType InType);
 	virtual ~AFruit() override;
 
-	void Tick();
+	// "Safe" way to spawn new entities
+	virtual void Tick(float DeltaTimeMs) override;
 
-	void Disappear(AActor* Opponent);
+	// Events
+	void OnCollision(AActor* Opponent);
+
+	// Just enable and disable physics
+	void Hold();
+	void Release();
 
 private:
 	CGeometry* Geo;
@@ -36,6 +42,7 @@ private:
 
 	EFruitType Type;
 
-	static bool bMatCreated;
-	static uint32_t MatId;
+	bool bMother = false;
+	glm::vec2 SpawnPoint;
+
 };

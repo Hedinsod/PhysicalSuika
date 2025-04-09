@@ -17,11 +17,11 @@ EVENT_OneParam(FRigidBodyEvent_OnCollision, AActor* /* Opponent */)
 
 class CRigidBodyComp : public CComponent
 {
-	friend class SPhySolver; // Make Physics Engine friend of Body
+	friend class SPhySolver;  // Solver will read all parameters directly
 
 public:
 	// Constructors
-	CRigidBodyComp(AActor* InOwner, uint32_t InMaterialId, FColliderShape* ShapeDesc, uint32_t Layers = 1);
+	CRigidBodyComp(AActor* InOwner, const std::string& MaterialTag, FColliderShape* ShapeDesc, uint32_t Layers = 1);
 	CRigidBodyComp(const CRigidBodyComp& Other);
 	CRigidBodyComp(CRigidBodyComp&& Other) noexcept;
 	
@@ -30,76 +30,37 @@ public:
 	CRigidBodyComp& operator=(const CRigidBodyComp& Other);
 	CRigidBodyComp& operator=(CRigidBodyComp&& Other) noexcept;
 
+	// For initialization only
 	inline void SetId(CBodyHandle NewId)
 	{
 		GAssert(Id == -1);
 		Id = NewId;
 	}
+	inline CBodyHandle GetId() { return Id; }
 
-	// Getters
+	// Accessors
+	inline void SetLayers(uint32_t InLayer)	{ Layers = InLayer; }
+	inline const uint32_t& GetLayers() { return Layers; }
+
+	inline bool IsStatic() { return InvMass == 0; }
+	
+	inline void Enable() { bDisabled = false; }
+	inline void Disable() { bDisabled = true; }
+	inline bool IsDisabled() { return bDisabled; }
+	
+	// Colliders
 	template <class T>
-	inline const T& GetCollider()
-	{
-		return *static_cast<T*>(Shape);
-	}
+	inline const T& GetCollider() { return *static_cast<T*>(Shape); }
+	inline uint16_t GetShapeIndex() { return Shape->GetShapeIndex(); }
+	inline FBoxCollider GenerateAABB() { return Shape->GenerateAABB(GetOwner().GetTransform().GetPos()); }
 
 	// 
-	inline void SetLayers(uint32_t InLayer)
-	{
-		Layers = InLayer;
-	}
-	inline const uint32_t& GetLayers()
-	{
-		return Layers;
-	}
-
-	// 
-	inline bool IsStatic()
-	{
-		return InvMass == 0;
-	}
-
-	// 
-	inline void Disable()
-	{
-		bDisabled = true;
-	}
-	inline bool IsDisabled()
-	{
-		return bDisabled;
-	}
-
-	// 
-	inline CBodyHandle GetId()
-	{
-		return Id;
-	}
-
-	// 
-	inline FBoxCollider GenerateAABB()
-	{
-		return Shape->GenerateAABB(GetOwner().GetTransform().GetPos());
-	}
-
-	// 
-	inline uint16_t GetShapeIndex()
-	{
-		return Shape->GetShapeIndex();
-	}
-
-	// Stuff
 	void IntegrateVelocity(float TimeStep);
 	void IntegratePosition(float TimeStep);
 
 	// Contacts
-	inline void AddContact(uint32_t ContactId)
-	{
-		Contacts.push_back(ContactId);
-	}
-	inline void RemoveContact(uint32_t ContactId)
-	{
-		Contacts.remove(ContactId);
-	}
+	inline void AddContact(uint32_t ContactId) { Contacts.push_back(ContactId); }
+	inline void RemoveContact(uint32_t ContactId) { Contacts.remove(ContactId); }
 
 	// Events
 	inline void SetOnDestructionEventHandler(const FRigidBodyEvent_OnDestruction::EventCallbackFn& InCallback)
@@ -114,12 +75,12 @@ public:
 private:
 	void BasicCopy(const CRigidBodyComp& Other);
 
-	// *** Data
+	// Index in the riged body array
 	CBodyHandle Id = -1;
 
 	// Collider
 	FColliderShape* Shape = nullptr;
-	uint32_t MaterialId;
+	std::string MaterialTag;
 	uint32_t Layers = 1;
 
 	// Calculatable
@@ -135,10 +96,14 @@ private:
 	float AngularVelocity = 0.0f;
 	float Torque = 0.0f;
 
+	// Status - should the body be solved
 	bool bDisabled = false;
 
+	// List of all cointacts with other bodies
 	std::list<uint32_t> Contacts;
 
+	// Events
 	FRigidBodyEvent_OnDestruction OnDestruction;
 	FRigidBodyEvent_OnCollision OnCollision;
+
 };

@@ -14,10 +14,18 @@ void Engine::Init()
 
 	Instance->Graphics = std::make_unique<SDraw>();
 	GAssert(Instance->Graphics);
+
+	Instance->LoadMaterials();
 }
 
 void Engine::Shutdown()
 {
 	delete Instance;
 	Instance = nullptr;
+}
+
+void Engine::LoadMaterials()
+{
+	MatirialLibrary.Add("Berry", std::make_shared<FMaterial>(/*.Density*/ 0.0955f, /*.Friction*/ 0.2f, /*.GravityScale*/ 2.0f));
+	MatirialLibrary.Add("Glass", std::make_shared<FMaterial>(/*.Density*/    0.0f, /*.Friction*/ 0.4f, /*.GravityScale*/ 2.0f));
 }

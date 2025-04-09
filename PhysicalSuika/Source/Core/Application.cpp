@@ -9,7 +9,6 @@
 
 #include "Renderer/Renderer.h"
 
-SGame* GGame = nullptr;
 
 Application::Application()
 {
@@ -20,13 +19,13 @@ Application::Application()
 	Engine::Init();
 	SRenderer::Init();
 
-	GGame = new SGame();
-	GAssert(GGame);
+	TheGame = new SGame();
+	GAssert(TheGame);
 }
 
 Application::~Application()
 {
-	delete GGame;
+	delete TheGame;
 
 	Engine::Shutdown();
 
@@ -45,20 +44,20 @@ void Application::Run()
 	{
 		Step.FrameStart();
 
-		// TODO: Pass dT to logic!
-		GGame->Tick();
+		// Physics
+		Engine::GetPhyScene().Tick(Step);
 
-		do  // Allow phisics to catch up
-		{
-			Engine::GetPhyScene().Tick(Step.GetStep());
-		}
-		while (Step.Update());
-
+		// Render everything
 		SGraphics::Clear();
-		// Rendering Pass
-		Engine::GetGraphics().Tick(GGame->GetCamera());
+		Engine::GetGraphics().Tick(TheGame->GetCamera());
+
+		// Poll input and swap buffers
 		MainWindow->Tick();
 
-		GGame->CullEntities();
+		// Game logic
+		TheGame->Tick(Step.GetFullStep());
+
+		// Delete unused
+		TheGame->CullEntities();
 	}
 }

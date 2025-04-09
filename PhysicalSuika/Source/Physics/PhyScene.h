@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Containers/SparseArray.h"
+#include "Core/Timestep.h"
 #include "RigidBodyComp.h"
 #include "PhySolver.h"
 
@@ -13,11 +14,12 @@ class SPhyScene
 public:
 	SPhyScene(int32_t InStepsNumber);
 
-	CBodyHandle CreateRigidBody(AActor* Owner, uint32_t InMaterialId, FColliderShape* InShape, uint32_t InLayers = 1);
+	CBodyHandle CreateRigidBody(AActor* Owner, const std::string& MaterialTag, FColliderShape* InShape, uint32_t InLayers = 1);
 	void RemoveRigidBody(CBodyHandle Handle);
 	CRigidBodyComp& GetRigidBody(CBodyHandle Handle);
 
-	void Tick(float DeltaTime);
+	void Tick(STimestep Step);
+	void InternalTick(float DeltaTime);
 
 	// Searching for potential collisions to give to solver
 	void BroadPass();

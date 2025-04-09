@@ -4,15 +4,6 @@
 
 namespace Utility
 {
-	void GetTime(int& hr, int& min, int& sec)
-	{
-		SYSTEMTIME time;
-		GetLocalTime(&time);
-		hr = time.wHour;
-		min = time.wMinute;
-		sec = time.wSecond;
-	}
-
 	int GetRandom(int Low, int Up)
 	{
 		static std::random_device dev; 

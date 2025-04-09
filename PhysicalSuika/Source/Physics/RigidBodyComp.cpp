@@ -1,17 +1,16 @@
 #include "pch.h"
 
 #include "RigidBodyComp.h"
-#include "PhyMaterialLibrary.h"
 #include "Systems/Engine.h"
 
 
-CRigidBodyComp::CRigidBodyComp(AActor* InOwner, uint32_t InMaterialId, FColliderShape* InShape, uint32_t InLayers)
+CRigidBodyComp::CRigidBodyComp(AActor* InOwner, const std::string& InMaterialTag, FColliderShape* InShape, uint32_t InLayers)
 	: CComponent(InOwner)
 	, Shape(InShape)
-	, MaterialId(InMaterialId)
+	, MaterialTag(InMaterialTag)
 	, Layers(InLayers)
 {
-	const FPhysicalMaterial& Material = SPhyMatirialLibrary::GetMaterial(MaterialId);
+	const FMaterial& Material = Engine::GetMaterialLibrary().Get(InMaterialTag);
 	if (Material.Density != 0)
 	{
 		auto MassPair = Shape->CalculateMass(Material.Density);
@@ -23,6 +22,7 @@ CRigidBodyComp::CRigidBodyComp(AActor* InOwner, uint32_t InMaterialId, FCollider
 CRigidBodyComp::CRigidBodyComp(const CRigidBodyComp& Other)
 	: CComponent(Other.Owner)
 	, Shape(Other.Shape->Clone())
+	, Contacts(Other.Contacts)
 {
 	BasicCopy(Other);
 }
@@ -30,9 +30,12 @@ CRigidBodyComp::CRigidBodyComp(const CRigidBodyComp& Other)
 CRigidBodyComp::CRigidBodyComp(CRigidBodyComp&& Other) noexcept
 	: CComponent(Other.Owner)
 	, Shape(Other.Shape)
+	, Contacts(std::move(Other.Contacts))
 {
 	BasicCopy(Other);
 	Other.Shape = nullptr;
+	Other.OnDestruction.InvocationItem = nullptr;
+	Other.OnCollision.InvocationItem = nullptr;
 }
 
 CRigidBodyComp::~CRigidBodyComp()
@@ -65,6 +68,8 @@ CRigidBodyComp& CRigidBodyComp::operator=(CRigidBodyComp&& Other) noexcept
 	if (Shape) delete Shape;
 	Shape = Other.Shape;
 	Other.Shape = nullptr;
+	Other.OnDestruction.InvocationItem = nullptr;
+	Other.OnCollision.InvocationItem = nullptr;
 
 	return *this;
 }
@@ -73,7 +78,7 @@ void CRigidBodyComp::BasicCopy(const CRigidBodyComp& Other)
 {
 	Owner = Other.Owner;
 	Id = Other.Id;
-	MaterialId = Other.MaterialId;
+	MaterialTag = Other.MaterialTag;
 	Layers = Other.Layers;
 
 	InvMass = Other.InvMass;
@@ -86,16 +91,20 @@ void CRigidBodyComp::BasicCopy(const CRigidBodyComp& Other)
 	Orientation = Other.Orientation;
 	AngularVelocity = Other.AngularVelocity;
 	Torque = Other.Torque;
+
+	bDisabled = Other.bDisabled;
+	OnDestruction = Other.OnDestruction;
+	OnCollision = Other.OnCollision;
 }
 
 void CRigidBodyComp::IntegrateVelocity(float TimeStep)
 {
 	static const glm::vec2 Gravity(0.f, -9.8);
 
-	const FPhysicalMaterial& Mat = SPhyMatirialLibrary::GetMaterial(MaterialId);
+	const FMaterial& Material = Engine::GetMaterialLibrary().Get(MaterialTag);
 
 	// Symplectic Euler 
-	glm::vec2 Acceleration = Forces * InvMass + Gravity * Mat.GravityScale;
+	glm::vec2 Acceleration = Forces * InvMass + Gravity * Material.GravityScale;
 	Velocity += Acceleration * TimeStep;
 
 	AngularVelocity += Torque * InvInertia * TimeStep;
@@ -103,6 +112,10 @@ void CRigidBodyComp::IntegrateVelocity(float TimeStep)
 
 void CRigidBodyComp::IntegratePosition(float TimeStep)
 {
+	// A completly arbitrary value preventing disaster
+	static glm::vec2 MaxSpeed(12.0f, 12.0);
+	Velocity = glm::clamp(Velocity, -MaxSpeed, MaxSpeed);
+
 	Owner->GetTransform().Translate(Velocity * TimeStep);
 	Owner->GetTransform().RotRad(AngularVelocity * TimeStep);
 }

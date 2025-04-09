@@ -13,6 +13,7 @@ public:
 	inline TSparseArray()
 		: Capacity(16)
 		, ArraySize(0)
+		, ArrayCount(0)
 	{
 		Data = std::malloc(sizeof(ElementType) * Capacity);
 		GAssert(Data);
@@ -63,6 +64,8 @@ public:
 		// manual destructor on allocated memory
 		GetData()[Index].~ElementType();
 		SetBitMapValue(Index, false);
+
+		ArrayCount--;
 	}
 	void Remove(Iterator It)
 	{
@@ -80,6 +83,10 @@ public:
 	inline int32_t Size() const
 	{
 		return ArraySize;
+	}
+	inline int32_t Count() const
+	{
+		return ArrayCount;
 	}
 	ElementType& operator[](int32_t Index)
 	{
@@ -190,6 +197,7 @@ private:
 		}
 		SetBitMapValue(NewIndex, true);
 
+		ArrayCount++;
 		return NewIndex;
 	}
 
@@ -212,6 +220,7 @@ private:
 			void* NewData = std::malloc(sizeof(ElementType) * NewCapacity);
 
 			// 2. Copy
+			/*
 			for (Iterator It = begin(); It != end(); It++)
 			{
 				ElementType* Array = static_cast<ElementType*>(NewData);
@@ -220,7 +229,7 @@ private:
 				// Destroy element before freeing its memory 
 				(*It).~ElementType();
 			}
-
+			
 
 			// 3. Free
 			std::free(Data); // Call destructor
@@ -275,6 +284,7 @@ private:
 	uint32_t* Bitmap;
 
 	int32_t ArraySize;
+	int32_t ArrayCount;
 	size_t Capacity;
 	size_t BitWordsNum;
 

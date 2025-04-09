@@ -55,6 +55,8 @@ public:
 	// Iteration?
 	TSparseArray<FContact>::Iterator begin() { return Contacts.begin(); }
 	TSparseArray<FContact>::Iterator end() { return Contacts.end(); }
+	
+	int32_t Count() { return Contacts.Count(); }
 
 private:
 	uint64_t GenerateHash(int32_t Id1, int32_t Id2);

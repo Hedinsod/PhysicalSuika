@@ -2,17 +2,13 @@
 #include "Fruit.h"
 #include "Game.h"
 #include "Systems/Engine.h"
-#include "Physics/PhyMaterialLibrary.h"
 #include "Renderer/GeometryComp.h"
 
 #include <sstream>
 
 
-bool AFruit::bMatCreated = false;
-uint32_t AFruit::MatId = 0;
-
 AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
-	: AActor(InPos, "Fruit\n")
+	: AActor(InPos)
 	, Type(InType)
 {
 	float Scale = 0.4f + 0.15f * (int16_t)Type;
@@ -36,21 +32,13 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	}
 	Inds.push_back(1);
 	Geo->SetVertices(Points);
-	Geo->SetIndecies(Inds);
+	Geo->SetIndices(Inds);
 	Geo->BuildGeometry();
 
-	// Physical Material
-	if (!bMatCreated)
-	{
-		FPhysicalMaterial Berry{ .Density = 0.0955f, .Friction = 0.2f, .GravityScale = 2.0f };
-		MatId = SPhyMatirialLibrary::AddMaterial(Berry);
-		bMatCreated = true;
-	}
-
 	FColliderShape* Shape = FColliderShape::Create<FCircleCollider>({ 0, 0 }, Scale);
-	Box = Engine::GetPhyScene().CreateRigidBody(this, MatId, Shape);
+	Box = Engine::GetPhyScene().CreateRigidBody(this, "Berry", Shape);
 
-	Engine::GetPhyScene().GetRigidBody(Box).SetOnCollisionEventHandler(std::bind(&AFruit::Disappear, this, std::placeholders::_1));
+	Engine::GetPhyScene().GetRigidBody(Box).SetOnCollisionEventHandler(std::bind(&AFruit::OnCollision, this, std::placeholders::_1));
 }
 
 AFruit::~AFruit()
@@ -59,11 +47,28 @@ AFruit::~AFruit()
 	Engine::GetGraphics().RemoveGeometry(Geo);
 }
 
-void AFruit::Tick()
+void AFruit::Tick(float DeltaTimeMs)
 {
+	// Theoretically spawning actor here is safe
+	// Not necessarily - we'll see
+
+	if (bMother)
+	{
+		std::shared_ptr<AFruit> NewFruit = GetGame()->AddEntity<AFruit>(SpawnPoint, (EFruitType)((int16_t)Type + 1));
+	}
 }
 
-void AFruit::Disappear(AActor* Opponent)
+void AFruit::Hold()
+{
+	Engine::GetPhyScene().GetRigidBody(Box).Disable();
+}
+
+void AFruit::Release()
+{
+	Engine::GetPhyScene().GetRigidBody(Box).Enable();
+}
+
+void AFruit::OnCollision(AActor* Opponent)
 {
 	AFruit* Other = dynamic_cast<AFruit*>(Opponent);
 
@@ -71,21 +76,14 @@ void AFruit::Disappear(AActor* Opponent)
 	{
 		bPendingDelete = true;
 
-		/*
-		std::string str;
-		std::stringstream s(str);
-		s << "Contact " << (int16_t)Other->Type << " & " << (int16_t)Type;
-		Utility::Log(s.str());
-		*/
-
-		// TODO: Disable physics // Other will be disabled by itself
+		// Other will be disabled by itself
 		Engine::GetPhyScene().GetRigidBody(Box).Disable();
 
-		// TODO: Spawn next type
+		// Spawn between frames!
 		if (Engine::GetPhyScene().GetRigidBody(Other->Box).IsDisabled())
 		{
-			glm::vec2 Spawn = (Trans.GetPos() + Other->Trans.GetPos()) * 0.5f;
-			GGame->AddEntity<AFruit>(Spawn, (EFruitType)(int16_t(Type) + 1));
+			bMother = true;
+			SpawnPoint = (Trans.GetPos() + Other->Trans.GetPos()) * 0.5f;
 		}
 	}
 }

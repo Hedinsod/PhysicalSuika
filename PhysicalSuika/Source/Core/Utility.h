@@ -4,9 +4,6 @@
 
 namespace Utility
 {
-	// Get system time
-	void GetTime(int& hr, int& min, int& sec);
-
 	// Get random number from range [low, up)
 	int GetRandom(int low, int up);
 

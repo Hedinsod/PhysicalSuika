@@ -51,6 +51,12 @@ public:
 		Timer.Restart();
 	}
 
+	// Returns full delta time since last Start
+	float GetFullStep()
+	{
+		return glm::min(MaxFrametimeMs, DeltaTimeMs);
+	}
+
 	float GetStep()
 	{
 		return glm::min(FrametimeMs, DeltaTimeMs);

@@ -7,7 +7,7 @@
 #include "Systems/Engine.h"
 
 AHand::AHand(glm::vec2 InPos)
-	: AActor(InPos, "Hand\n")
+	: AActor(InPos)
 {
 	Geo = Engine::GetGraphics().CreateGeometry(this);
 
@@ -25,7 +25,7 @@ AHand::AHand(glm::vec2 InPos)
 		 1.0f, -1.5f
 		});
 
-	Geo->SetIndecies({
+	Geo->SetIndices({
 		0, 1, 2, 3, 4, 5, 6, 7, 8
 		});
 	Geo->BuildGeometry();
@@ -36,9 +36,10 @@ AHand::~AHand()
 	Engine::GetGraphics().RemoveGeometry(Geo);
 }
 
-void AHand::Tick()
+void AHand::Tick(float DeltaTimeMs)
 {
 	static const glm::vec2 Shift{ .1f, 0.f };
+	
 	if (SInput::IsButtonPressed(EInputCode::Left))
 	{
 		Trans.Translate(-Shift);
@@ -47,15 +48,30 @@ void AHand::Tick()
 	{
 		Trans.Translate(Shift);
 	}
-	
-	if (SpawnCooldown > 0) SpawnCooldown--;
-	if (SInput::IsButtonPressed(EInputCode::Space) && SpawnCooldown == 0)
+	glm::vec2 HoldPoint = Trans.GetPos() + glm::vec2{ 0.f, -1.5f };
+
+	if (SpawnCooldown > 0.0f)
 	{
-		glm::vec2 Spawn = Trans.GetPos() + glm::vec2{ 0.f, -1.5f };
+		SpawnCooldown -= DeltaTimeMs;
+	}
 
+	if (!Preview && SpawnCooldown <= 0)
+	{
 		uint16_t TypeRand = Utility::GetRandom(1, 6);
+		Preview = GetGame()->AddEntity<AFruit>(HoldPoint, (EFruitType)TypeRand);
+		Preview->Hold();
+	}
 
-		GGame->AddEntity<AFruit>(Spawn, (EFruitType)TypeRand);
-		SpawnCooldown = SpawnCooldownStart;
+	if (Preview)
+	{
+		Preview->GetTransform().SetPos(HoldPoint);
+
+		if (SInput::IsButtonPressed(EInputCode::Space))
+		{
+			Preview->Release();
+			Preview.reset();
+
+			SpawnCooldown = SpawnCooldownStart;
+		}
 	}
 }

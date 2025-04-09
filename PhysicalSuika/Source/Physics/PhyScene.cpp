@@ -14,9 +14,9 @@ SPhyScene::SPhyScene(int32_t InStepsNumber)
 	Solver = std::make_unique<SPhySolver>();
 }
 
-CBodyHandle SPhyScene::CreateRigidBody(AActor* Owner, uint32_t InMaterialId, FColliderShape* InShape, uint32_t InLayers /*= 1*/)
+CBodyHandle SPhyScene::CreateRigidBody(AActor* Owner, const std::string& MaterialTag, FColliderShape* InShape, uint32_t InLayers /*= 1*/)
 {
-	CBodyHandle BodyId = BodyPool.Emplace(Owner, InMaterialId, InShape, InLayers);
+	CBodyHandle BodyId = BodyPool.Emplace(Owner, MaterialTag, InShape, InLayers);
 	BodyPool[BodyId].SetId(BodyId);
 
 	return BodyId;
@@ -41,14 +41,22 @@ bool SPhyScene::SimpleCollision(const FBoxCollider& FirstAABB, const FBoxCollide
 	return true;
 }
 
-void SPhyScene::Tick(float DeltaTimeMs)
+void SPhyScene::Tick(STimestep Step)
 {
 	if (BodyPool.Size() == 0)
 		return;
 
-	// TODO: should physics run sub-steps & catch up on its own?
-	// Convert Ms to S
-	float TimeStep = DeltaTimeMs / (1000 * StepsNumber);
+	// Allow physics to catch up
+	do
+	{
+		float DeltaTimeMs = Step.GetStep();
+		InternalTick(DeltaTimeMs / 1000.0f);
+	} while (Step.Update());
+}
+
+void SPhyScene::InternalTick(float DeltaTimeS)
+{
+	float TimeStep = DeltaTimeS / StepsNumber;
 
 	const float Gravity = 9.8f;
 	for (int32_t i = 0; i < StepsNumber; i++)
