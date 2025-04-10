@@ -44,7 +44,7 @@ public:
 	virtual void Bind() override;
 	virtual void Unbind() override;
 
-	virtual std::shared_ptr<SGfxVertexBuffer> AddVertexData(const std::vector<float>& VertexData,
+	virtual StdShared<SGfxVertexBuffer> AddVertexData(const std::vector<float>& VertexData,
 	                                                        const SGfxBufferLayout& InLayout) override;
 	virtual void SetIndexData(const std::vector<uint32_t>& IndexData) override;
 

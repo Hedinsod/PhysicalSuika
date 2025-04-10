@@ -7,7 +7,7 @@ class CGeometry;
 
 enum class EFruitType : int16_t
 {
-	Cherry = 1,
+	Cherry = 0,
 	Strawberry,
 	Grape,
 	Dekopon,
@@ -17,7 +17,9 @@ enum class EFruitType : int16_t
 	Peach,
 	Pineapple,
 	Melon,
-	Watermelon
+	Watermelon,
+
+	Count
 };
 
 class AFruit : public AActor

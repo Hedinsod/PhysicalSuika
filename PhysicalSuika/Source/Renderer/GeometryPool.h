@@ -9,13 +9,13 @@ class SGfxContext;
 class CGeometry;
 class ACamera;
 
-class SDraw
+class SGeometryPool
 {
 public:
 	CGeometry* CreateGeometry(AActor* InOwner);
 	void RemoveGeometry(CGeometry* Geo);
 
-	void Tick(const std::shared_ptr<ACamera>& Camera);
+	void Tick(const StdShared<ACamera>& Camera);
 
 private:
 	std::unordered_set<CGeometry*> GeometryPool;

@@ -2,7 +2,7 @@
 
 #include "Core/Utility.h"
 #include "Physics/PhyScene.h"
-#include "Renderer/Draw.h"
+#include "Renderer/GeometryPool.h"
 #include "Systems/MaterialLibrary.h"
 #include <memory>
 
@@ -18,7 +18,7 @@ public:
 		GAssert(Instance);
 		return *Instance->PhyScene;
 	}
-	static SDraw& GetGraphics()
+	static SGeometryPool& GetGraphics()
 	{
 		GAssert(Instance);
 		return *Instance->Graphics;
@@ -38,8 +38,8 @@ private:
 private:
 	static Engine* Instance;
 
-	std::unique_ptr<SPhyScene> PhyScene;
-	std::unique_ptr<SDraw> Graphics;
+	StdScoped<SPhyScene> PhyScene;
+	StdScoped<SGeometryPool> Graphics;
 	
 	SMatirialLibrary MatirialLibrary;
 

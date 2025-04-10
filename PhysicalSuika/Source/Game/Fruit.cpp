@@ -7,11 +7,27 @@
 #include <sstream>
 
 
+static std::array<FColorRGB, (int16_t)EFruitType::Count> FruitColors =
+	{
+		FColorRGB(220, 65, 80),     // Cherry
+		FColorRGB(215, 100, 60),    // Strawberry
+		FColorRGB(200, 115, 245),   // Grape
+		FColorRGB(240, 175, 75),    // Dekopon
+		FColorRGB(215, 145, 90),    // Orange
+		FColorRGB(230, 90, 90),     // Apple
+		FColorRGB(235, 220, 100),   // Pear
+		FColorRGB(230, 105, 205),   // Peach
+		FColorRGB(245, 220, 65),    // Pineapple
+		FColorRGB(170, 250, 85),    // Melon
+		FColorRGB(135, 205, 50),    // Watermelon
+	};
+
+
 AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	: AActor(InPos)
 	, Type(InType)
 {
-	float Scale = 0.4f + 0.15f * (int16_t)Type;
+	float Scale = 0.4f + 0.15f * ((int16_t)Type + 1);
 	Trans.SetScale({ Scale, Scale });
 
 	// Graphics
@@ -35,6 +51,8 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	Geo->SetIndices(Inds);
 	Geo->BuildGeometry();
 
+	Geo->SetColor(FruitColors[(int16_t)Type]);
+
 	FColliderShape* Shape = FColliderShape::Create<FCircleCollider>({ 0, 0 }, Scale);
 	Box = Engine::GetPhyScene().CreateRigidBody(this, "Berry", Shape);
 
@@ -54,7 +72,7 @@ void AFruit::Tick(float DeltaTimeMs)
 
 	if (bMother)
 	{
-		std::shared_ptr<AFruit> NewFruit = GetGame()->AddEntity<AFruit>(SpawnPoint, (EFruitType)((int16_t)Type + 1));
+		StdShared<AFruit> NewFruit = GetGame()->AddEntity<AFruit>(SpawnPoint, (EFruitType)((int16_t)Type + 1));
 	}
 }
 

@@ -12,14 +12,18 @@ public:
 	void SetVertices(const std::vector<float>& InVertices);
 	void SetIndices(const std::vector<uint32_t>& InIndices);
 
-	std::shared_ptr<SGfxVertexData> GetVertexData() const { return VertexData; }
+	StdShared<SGfxVertexData> GetVertexData() const { return VertexData; }
 	void BuildGeometry();
 
+	void SetColor(const FColorRGB& InColor) { Color = InColor; }
+	const FColorLinear& GetColor() { return Color; }
+
 private:
-	std::shared_ptr<SGfxVertexData> VertexData;
+	StdShared<SGfxVertexData> VertexData;
 
 	std::vector<float> Vertices;
-	std::vector<float> Colors;
 	std::vector<uint32_t> Indices;
+
+	FColorLinear Color;
 
 };

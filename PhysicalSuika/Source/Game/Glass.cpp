@@ -21,6 +21,7 @@ AGlass::AGlass(glm::vec2 InPos)
 		0, 1, 2, 3
 		});
 	Geo->BuildGeometry();
+	Geo->SetColor(FColorRGB(0,0,0));
 
 	FColliderShape* LeftBox = FColliderShape::Create<FBoxCollider>({ -5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
 	FColliderShape* RightBox = FColliderShape::Create<FBoxCollider>({ 5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);

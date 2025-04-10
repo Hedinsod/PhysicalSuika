@@ -1,37 +1,16 @@
 #pragma once
 
-#include <memory>
+#include "Types.h"
+#include "Core/SmartPointers.h"
+#include "GfxShader.h"
 #include <string>
 
 class SGfxWindow;
-class SGfxShader;
+
 class SGfxVertexBuffer;
 class SGfxIndexBuffer;
 class SGfxVertexData;
 
-struct FColorRGB
-{
-	int Red = 0;
-	int Green = 0;
-	int Blue = 0;
-};
-
-struct FColorLinear
-{
-	FColorLinear() = default;
-	FColorLinear(float InR, float InG, float InB)
-		: Red(InR), Green(InG), Blue(InB)
-	{
-	}
-	FColorLinear(const FColorRGB& InColor)
-		: Red(InColor.Red / 255.f), Green(InColor.Green / 255.f), Blue(InColor.Blue / 255.f)
-	{
-	}
-
-	float Red = 0;
-	float Green = 0;
-	float Blue = 0;
-};
 
 enum class EGfxApi
 {
@@ -46,12 +25,13 @@ public:
 	virtual ~SGraphicsApi() = default;
 
 	virtual SGfxWindow* CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle) = 0;
-	virtual std::shared_ptr<SGfxShader> CreateShader(const std::string& VertexSource, const std::string& FragmentSource) = 0;
-	virtual std::shared_ptr<SGfxVertexBuffer> CreateVertexBuffer(const std::vector<float>& VertexData) = 0;
-	virtual std::shared_ptr<SGfxIndexBuffer> CreateIndexBuffer(const std::vector<uint32_t>& IndexData) = 0;
-	virtual std::shared_ptr<SGfxVertexData> CreateVertexData() = 0;
+	virtual StdScoped<SGfxShaderFactory> GetShaderFactory() = 0;
 
-	virtual void DrawIndexed(const std::shared_ptr<SGfxVertexData>& VA) = 0;
+	virtual StdShared<SGfxVertexBuffer> CreateVertexBuffer(const std::vector<float>& VertexData) = 0;
+	virtual StdShared<SGfxIndexBuffer> CreateIndexBuffer(const std::vector<uint32_t>& IndexData) = 0;
+	virtual StdShared<SGfxVertexData> CreateVertexData() = 0;
+
+	virtual void DrawIndexed(const StdShared<SGfxVertexData>& VA) = 0;
 	virtual void SetClearColor(const FColorRGB& InColor) = 0;
 	virtual void Clear() = 0;
 };
@@ -70,25 +50,27 @@ public:
 	{
 		return Api->CreateGfxWindow(InWidth, InHeight, InTitle);
 	}
-	inline static std::shared_ptr<SGfxShader> CreateShader(const std::string& VertexSource, const std::string& FragmentSource)
+
+	inline static StdScoped<SGfxShaderFactory> GetShaderFactory()
 	{
-		return Api->CreateShader(VertexSource, FragmentSource);
+		return Api->GetShaderFactory();
 	}
-	inline static std::shared_ptr<SGfxVertexBuffer> CreateVertexBuffer(const std::vector<float>& VertexData)
+
+	inline static StdShared<SGfxVertexBuffer> CreateVertexBuffer(const std::vector<float>& VertexData)
 	{
 		return Api->CreateVertexBuffer(VertexData);
 	}
-	inline static std::shared_ptr<SGfxIndexBuffer> CreateIndexBuffer(const std::vector<uint32_t>& IndexData)
+	inline static StdShared<SGfxIndexBuffer> CreateIndexBuffer(const std::vector<uint32_t>& IndexData)
 	{
 		return Api->CreateIndexBuffer(IndexData);
 	}
-	inline static std::shared_ptr<SGfxVertexData> CreateVertexData()
+	inline static StdShared<SGfxVertexData> CreateVertexData()
 	{
 		return Api->CreateVertexData();
 	}
 
 	// Render Commands
-	inline static void DrawIndexed(const std::shared_ptr<SGfxVertexData>& VertexData)
+	inline static void DrawIndexed(const StdShared<SGfxVertexData>& VertexData)
 	{
 		return Api->DrawIndexed(VertexData);
 	}
@@ -100,6 +82,8 @@ public:
 	{
 		return Api->Clear();
 	}
+
+	inline static SGraphicsApi& GetGraphicsApi() { return *Api; }
 
 private:
 	static EGfxApi CurrentApi;

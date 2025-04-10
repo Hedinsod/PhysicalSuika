@@ -17,21 +17,21 @@ public:
 
 	// Adding and deleting actors
 	template <class TEntity, class... Args>
-	std::shared_ptr<TEntity> AddEntity(Args... args);
-	bool ClipOutOfBoundaries(std::shared_ptr<AActor> Actor);
+	StdShared<TEntity> AddEntity(Args... args);
+	bool ClipOutOfBoundaries(StdShared<AActor> Actor);
 	void CullEntities();
 
 	void Tick(float DeltaTimeMs);
 
-	std::shared_ptr<ACamera> GetCamera()
+	StdShared<ACamera> GetCamera()
 	{
 		return Camera;
 	};
 
 private:
-	TSparseArray<std::shared_ptr<AActor>> Actors;
+	TSparseArray<StdShared<AActor>> Actors;
 
-	std::shared_ptr<ACamera> Camera;
+	StdShared<ACamera> Camera;
 
 	// for clipping
 	float Top, Bottom, Left, Right;
@@ -39,9 +39,9 @@ private:
 };
 
 template <class TEntity, class... Args>
-std::shared_ptr<TEntity> SGame::AddEntity(Args... args)
+StdShared<TEntity> SGame::AddEntity(Args... args)
 {
-	std::shared_ptr<TEntity> NewEntity = std::make_shared<TEntity>(args...);
+	StdShared<TEntity> NewEntity = MakeShared<TEntity>(std::forward<Args>(args)...);
 	GAssert(NewEntity);
 	Actors.Push(NewEntity);
 

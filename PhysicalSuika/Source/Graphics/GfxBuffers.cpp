@@ -73,10 +73,10 @@ void SGfxBufferLayout::CalculateOffsetAndStride()
 // ********** SGfxVertexData **************************************************
 // ****************************************************************************
 
-std::shared_ptr<SGfxVertexBuffer> SGfxVertexData::AddVertexData(const std::vector<float>& VertexData,
+StdShared<SGfxVertexBuffer> SGfxVertexData::AddVertexData(const std::vector<float>& VertexData,
                                                                 const SGfxBufferLayout& InLayout)
 {
-	std::shared_ptr<SGfxVertexBuffer> NewVertexBuffer = SGraphics::CreateVertexBuffer(VertexData);
+	StdShared<SGfxVertexBuffer> NewVertexBuffer = SGraphics::CreateVertexBuffer(VertexData);
 	VertexBuffers.push_back(NewVertexBuffer);
 
 	return NewVertexBuffer;

@@ -12,7 +12,7 @@ void Engine::Init()
 	Instance->PhyScene = std::make_unique<SPhyScene>(4);
 	GAssert(Instance->PhyScene);
 
-	Instance->Graphics = std::make_unique<SDraw>();
+	Instance->Graphics = std::make_unique<SGeometryPool>();
 	GAssert(Instance->Graphics);
 
 	Instance->LoadMaterials();
@@ -26,6 +26,6 @@ void Engine::Shutdown()
 
 void Engine::LoadMaterials()
 {
-	MatirialLibrary.Add("Berry", std::make_shared<FMaterial>(/*.Density*/ 0.0955f, /*.Friction*/ 0.2f, /*.GravityScale*/ 2.0f));
-	MatirialLibrary.Add("Glass", std::make_shared<FMaterial>(/*.Density*/    0.0f, /*.Friction*/ 0.4f, /*.GravityScale*/ 2.0f));
+	MatirialLibrary.Add("Berry", MakeShared<FMaterial>(/*.Density*/ 0.0955f, /*.Friction*/ 0.2f, /*.GravityScale*/ 2.0f));
+	MatirialLibrary.Add("Glass", MakeShared<FMaterial>(/*.Density*/    0.0f, /*.Friction*/ 0.4f, /*.GravityScale*/ 2.0f));
 }

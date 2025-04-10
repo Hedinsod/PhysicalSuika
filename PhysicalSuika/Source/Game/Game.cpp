@@ -26,7 +26,7 @@ SGame::~SGame()
 	Actors.Clear();
 }
 
-bool SGame::ClipOutOfBoundaries(std::shared_ptr<AActor> Actor)
+bool SGame::ClipOutOfBoundaries(StdShared<AActor> Actor)
 {
 	glm::vec2 Pos = Actor->GetTransform().GetPos();
 
@@ -37,7 +37,7 @@ void SGame::CullEntities()
 {
 	for (auto It = Actors.begin(); It != Actors.end(); It++)
 	{
-		std::shared_ptr<AActor> Actor = *It;
+		StdShared<AActor> Actor = *It;
 		if (Actor->IsPendingDelete() || ClipOutOfBoundaries(Actor))
 		{
 			Actors.Remove(It);
@@ -47,7 +47,7 @@ void SGame::CullEntities()
 
 void SGame::Tick(float DeltaTimeMs)
 {
-	for (std::shared_ptr<AActor> Actor : Actors)
+	for (StdShared<AActor> Actor : Actors)
 	{
 		Actor->Tick(DeltaTimeMs);
 	}

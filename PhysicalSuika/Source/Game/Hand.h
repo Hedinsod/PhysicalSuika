@@ -16,7 +16,7 @@ public:
 	virtual void OnCollide(const AActor* Opponent) {}
 	
 private:
-	std::shared_ptr<AFruit> Preview;
+	StdShared<AFruit> Preview;
 
 	CGeometry* Geo;
 

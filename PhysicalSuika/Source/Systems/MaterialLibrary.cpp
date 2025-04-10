@@ -2,7 +2,7 @@
 #include "MaterialLibrary.h"
 
 
-void SMatirialLibrary::Add(std::string MaterialTag, const std::shared_ptr<FMaterial>& InMaterial)
+void SMatirialLibrary::Add(std::string MaterialTag, const StdShared<FMaterial>& InMaterial)
 {
 	MaterialTable[MaterialTag] = InMaterial;
 }

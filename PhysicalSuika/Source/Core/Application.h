@@ -31,7 +31,7 @@ public:
 	}
 
 private:
-	std::unique_ptr<SGfxWindow> MainWindow;
+	StdScoped<SGfxWindow> MainWindow;
 
 	// Scene - holds all actors of the game
 	SGame* TheGame;

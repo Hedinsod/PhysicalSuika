@@ -23,10 +23,10 @@ struct FMaterial
 class SMatirialLibrary
 {
 public:
-	void Add(std::string MaterialTag, const std::shared_ptr<FMaterial>& InMaterial);
+	void Add(std::string MaterialTag, const StdShared<FMaterial>& InMaterial);
 	const FMaterial& Get(std::string MaterialTag);
 
 private:
-	std::unordered_map<std::string, std::shared_ptr<FMaterial>> MaterialTable;
+	std::unordered_map<std::string, StdShared<FMaterial>> MaterialTable;
 
 };

@@ -9,7 +9,7 @@ include "External/GLAD/premake-glad.lua"
 
 project "PhysicalSuika"
 	location "PhysicalSuika"
-	kind "WindowedApp"
+	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++20"
 	staticruntime "on"
@@ -22,6 +22,7 @@ project "PhysicalSuika"
 
 	files
 	{
+		"%{prj.name}/Content/**.glsl",
 		"%{prj.name}/Source/**.h",
 		"%{prj.name}/Source/**.cpp",
 	}

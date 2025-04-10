@@ -32,7 +32,7 @@ private:
 	const int32_t StepsNumber = 0;
 
 	// Physics solver
-	std::unique_ptr<SPhySolver> Solver;
+	StdScoped<SPhySolver> Solver;
 
 	// All bodies of the scene
 	TSparseArray<CRigidBodyComp> BodyPool;

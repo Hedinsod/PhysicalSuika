@@ -23,7 +23,11 @@ namespace Utility
 
 	void Log(const std::string& Message);
 
+	// Reads file into std::string and returns it
+	// If fails to open file prints in log and returns empty string
+	std::string LoadFileToString(const std::string& Path);
 }
+
 
 // see https://github.com/scottt/debugbreak
 #if defined( _MSC_VER )

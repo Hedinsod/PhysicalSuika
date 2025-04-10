@@ -100,7 +100,7 @@ public:
 	virtual void Bind() = 0;
 	virtual void Unbind() = 0;
 
-	virtual std::shared_ptr<SGfxVertexBuffer> AddVertexData(
+	virtual StdShared<SGfxVertexBuffer> AddVertexData(
 		const std::vector<float>& VertexData, 
 		const SGfxBufferLayout& InLayout);
 
@@ -109,7 +109,7 @@ public:
 	uint32_t GetIndexCount() { return IndexBuffer->GetCount(); }
 
 protected:
-	std::vector<std::shared_ptr<SGfxVertexBuffer>> VertexBuffers;
-	std::shared_ptr<SGfxIndexBuffer> IndexBuffer;
+	std::vector<StdShared<SGfxVertexBuffer>> VertexBuffers;
+	StdShared<SGfxIndexBuffer> IndexBuffer;
 
 };
