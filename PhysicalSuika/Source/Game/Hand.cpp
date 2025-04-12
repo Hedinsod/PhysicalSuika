@@ -9,32 +9,26 @@
 AHand::AHand(glm::vec2 InPos)
 	: AActor(InPos)
 {
-	Geo = Engine::GetGraphics().CreateGeometry(this);
+	std::vector<glm::vec2> Points = {
+			glm::vec2(-1.0f, -1.5f),
+			glm::vec2(-1.3f, -0.7f),
+			glm::vec2(-1.0f,  0.0f),
+			glm::vec2(-0.3f,  0.0f),
+			glm::vec2(0.0f,  0.3f),
+			glm::vec2(0.3f,  0.0f),
+			glm::vec2(1.0f,  0.0f),
+			glm::vec2(1.3f, -0.7f),
+			glm::vec2(1.0f, -1.5f)
+	};
 
-	FColorRGB Color({ 200, 165, 100 });
+	GeoHandle = Engine::GetGraphics().CreateGeometry(this);
+	(*GeoHandle).Import(Points);
 
-	Geo->SetVertices({
-		-1.0f, -1.5f,
-		-1.3f, -0.7f,
-		-1.0f,  0.0f,
-		-0.3f,  0.0f,
-		 0.0f,  0.3f,
-		 0.3f,  0.0f,
-		 1.0f,  0.0f,
-		 1.3f, -0.7f,
-		 1.0f, -1.5f
-		});
-
-	Geo->SetIndices({
-		0, 1, 2, 3, 4, 5, 6, 7, 8
-		});
-	Geo->BuildGeometry();
-	Geo->SetColor(FColorRGB(0, 0, 0));
 }
 
 AHand::~AHand()
 {
-	Engine::GetGraphics().RemoveGeometry(Geo);
+	Engine::GetGraphics().RemoveGeometry(GeoHandle);
 }
 
 void AHand::Tick(float DeltaTimeMs)

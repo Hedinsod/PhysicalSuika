@@ -1,34 +1,22 @@
 #include "pch.h"
 #include "GeometryComp.h"
 
-#include "Graphics/Graphics.h"
-#include "Graphics/GfxBuffers.h"
-
-
-SGfxBufferLayout Mixed = {
-	{ "Vertices", EGfxShaderData::Float3 },
-	{ "Color", EGfxShaderData::Float3 },
-};
-
-SGfxBufferLayout Plain2 = {
-	{ "Vertices", EGfxShaderData::Float2 }
-};
-
-/*
-SGfxBufferLayout Plain3 = {
-	{ "Whatever", EGfxShaderData::Float3 }
-};
-*/
 
 CGeometry::CGeometry(AActor* InOwner)
 	: CComponent(InOwner)
-	, Color(1.0f, 0.0f, 1.0f) // Eye bleeding magenta
 {
 }
 
-void CGeometry::SetVertices(const std::vector<float>& InVertices)
+void CGeometry::Import(const std::vector<glm::vec2>& InVertices)
 {
-	Vertices = InVertices;
+	Indices.reserve(InVertices.size() + 1);
+	Vertices.reserve(InVertices.size());
+	for (int32_t i = 0; i < InVertices.size(); i++)
+	{
+		Vertices.emplace_back(InVertices[i].x, InVertices[i].y, 0.0f, 1.0f);
+		Indices.emplace_back(i);
+	}
+	//Indices.emplace_back(0);
 }
 
 void CGeometry::SetIndices(const std::vector<uint32_t>& InIndices)
@@ -36,9 +24,7 @@ void CGeometry::SetIndices(const std::vector<uint32_t>& InIndices)
 	Indices = InIndices;
 }
 
-void CGeometry::BuildGeometry()
+void CGeometry::SetIndices(std::vector<uint32_t>&& InIndices)
 {
-	VertexData = SGraphics::CreateVertexData();
-	VertexData->AddVertexData(Vertices, Plain2);
-	VertexData->SetIndexData(Indices);
+	Indices = std::move(InIndices);
 }

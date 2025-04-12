@@ -6,36 +6,27 @@
 
 #include <glad/glad.h>
 
-StdScoped<SGfxShaderFactory> SOpenGLGraphics::GetShaderFactory()
-{
-	return MakeScoped<SOpenGLShaderFactory>();
-}
-
 // Fabrics
 SGfxWindow* SOpenGLGraphics::CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle)
 {
     return new SOpenGLWindow(InWidth, InHeight, InTitle);
 }
 
-StdShared<SGfxVertexBuffer> SOpenGLGraphics::CreateVertexBuffer(const std::vector<float>& VertexData)
+StdScoped<SGfxShaderFactory> SOpenGLGraphics::GetShaderFactory()
 {
-	return MakeShared<SOpenGLVertexBuffer>(VertexData);
+	return MakeScoped<SOpenGLShaderFactory>();
+}
+StdScoped<SGfxBufferFactory> SOpenGLGraphics::GetBufferFactory()
+{
+	return MakeScoped<SOpenGLBufferFactory>();
 }
 
-StdShared<SGfxIndexBuffer> SOpenGLGraphics::CreateIndexBuffer(const std::vector<uint32_t>& IndexData)
-{
-	return MakeShared<SOpenGLIndexBuffer>(IndexData);
-}
 
-StdShared<SGfxVertexData> SOpenGLGraphics::CreateVertexData()
-{
-	return MakeShared<SOpenGLVertexArray>();
-}
 
 // Render Commands
-void SOpenGLGraphics::DrawIndexed(const StdShared<SGfxVertexData>& VertexData)
+void SOpenGLGraphics::DrawIndexed(uint32_t IndexCount)
 {
-	glDrawElements(GL_LINE_STRIP, VertexData->GetIndexCount(), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_LINE_STRIP, IndexCount, GL_UNSIGNED_INT, nullptr);
 }
 
 void SOpenGLGraphics::SetClearColor(const FColorRGB& InColor)

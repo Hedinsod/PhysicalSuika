@@ -2,6 +2,7 @@
 
 #include "Actor.h"
 #include "Physics/RigidBodyComp.h"
+#include "Renderer/GeometryHandle.h"
 
 
 class CGeometry;
@@ -13,7 +14,7 @@ public:
 	virtual ~AGlass() override;
 
 private:
-	CGeometry* Geo;
+	FGeometryHandle GeoHandle;
 
 	CBodyHandle Left;
 	CBodyHandle Right;

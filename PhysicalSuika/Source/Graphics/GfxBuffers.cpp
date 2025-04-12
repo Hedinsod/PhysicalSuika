@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "GfxBuffers.h"
-#include "Graphics.h"
 
 
 // ****************************************************************************
@@ -72,8 +71,8 @@ void SGfxBufferLayout::CalculateOffsetAndStride()
 // ****************************************************************************
 // ********** SGfxVertexData **************************************************
 // ****************************************************************************
-
-StdShared<SGfxVertexBuffer> SGfxVertexData::AddVertexData(const std::vector<float>& VertexData,
+/*
+StdShared<SGfxVertexBuffer> SGfxVertexArray::AddVertexData(const std::vector<float>& VertexData,
                                                                 const SGfxBufferLayout& InLayout)
 {
 	StdShared<SGfxVertexBuffer> NewVertexBuffer = SGraphics::CreateVertexBuffer(VertexData);
@@ -82,7 +81,8 @@ StdShared<SGfxVertexBuffer> SGfxVertexData::AddVertexData(const std::vector<floa
 	return NewVertexBuffer;
 }
 
-void SGfxVertexData::SetIndexData(const std::vector<uint32_t>& IndexData)
+void SGfxVertexArray::SetIndexData(const std::vector<uint32_t>& IndexData)
 {
 	IndexBuffer = SGraphics::CreateIndexBuffer(IndexData);
 }
+*/

@@ -14,6 +14,7 @@ public:
 		, Height(InHeight)
 	{
 	}
+	virtual ~SGfxWindow() = default;
 
 	virtual void Destroy() = 0;
 	virtual void Tick() {}

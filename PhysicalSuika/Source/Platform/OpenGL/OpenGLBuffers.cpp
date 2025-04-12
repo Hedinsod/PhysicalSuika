@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "OpenGLBuffers.h"
-#include "Graphics/Graphics.h"
 
 #include <glad/glad.h>
 
@@ -9,17 +8,16 @@
 // ********** SOpenGLVertexBuffer *********************************************
 // ****************************************************************************
 
-SOpenGLVertexBuffer::SOpenGLVertexBuffer(const std::vector<float>& VertexData)
-{
-	glGenBuffers(1, &BufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, BufferId);
-	glBufferData(GL_ARRAY_BUFFER, VertexData.size() * sizeof(float), VertexData.data(), GL_STATIC_DRAW);
-}
-
 SOpenGLVertexBuffer::~SOpenGLVertexBuffer()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glDeleteBuffers(1, &BufferId);
+}
+
+void SOpenGLVertexBuffer::UploadVertices(void* Data, size_t Size)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, BufferId); // ?
+	glBufferData(GL_ARRAY_BUFFER, Size, Data, GL_DYNAMIC_DRAW);
 }
 
 void SOpenGLVertexBuffer::Bind()
@@ -58,7 +56,7 @@ static GLenum GetGLElementType(EGfxShaderData Data)
 
 void SOpenGLVertexBuffer::SetLayout(const SGfxBufferLayout& InLayout)
 {
-	// Bind() ??
+	glBindBuffer(GL_ARRAY_BUFFER, BufferId);
 
 	int i = 0;
 	for (const auto& Element : InLayout)
@@ -80,18 +78,17 @@ void SOpenGLVertexBuffer::SetLayout(const SGfxBufferLayout& InLayout)
 // ********** SOpenGLIndexBuffer **********************************************
 // ****************************************************************************
 
-SOpenGLIndexBuffer::SOpenGLIndexBuffer(const std::vector<uint32_t>& IndexData)
-	: Count((uint32_t)IndexData.size())
-{
-	glGenBuffers(1, &BufferId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, BufferId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, IndexData.size() * sizeof(uint32_t), IndexData.data(), GL_STATIC_DRAW);
-}
-
 SOpenGLIndexBuffer::~SOpenGLIndexBuffer()
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glDeleteBuffers(1, &BufferId);
+}
+
+void SOpenGLIndexBuffer::UploadIndices(uint32_t* Data, size_t Size)
+{
+	// ? ? ?
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, BufferId);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Size, Data, GL_DYNAMIC_DRAW);
 }
 
 void SOpenGLIndexBuffer::Bind()
@@ -105,9 +102,67 @@ void SOpenGLIndexBuffer::Unbind()
 }
 
 // ****************************************************************************
+// ********** SGfxBufferFactory ***********************************************
+// ****************************************************************************
+
+SOpenGLBufferFactory::~SOpenGLBufferFactory() = default;
+
+StdShared<SGfxVertexBuffer> SOpenGLBufferFactory::CreateVertexBuffer(const std::vector<float>& VertexData)
+{
+	uint32_t RenderId;
+	glGenBuffers(1, &RenderId);
+	glBindBuffer(GL_ARRAY_BUFFER, RenderId);
+	glBufferData(GL_ARRAY_BUFFER, VertexData.size() * sizeof(float), VertexData.data(), GL_STATIC_DRAW);
+
+	return MakeShared<SOpenGLVertexBuffer>(RenderId);
+}
+
+StdShared<SGfxVertexBuffer> SOpenGLBufferFactory::CreateVertexBuffer(const float* Data, size_t Count)
+{
+	uint32_t RenderId;
+	glGenBuffers(1, &RenderId);
+	glBindBuffer(GL_ARRAY_BUFFER, RenderId);
+	glBufferData(GL_ARRAY_BUFFER, Count * sizeof(float), Data, GL_STATIC_DRAW);
+
+	return MakeShared<SOpenGLVertexBuffer>(RenderId);
+}
+
+StdShared<SGfxVertexBuffer> SOpenGLBufferFactory::CreateVertexBuffer(size_t Size)
+{
+	uint32_t RenderId;
+	glGenBuffers(1, &RenderId);
+	glBindBuffer(GL_ARRAY_BUFFER, RenderId);
+	glBufferData(GL_ARRAY_BUFFER, Size, nullptr, GL_STATIC_DRAW);
+
+	return MakeShared<SOpenGLVertexBuffer>(RenderId);
+}
+
+StdShared<SGfxIndexBuffer> SOpenGLBufferFactory::CreateIndexBuffer(const std::vector<uint32_t>& IndexData)
+{
+	uint32_t RenderId;
+	glGenBuffers(1, &RenderId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, RenderId);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, IndexData.size() * sizeof(uint32_t), IndexData.data(), GL_STATIC_DRAW);
+
+	return MakeShared<SOpenGLIndexBuffer>(RenderId);
+}
+
+StdShared<SGfxIndexBuffer> SOpenGLBufferFactory::CreateIndexBuffer(size_t Size)
+{
+	uint32_t RenderId;
+	glGenBuffers(1, &RenderId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, RenderId);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Size, nullptr, GL_STATIC_DRAW);
+
+	return MakeShared<SOpenGLIndexBuffer>(RenderId);
+}
+
+
+// ****************************************************************************
 // ********** SOpenGLVertexArray **********************************************
 // ****************************************************************************
 
+/*
 SOpenGLVertexArray::SOpenGLVertexArray()
 {
 	glGenVertexArrays(1, &ArrayId);
@@ -128,7 +183,7 @@ void SOpenGLVertexArray::Unbind()
 }
 
 StdShared<SGfxVertexBuffer> SOpenGLVertexArray::AddVertexData(const std::vector<float>& VertexData,
-                                                      const SGfxBufferLayout& InLayout)
+													  const SGfxBufferLayout& InLayout)
 {
 	StdShared<SGfxVertexBuffer> NewVertexBuffer = SGfxVertexData::AddVertexData(VertexData, InLayout);
 
@@ -146,4 +201,4 @@ void SOpenGLVertexArray::SetIndexData(const std::vector<uint32_t>& IndexData)
 	glBindVertexArray(ArrayId);
 	IndexBuffer->Bind();
 }
-
+*/

@@ -65,6 +65,9 @@ class SGfxVertexBuffer
 public:
 	virtual ~SGfxVertexBuffer() = default;
 
+	// Upload any data of a given size in bytes
+	virtual void UploadVertices(void* Data, size_t Size) = 0;
+
 	virtual void Bind() = 0;
 	virtual void Unbind() = 0;
 
@@ -81,27 +84,55 @@ class SGfxIndexBuffer
 public:
 	virtual ~SGfxIndexBuffer() = default;
 
+	virtual void UploadIndices(uint32_t* Data, size_t Size) = 0;
+
 	virtual void Bind() = 0;
 	virtual void Unbind() = 0;
-
-	virtual uint32_t GetCount() = 0;
 
 };
 
 // ****************************************************************************
-// ********** SGfxVertexData **************************************************
+// ********** SGfxBufferFactory ***********************************************
 // ****************************************************************************
 
-class SGfxVertexData
+class SGfxBufferFactory
 {
 public:
-	virtual ~SGfxVertexData() = default;
+	virtual ~SGfxBufferFactory() = default;
+
+	// VBOs
+	virtual StdShared<SGfxVertexBuffer> CreateVertexBuffer(const std::vector<float>& VertexData) = 0;
+	virtual StdShared<SGfxVertexBuffer> CreateVertexBuffer(const float* Data, size_t Size) = 0;
+	virtual StdShared<SGfxVertexBuffer> CreateVertexBuffer(size_t Size) = 0;
+
+	// IBO(s)
+	virtual StdShared<SGfxIndexBuffer> CreateIndexBuffer(const std::vector<uint32_t>& IndexData) = 0;
+	virtual StdShared<SGfxIndexBuffer> CreateIndexBuffer(size_t Size) = 0;
+
+	// VAO(s) -- Geometry Object | OpenGL specific?
+	/*
+	virtual StdShared<SGfxVertexArray> CreateVertexArray(const StdShared<SGfxVertexBuffer>&,
+	                                                     const StdShared<SGfxIndexBuffer>&,
+	                                                     SGfxBufferLayout&&) = 0;
+														 */
+
+};
+
+
+// ****************************************************************************
+// ********** SGfxVertexData **************************************************
+// ****************************************************************************
+/*
+class SGfxVertexArray
+{
+public:
+	virtual ~SGfxVertexArray() = default;
 
 	virtual void Bind() = 0;
 	virtual void Unbind() = 0;
 
 	virtual StdShared<SGfxVertexBuffer> AddVertexData(
-		const std::vector<float>& VertexData, 
+		const std::vector<float>& VertexData,
 		const SGfxBufferLayout& InLayout);
 
 	virtual void SetIndexData(const std::vector<uint32_t>& IndexData);
@@ -113,3 +144,4 @@ protected:
 	StdShared<SGfxIndexBuffer> IndexBuffer;
 
 };
+*/

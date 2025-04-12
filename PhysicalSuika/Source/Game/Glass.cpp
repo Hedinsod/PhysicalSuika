@@ -7,21 +7,15 @@
 AGlass::AGlass(glm::vec2 InPos)
 	: AActor(InPos)
 {
-	Geo = Engine::GetGraphics().CreateGeometry(this);
+	std::vector<glm::vec2> Points = { 
+			glm::vec2(-5.0f, 16.0f),
+			glm::vec2(-5.0f, 0.0f),
+			glm::vec2(5.0f, 0.0f),
+			glm::vec2(5.0f, 16.0f)
+		};
 
-	FColorRGB GlassColor({ 125, 125, 125 });
-
-	Geo->SetVertices({
-		 -5.0f, 16.0f,
-		 -5.0f,  0.0f,
-		  5.0f,  0.0f,
-		  5.0f, 16.0f
-		});
-	Geo->SetIndices({
-		0, 1, 2, 3
-		});
-	Geo->BuildGeometry();
-	Geo->SetColor(FColorRGB(0,0,0));
+	GeoHandle = Engine::GetGraphics().CreateGeometry(this);
+	(*GeoHandle).Import(Points);
 
 	FColliderShape* LeftBox = FColliderShape::Create<FBoxCollider>({ -5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
 	FColliderShape* RightBox = FColliderShape::Create<FBoxCollider>({ 5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
@@ -34,7 +28,7 @@ AGlass::AGlass(glm::vec2 InPos)
 
 AGlass::~AGlass()
 {
-	Engine::GetGraphics().RemoveGeometry(Geo);
+	Engine::GetGraphics().RemoveGeometry(GeoHandle);
 
 	Engine::GetPhyScene().RemoveRigidBody(Left);
 	Engine::GetPhyScene().RemoveRigidBody(Right);

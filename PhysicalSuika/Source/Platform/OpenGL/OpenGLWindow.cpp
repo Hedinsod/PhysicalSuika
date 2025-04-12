@@ -2,7 +2,7 @@
 
 #include "Core/Application.h"
 #include "Core/Input.h"
-#include "Graphics/Graphics.h"
+
 #include "Platform/OpenGL/OpenGLWindow.h"
 #include "Platform/OpenGL/OpenGLContext.h"
 

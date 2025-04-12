@@ -2,15 +2,14 @@
 
 #include "Core/Application.h"
 #include "Core/Timestep.h"
-#include "Graphics/GfxWindow.h"
 #include "Graphics/Graphics.h"
+#include "Graphics/GfxWindow.h"
 #include "Systems/Engine.h"
 #include "Game/Game.h"
 
-#include "Renderer/Renderer.h"
-
 
 Application::Application()
+	: TheGame(nullptr)
 {
 }
 
@@ -21,7 +20,6 @@ void Application::Init()
 	MainWindow.reset(SGraphics::CreateGfxWindow(ScreenWidth, ScreenHeight, "Physical Suika"));
 
 	Engine::Init();
-	SRenderer::Init();
 
 	TheGame = new SGame();
 	GAssert(TheGame);
@@ -58,7 +56,9 @@ void Application::Run()
 
 		// Render everything
 		SGraphics::Clear();
-		Engine::GetGraphics().Tick(TheGame->GetCamera());
+		Engine::GetGraphics().Begin(TheGame->GetCamera());
+		Engine::GetGraphics().Tick();
+		Engine::GetGraphics().Finish();
 
 		// Poll input and swap buffers
 		MainWindow->Tick();

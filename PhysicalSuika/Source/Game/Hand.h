@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Actor.h"
+#include "Renderer/GeometryHandle.h"
 
 class AFruit;
 class CGeometry;
@@ -18,7 +19,7 @@ public:
 private:
 	StdShared<AFruit> Preview;
 
-	CGeometry* Geo;
+	FGeometryHandle GeoHandle;
 
 	const float SpawnCooldownStart = 1000.0f;
 	float SpawnCooldown = 0.0f;

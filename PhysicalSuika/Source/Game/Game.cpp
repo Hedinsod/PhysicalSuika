@@ -6,7 +6,6 @@
 #include "Game/Glass.h"
 #include "Game/Fruit.h"
 #include "Game/Hand.h"
-#include "Renderer/Renderer.h"
 
 
 SGame::SGame()

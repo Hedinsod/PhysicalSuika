@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "GfxShader.h"
-#include "Graphics.h"
-#include "Core/Utility.h"
 
 
 static EGfxShaderType GetShaderType(const std::string& Type)

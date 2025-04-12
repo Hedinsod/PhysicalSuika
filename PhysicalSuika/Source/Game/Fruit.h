@@ -3,6 +3,8 @@
 #include "Actor.h"
 #include "Physics/RigidBodyComp.h"
 
+#include "Renderer/GeometryHandle.h"
+
 class CGeometry;
 
 enum class EFruitType : int16_t
@@ -39,7 +41,7 @@ public:
 	void Release();
 
 private:
-	CGeometry* Geo;
+	FGeometryHandle GeoHandle;
 	CBodyHandle Box;
 
 	EFruitType Type;

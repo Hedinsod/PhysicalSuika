@@ -1,29 +1,22 @@
 #pragma once
-#include "Graphics/Graphics.h"
-#include <vector>
 
+#include <vector>
 #include "Systems/Components.h"
 
 class CGeometry : public CComponent
 {
+	friend class SGeometryPool;
 public:
 	CGeometry(AActor* InOwner);
 
-	void SetVertices(const std::vector<float>& InVertices);
+	void Import(const std::vector<glm::vec2>& InVertices);
+
 	void SetIndices(const std::vector<uint32_t>& InIndices);
+	void SetIndices(std::vector<uint32_t>&& InIndices);
 
-	StdShared<SGfxVertexData> GetVertexData() const { return VertexData; }
-	void BuildGeometry();
-
-	void SetColor(const FColorRGB& InColor) { Color = InColor; }
-	const FColorLinear& GetColor() { return Color; }
 
 private:
-	StdShared<SGfxVertexData> VertexData;
-
-	std::vector<float> Vertices;
+	std::vector<glm::vec4> Vertices;
 	std::vector<uint32_t> Indices;
-
-	FColorLinear Color;
 
 };

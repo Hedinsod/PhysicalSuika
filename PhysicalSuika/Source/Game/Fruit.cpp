@@ -2,9 +2,8 @@
 #include "Fruit.h"
 #include "Game.h"
 #include "Systems/Engine.h"
-#include "Renderer/GeometryComp.h"
-
-#include <sstream>
+#include "Renderer/GeometryPool.h"
+#include "Graphics/Types.h"
 
 
 static std::array<FColorRGB, (int16_t)EFruitType::Count> FruitColors =
@@ -30,29 +29,26 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	float Scale = 0.4f + 0.15f * ((int16_t)Type + 1);
 	Trans.SetScale({ Scale, Scale });
 
+
+
 	// Graphics
-	FColorRGB Color({ 250, 5, 5 });
-	Geo = Engine::GetGraphics().CreateGeometry(this);
-	
-	std::vector<float> Points;
-	std::vector<uint32_t> Inds;
+	// {
+	GeoHandle = Engine::GetGraphics().CreateGeometry(this);
+
+	// Generate points
+	std::vector<glm::vec2> Points;
+	Points.emplace_back(0.0f, 0.0f);
 	uint32_t i = 0;
-	Points.push_back(0.0f);
-	Points.push_back(0.0f);
-	Inds.push_back(i++);
-	for (float a = 0.f; a <= 360.f; a += 5.f)
+	for (float a = 0.f; a <= 360.f; a += 60.f)
 	{
-		Points.push_back(glm::sin(glm::radians(a)));
-		Points.push_back(glm::cos(glm::radians(a)));
-		Inds.push_back(i++);
+		Points.emplace_back(glm::sin(glm::radians(a)), glm::cos(glm::radians(a)));
 	}
-	Inds.push_back(1);
-	Geo->SetVertices(Points);
-	Geo->SetIndices(Inds);
-	Geo->BuildGeometry();
+	// Import into component
+	(*GeoHandle).Import(Points);
+	// }
 
-	Geo->SetColor(FruitColors[(int16_t)Type]);
 
+	// Physics
 	FColliderShape* Shape = FColliderShape::Create<FCircleCollider>({ 0, 0 }, Scale);
 	Box = Engine::GetPhyScene().CreateRigidBody(this, "Berry", Shape);
 
@@ -62,7 +58,7 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 AFruit::~AFruit()
 {
 	Engine::GetPhyScene().RemoveRigidBody(Box);
-	Engine::GetGraphics().RemoveGeometry(Geo);
+	Engine::GetGraphics().RemoveGeometry(GeoHandle);
 }
 
 void AFruit::Tick(float DeltaTimeMs)

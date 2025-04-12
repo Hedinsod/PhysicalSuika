@@ -2,32 +2,93 @@
 
 #include "GeometryPool.h"
 #include "Game/Actor.h"
-#include "Renderer/Renderer.h"
-#include "Renderer/GeometryComp.h"
+#include "Game/Camera.h"
+
 #include "Graphics/Graphics.h"
-#include "Graphics/GfxContext.h"
 
 
-CGeometry* SGeometryPool::CreateGeometry(AActor* InOwner)
+static const int32_t MaxHexagones = 1000;
+static const int32_t MaxVertices = MaxHexagones * 6;
+static const int32_t MaxIndices = MaxHexagones * 7;
+
+SGeometryPool::SGeometryPool()
 {
-	CGeometry* Elem = new CGeometry(InOwner);
-	GeometryPool.insert(Elem);
+	// Make shader
+	StdScoped<SGfxShaderFactory> ShaderFactory = SGraphics::GetShaderFactory();
 
-	return Elem;
+	ShaderFactory->LoadSourceFromFile("Content/Shaders/BatchShader.glsl");
+	Shader = ShaderFactory->Build();
+
+	// Prepare VBO, IBO, VAO:
+	StdScoped<SGfxBufferFactory> BuffersFactory = SGraphics::GetBufferFactory();
+	VBO = BuffersFactory->CreateVertexBuffer(MaxVertices);
+	IBO = BuffersFactory->CreateIndexBuffer(MaxIndices);
+	//RenderVAO = BuffersFactory->CreateVertexArray(VBO, IBO, {{ "Vertices", EGfxShaderData::Float3 }});
+
+	VertexData = new FVertex[MaxVertices];
+	IndexData = new uint32_t[MaxIndices];
+	NextVertex = 0;
+	NextIndex = 0;
+	IndexOffset = 0;
 }
-void SGeometryPool::RemoveGeometry(CGeometry* Geo)
+
+SGeometryPool::~SGeometryPool()
 {
-	GeometryPool.erase(Geo);
-	delete Geo;
+	delete[] VertexData;
+	delete[] IndexData;
 }
 
-void SGeometryPool::Tick(const StdShared<ACamera>& Camera)
+FGeometryHandle SGeometryPool::CreateGeometry(AActor* InOwner)
 {
-	SRenderer::Begin(Camera);
-	for (CGeometry* Geo : GeometryPool)
+	int32_t Id = GeometryPool.Emplace(InOwner);
+
+	return FGeometryHandle(Id);
+}
+void SGeometryPool::RemoveGeometry(FGeometryHandle GeoId)
+{
+	GeometryPool.Remove(GeoId.Id);
+}
+
+void SGeometryPool::Begin(const StdShared<ACamera>& Camera)
+{
+	Shader->Bind();
+	Shader->SetParameter("u_ViewProj", Camera->GetVP());
+
+	NextVertex = 0;
+	NextIndex = 0;
+	IndexOffset = 0;
+}
+
+void SGeometryPool::Tick()
+{
+	if (NextIndex >= MaxIndices)
 	{
-		SRenderer::Sumbit(Geo, Geo->GetOwner().GetTransform(), Geo->GetColor());
+		// Restart
+	}
+
+	for (CGeometry& Geo : GeometryPool)
+	{
+		const glm::mat4& Model = Geo.GetOwner().GetTransform().GetModel();
+		for (const glm::vec4& Vertex : Geo.Vertices)
+		{
+			VertexData[NextVertex].Position = Model * Vertex;
+			NextVertex++;
+		}
+
+		for (const uint32_t& Index : Geo.Indices)
+		{
+			IndexData[NextIndex++] = IndexOffset + Index;
+		}
+
+		IndexOffset += static_cast<uint32_t>(Geo.Indices.size());
 	}
 }
 
+void SGeometryPool::Finish()
+{
+	VBO->UploadVertices(VertexData, NextVertex * sizeof(FVertex));
+	VBO->SetLayout({ { "Position", EGfxShaderData::Float4 } });
+	IBO->UploadIndices(IndexData, NextIndex * sizeof(uint32_t));
 
+	SGraphics::DrawIndexed(NextIndex);
+}
