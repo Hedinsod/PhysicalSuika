@@ -5,6 +5,8 @@
 class SOpenGLGraphics : public SGraphicsApi
 {
 public:
+	SOpenGLGraphics();
+	
 	// Fabrics
 	virtual SGfxWindow* CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle) override;
 

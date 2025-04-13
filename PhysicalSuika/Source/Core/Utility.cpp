@@ -17,7 +17,7 @@ namespace Utility
 		return (Random % (Up - Low)) + Low + Correction;
 	}
 
-#if defined( _DEBUG )
+#if defined(BUILD_DEBUG) || defined (BUILD_DEVELOPMENT)
 	void AssertLog(const char* Condition, const char* FileName, int32_t LineNumber)
 	{
 		std::cerr << "Assertion failed: " << Condition 

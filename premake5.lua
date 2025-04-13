@@ -39,7 +39,6 @@ project "PhysicalSuika"
 	{
 		"GLFW",
 		"GLAD",
-		"winmm.lib"
 	}
 
 	filter "system:windows"
@@ -61,7 +60,4 @@ project "PhysicalSuika"
 	filter "configurations:Release"
 		defines "BUILD_RELEASE"
 		optimize "on"
-		
---	filter "system:windows"
---		buildoptions "/utf-8"
 	

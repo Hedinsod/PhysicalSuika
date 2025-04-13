@@ -29,7 +29,8 @@ void SOpenGLWindow::Create()
 {
 	if (Counter == 0)
 	{
-		GAssert(glfwInit());
+		int Success = glfwInit();
+		GAssert(Success);
 		glfwSetErrorCallback(ProcessError);
 	}
 

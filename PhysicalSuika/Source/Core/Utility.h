@@ -40,7 +40,7 @@ namespace Utility
 #define GBreakPoint assert( 0 )
 #endif
 
-#if defined( _DEBUG )
+#if defined(BUILD_DEBUG) || defined (BUILD_DEVELOPMENT)
 namespace Utility
 {
 	void AssertLog(const char* condition, const char* fileName, int32_t lineNumber);
