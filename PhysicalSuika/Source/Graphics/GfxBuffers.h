@@ -63,7 +63,12 @@ private:
 class SGfxVertexBuffer
 {
 public:
+	SGfxVertexBuffer() = default;
 	virtual ~SGfxVertexBuffer() = default;
+
+	// Non-copyable
+	SGfxVertexBuffer(const SGfxVertexBuffer&) = delete;
+	SGfxVertexBuffer& operator=(const SGfxVertexBuffer&) = delete;
 
 	// Upload any data of a given size in bytes
 	virtual void UploadVertices(void* Data, size_t Size) = 0;
@@ -82,7 +87,12 @@ public:
 class SGfxIndexBuffer
 {
 public:
+	SGfxIndexBuffer() = default;
 	virtual ~SGfxIndexBuffer() = default;
+
+	// Non-copyable
+	SGfxIndexBuffer(const SGfxIndexBuffer&) = delete;
+	SGfxIndexBuffer& operator=(const SGfxIndexBuffer&) = delete;
 
 	virtual void UploadIndices(uint32_t* Data, size_t Size) = 0;
 

@@ -34,8 +34,9 @@ CRigidBodyComp::CRigidBodyComp(CRigidBodyComp&& Other) noexcept
 {
 	BasicCopy(Other);
 	Other.Shape = nullptr;
-	Other.OnDestruction.InvocationItem = nullptr;
-	Other.OnCollision.InvocationItem = nullptr;
+
+	Other.OnDestruction.InvocationList.clear();
+	Other.OnCollision.InvocationList.clear();
 }
 
 CRigidBodyComp::~CRigidBodyComp()
@@ -68,8 +69,8 @@ CRigidBodyComp& CRigidBodyComp::operator=(CRigidBodyComp&& Other) noexcept
 	if (Shape) delete Shape;
 	Shape = Other.Shape;
 	Other.Shape = nullptr;
-	Other.OnDestruction.InvocationItem = nullptr;
-	Other.OnCollision.InvocationItem = nullptr;
+	Other.OnDestruction.InvocationList.clear();
+	Other.OnCollision.InvocationList.clear();
 
 	return *this;
 }
@@ -117,5 +118,5 @@ void CRigidBodyComp::IntegratePosition(float TimeStep)
 	Velocity = glm::clamp(Velocity, -MaxSpeed, MaxSpeed);
 
 	Owner->GetTransform().Translate(Velocity * TimeStep);
-	Owner->GetTransform().RotRad(AngularVelocity * TimeStep);
+	Owner->GetTransform().Rotate(AngularVelocity * TimeStep);
 }

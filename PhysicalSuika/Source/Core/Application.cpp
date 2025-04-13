@@ -8,38 +8,41 @@
 #include "Game/Game.h"
 
 
-Application::Application()
-	: TheGame(nullptr)
-{
-}
+Application* GApp = nullptr;
 
+Application::Application() = default;
+
+// All systems should be initialized when GApp is already constructed
 void Application::Init()
 {
 	SGraphics::Init(EGfxApi::OpenGL);
 
-	MainWindow.reset(SGraphics::CreateGfxWindow(ScreenWidth, ScreenHeight, "Physical Suika"));
+	TheWindow.reset(SGraphics::CreateGfxWindow(TheSettings.WindowWidth, TheSettings.WindowHeight, "Physical Suika"));
+	GAssert(TheWindow);
 
 	Engine::Init();
 
-	TheGame = new SGame();
+	TheGame = MakeScoped<SGame>();
 	GAssert(TheGame);
 
-	OnResize(ScreenWidth, ScreenHeight);
+	// Notify every system about initial window size
+	OnResize(TheSettings.WindowWidth, TheSettings.WindowHeight);
 }
 
 Application::~Application()
 {
-	delete TheGame;
+	// Eventually not so smart pointer 
+	TheGame.reset();
 
 	Engine::Shutdown();
+	TheWindow->Destroy();
 
-	MainWindow->Destroy();
 	SGraphics::Shutdown();
 }
 
 void Application::Run()
 {
-	STimestep Step(TargetFPS, MaxFrametimeMs);
+	STimestep Step(TheSettings.TargetFPS, TheSettings.MaxFrametimeMs);
 
 	const FColorRGB Background = { 250, 250, 250 };
 	SGraphics::SetClearColor(Background);
@@ -61,7 +64,7 @@ void Application::Run()
 		Engine::GetGraphics().Finish();
 
 		// Poll input and swap buffers
-		MainWindow->Tick();
+		TheWindow->Tick();
 
 		// Delete unused
 		TheGame->CullEntities();

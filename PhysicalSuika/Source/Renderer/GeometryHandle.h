@@ -9,6 +9,6 @@ struct FGeometryHandle
 
 	CGeometry& operator*();
 	const CGeometry& operator*() const;
-	CGeometry& operator->();
-	const CGeometry& operator->() const;
+	CGeometry* operator->();
+	const CGeometry* operator->() const;
 };

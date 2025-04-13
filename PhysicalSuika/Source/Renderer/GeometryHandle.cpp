@@ -13,12 +13,12 @@ const CGeometry& FGeometryHandle::operator*() const
 	return Engine::GetGraphics().GeometryPool[Id];
 }
 
-CGeometry& FGeometryHandle::operator->()
+CGeometry* FGeometryHandle::operator->()
 {
-	return Engine::GetGraphics().GeometryPool[Id];
+	return &Engine::GetGraphics().GeometryPool[Id];
 }
 
-const CGeometry& FGeometryHandle::operator->() const
+const CGeometry* FGeometryHandle::operator->() const
 {
-	return Engine::GetGraphics().GeometryPool[Id];
+	return &Engine::GetGraphics().GeometryPool[Id];
 }

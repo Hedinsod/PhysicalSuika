@@ -19,7 +19,10 @@ SOpenGLWindow::SOpenGLWindow(int32_t InWidth, int32_t InHeight, const std::strin
 
 SOpenGLWindow::~SOpenGLWindow()
 {
-	Destroy();
+	if (NativeWindow)
+	{
+		Destroy();
+	}
 }
 
 void SOpenGLWindow::Create()
@@ -66,6 +69,7 @@ void SOpenGLWindow::Create()
 void SOpenGLWindow::Destroy()
 {
 	glfwDestroyWindow(NativeWindow);
+	NativeWindow = nullptr;
 
 	delete GfxContext;
 	GfxContext = nullptr;

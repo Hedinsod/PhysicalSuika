@@ -8,19 +8,22 @@ class ACamera;
 
 // Effectively it is Scene class
 // Stores all actors, adds and removes them
-// 
 class SGame
 {
 public:
 	SGame();
+	SGame(const SGame&) = delete;
 	~SGame();
 
-	// Adding and deleting actors
+	// Adding actors
 	template <class TEntity, class... Args>
 	StdShared<TEntity> AddEntity(Args... args);
+
+	// And deleting
 	bool ClipOutOfBoundaries(StdShared<AActor> Actor);
 	void CullEntities();
 
+	// Update logic
 	void Tick(float DeltaTimeMs);
 
 	StdShared<ACamera> GetCamera()

@@ -4,9 +4,9 @@
 
 struct FColorRGB
 {
-	int Red = 0;
-	int Green = 0;
-	int Blue = 0;
+	uint8_t Red = 0;
+	uint8_t Green = 0;
+	uint8_t Blue = 0;
 };
 
 struct FColorLinear

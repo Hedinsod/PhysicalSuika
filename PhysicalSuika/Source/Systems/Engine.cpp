@@ -9,7 +9,7 @@ void Engine::Init()
 {
 	Instance = new Engine;
 
-	Instance->PhyScene = std::make_unique<SPhyScene>(4);
+	Instance->PhyScene = std::make_unique<SPhyScene>(/* Calculations per frame */4);
 	GAssert(Instance->PhyScene);
 
 	Instance->Graphics = std::make_unique<SGeometryPool>();

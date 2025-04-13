@@ -8,7 +8,12 @@
 class SGfxShader
 {
 public:
+	SGfxShader() = default;
 	virtual ~SGfxShader() = default;
+
+	// Non-copyable
+	SGfxShader(const SGfxShader&) = delete;
+	SGfxShader& operator=(const SGfxShader&) = delete;
 
 	virtual void Bind() = 0;
 	virtual void Unbind() = 0;

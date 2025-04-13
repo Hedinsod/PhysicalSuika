@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Utility.h"
+#include "Settings.h"
 #include "Event.h"
 
 class SGfxWindow;
 class SGame;
 
 
-EVENT_TwoParam(FAppEvent_OnResize, int32_t /*Width*/, int32_t /*Height*/);
+using FAppEvent_OnResize = TEvent<void, int32_t, int32_t>;
 
 class Application final
 {
@@ -20,7 +21,7 @@ public:
 	void Run();
 	void Quit() { bQuit = true; };
 
-	SGfxWindow& GetWindow() { return *MainWindow; }
+	SGfxWindow& GetWindow() { return *TheWindow; }
 
 	// Events
 	void OnResize(int32_t InScreenWidth, int32_t InScreenHeight);
@@ -31,20 +32,19 @@ public:
 	}
 
 private:
-	StdScoped<SGfxWindow> MainWindow;
-
+	// Main window of the application
+	StdScoped<SGfxWindow> TheWindow;
+	
 	// Scene - holds all actors of the game
-	SGame* TheGame;
+	StdScoped<SGame> TheGame;
 
+	// Quit flag - breaks main loop of the app
 	bool bQuit = false;
 
-	// Settings
-	int32_t ScreenWidth = 800;
-	int32_t ScreenHeight = 600;
-
+	// Events
 	FAppEvent_OnResize OnResizeEvent;
 
-	static constexpr float TargetFPS = 60.f;
-	static constexpr float MaxFrametimeMs = 200.f;
+	// Application Settings
+	FSettings TheSettings;
 };
 extern Application* GApp;

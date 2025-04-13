@@ -10,7 +10,7 @@ class TSparseArray
 public:
 	class Iterator;
 
-	inline TSparseArray()
+	TSparseArray()
 		: Capacity(16)
 		, ArraySize(0)
 		, ArrayCount(0)
@@ -22,16 +22,126 @@ public:
 		Bitmap = new uint32_t[BitWordsNum](~0u);
 	}
 
-	// TODO: Temporary solution, implement rule of five
-	TSparseArray(const TSparseArray&) = delete;
+	TSparseArray(const TSparseArray& Other)
+		: Capacity(Other.Capacity)
+		, BitWordsNum(Other.BitWordsNum)
+		, ArraySize(Other.ArraySize)
+		, ArrayCount(Other.Count)
+	{
+		// Allocate new memory for Data
+		Data = std::malloc(sizeof(ElementType) * Capacity);
+		GAssert(Data);
 
-	inline ~TSparseArray()
+		// Copy elements
+		ElementType* Array = static_cast<ElementType*>(Data);
+		for (Iterator It = Other.begin(); It != Other.end(); It++)
+		{
+			new (&Array[It.GetIndex()]) ElementType(*It);
+		}
+
+		// Allocate and copy Bitmap
+		Bitmap = new uint32_t[BitWordsNum](~0u);
+		errno_t ErrorCode = memcpy_s(Bitmap, BitWordsNum * sizeof(uint32_t), Other.Bitmap, Other.BitWordsNum * sizeof(uint32_t));
+		GAssert(ErrorCode == 0);
+	}
+	
+	TSparseArray(TSparseArray&& Other)
+		: Data(Other.Data)
+		, Bitmap(Other.Bitmap)
+		, ArraySize(Other.ArraySize)
+		, ArrayCount(Other.Count)
+		, Capacity(Other.Capacity)
+		, BitWordsNum(Other.BitWordsNum)
+	{
+		// Reset the moved-from object
+		Other.Data = nullptr;
+		Other.Bitmap = nullptr;
+		Other.ArraySize = 0;
+		Other.ArrayCount = 0;
+		Other.Capacity = 0;
+		Other.BitWordsNum = 0;
+	}
+
+	~TSparseArray()
 	{
 		Clear();
 
 		std::free(Data);
 
-		delete[] Bitmap;
+		if (Bitmap)
+		{
+			delete[] Bitmap;
+		}
+	}
+
+	TSparseArray& operator=(const TSparseArray& Other)
+	{
+		if (this == &Other)
+			return *this;
+
+		// Clear existing data
+		Clear();
+		std::free(Data);
+		if (Bitmap)
+		{
+			delete[] Bitmap;
+		}
+
+		// Copy metadata
+		Capacity = Other.Capacity;
+		BitWordsNum = Other.BitWordsNum;
+		ArraySize = Other.ArraySize;
+		ArrayCount = Other.ArrayCount;
+
+		// Allocate new memory for Data
+		Data = std::malloc(sizeof(ElementType) * Capacity);
+		GAssert(Data);
+
+		// Copy elements
+		ElementType* Array = static_cast<ElementType*>(Data);
+		for (Iterator It = Other.begin(); It != Other.end(); It++)
+		{
+			new (&Array[It.GetIndex()]) ElementType(*It);
+		}
+
+		// Allocate and copy Bitmap
+		Bitmap = new uint32_t[BitWordsNum](~0u);
+		errno_t ErrorCode = memcpy_s(Bitmap, BitWordsNum * sizeof(uint32_t), Other.Bitmap, Other.BitWordsNum * sizeof(uint32_t));
+		GAssert(ErrorCode == 0);
+
+		return *this;
+	}
+
+	TSparseArray& operator=(TSparseArray&& Other)
+	{
+		if (this == &Other)
+			return *this;
+
+		// Clear existing data
+		Clear();
+		std::free(Data);
+		if (Bitmap)
+		{
+			delete[] Bitmap;
+		}
+
+		// Move metadata
+		Data = Other.Data;
+		Bitmap = Other.Bitmap;
+		ArraySize = Other.ArraySize;
+		ArrayCount = Other.ArrayCount;
+		Capacity = Other.Capacity;
+		BitWordsNum = Other.BitWordsNum;
+
+		// Reset the moved-from object
+		Other.Data = nullptr;
+		Other.Bitmap = nullptr;
+		Other.ArraySize = 0;
+		Other.ArrayCount = 0;
+		Other.Capacity = 0;
+		Other.BitWordsNum = 0;
+
+		return *this;
 	}
 
 	// Add functions

@@ -2,32 +2,31 @@
 
 #include <vector>
 
-#define EVENT_OneParam(_Event_TypeName, _ParamType)                                \
-	struct _Event_TypeName {                                                       \
-		using EventCallbackFn = std::function<void(_ParamType)>;                   \
-		void Broadcast(_ParamType Param) {                                         \
-			if (InvocationItem) {                                                  \
-				InvocationItem(std::forward<_ParamType>(Param)); } }               \
-		void Subscribe(const EventCallbackFn& InCallback) {                        \
-			InvocationItem = InCallback; }                                         \
-		EventCallbackFn InvocationItem = nullptr; };                               
+template <class RetType, class ...Args>
+struct TEvent final
+{
+	using EventCallbackFn = std::function<RetType(Args... args)>;
+	std::vector<EventCallbackFn> InvocationList;
 
+	inline void Subscribe(const EventCallbackFn& InCallback)
+	{
+		InvocationList.push_back(InCallback);
+	}
 
-#define EVENT_TwoParam(_Event_TypeName1, _ParamType1, _ParamType2)                 \
-	struct _Event_TypeName1 {                                                      \
-		using EventCallbackFn = std::function<void(_ParamType1, _ParamType2)>;     \
-		void Broadcast(_ParamType1 Param1, _ParamType2 Param2) {                   \
-			for (auto& InvocationItem : InvocationList)	{                          \
-				if (InvocationItem) {		                                       \
-					InvocationItem(std::forward<_ParamType1>(Param1),              \
-					    std::forward<_ParamType2>(Param2)); }                      \
-			}                                                                      \
-		}                                                                          \
-		void Subscribe(const EventCallbackFn& InCallback) {                        \
-			InvocationList.push_back(InCallback); }                                \
-		std::vector<EventCallbackFn> InvocationList; };
-	
-	
-	/*	void Unsubscribe(const EventCallbackFn& InCallback) {                      \
-			InvocationList.erase(InCallback); }                                    \ */
-		
+	void Unsubscribe(const EventCallbackFn& InCallback)
+	{
+		InvocationList.erase(InCallback);
+	}
+
+	void Broadcast(Args... args)
+	{
+		for (auto& InvocationItem : InvocationList)
+		{
+			if (InvocationItem)
+			{
+				InvocationItem(std::forward<Args>(args)...);
+			}
+		}
+	}
+
+};

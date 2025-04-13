@@ -20,4 +20,6 @@ void SGraphics::Init(EGfxApi InApi)
 	}
 }
 
-SGraphicsApi::~SGraphicsApi() = default;
+SGraphicsApi::~SGraphicsApi()
+{
+}

@@ -38,10 +38,16 @@ struct FContact
 	int32_t Id;
 };
 
-// F is for [utility] structs, how to call utility classes ??
+// F is for [utility] structs, how to call utility class?
 class FContactGraph
 {
 public:
+	FContactGraph() = default;
+
+	// This thing is far away from being simple copyable type
+	FContactGraph(const FContactGraph&) = delete;
+	FContactGraph& operator=(const FContactGraph&) = delete;
+
 	// Returns Contact Id if it was created
 	// Returns -1 otherwise
 	int32_t AddContact(CRigidBodyComp& InFirst, CRigidBodyComp& InSecond);
@@ -50,16 +56,16 @@ public:
 	void RemoveContact(int32_t ContactId);
 	void RemoveAllContacts(std::list<uint32_t> ContactsToDelete);
 
-	// Special remove all bodily contacts?
-
-	// Iteration?
+	// Iteration!
 	TSparseArray<FContact>::Iterator begin() { return Contacts.begin(); }
 	TSparseArray<FContact>::Iterator end() { return Contacts.end(); }
 	
 	int32_t Count() { return Contacts.Count(); }
 
 private:
+	// Generates order-agnostic hash to avoid duplications
 	uint64_t GenerateHash(int32_t Id1, int32_t Id2);
+
 	// Stores contact hashes ensuring there are no duplicates
 	std::unordered_set<uint64_t> Tracker;
 

@@ -12,8 +12,8 @@
 
 typedef int32_t CBodyHandle;
 
-EVENT_OneParam(FRigidBodyEvent_OnDestruction, std::list<uint32_t> /*ContactsToDelete*/)
-EVENT_OneParam(FRigidBodyEvent_OnCollision, AActor* /* Opponent */)
+using FRigidBodyEvent_OnDestruction = TEvent<void, std::list<uint32_t>>;
+using FRigidBodyEvent_OnCollision = TEvent<void, AActor*>;
 
 class CRigidBodyComp : public CComponent
 {

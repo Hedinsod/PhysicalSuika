@@ -7,10 +7,7 @@ class SGame;
 class AActor
 {
 public:
-	AActor(glm::vec2 InPos)
-	{
-		Trans.SetPos(InPos);
-	}
+	AActor(const glm::vec2& InPos) : Trans(InPos) { }
 	virtual ~AActor() = default;
 
 	void RegisterGame(SGame* InGame) { Game = InGame; }
@@ -20,10 +17,6 @@ public:
 
 	// "Events"
 	bool IsPendingDelete() { return bPendingDelete; }
-	virtual void OnOutOfBounds(bool bHorizontal, bool bVertical)
-	{
-		this->bPendingDelete = true;
-	}
 
 	const CTransform& GetTransform() const { return Trans; }
 	CTransform& GetTransform() { return Trans; }

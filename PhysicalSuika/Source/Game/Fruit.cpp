@@ -29,24 +29,18 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	float Scale = 0.4f + 0.15f * ((int16_t)Type + 1);
 	Trans.SetScale({ Scale, Scale });
 
-
-
-	// Graphics
-	// {
-	GeoHandle = Engine::GetGraphics().CreateGeometry(this);
-
 	// Generate points
 	std::vector<glm::vec2> Points;
 	Points.emplace_back(0.0f, 0.0f);
 	uint32_t i = 0;
-	for (float a = 0.f; a <= 360.f; a += 60.f)
+	for (float a = 0.f; a <= 360.f; a += 30.f)
 	{
 		Points.emplace_back(glm::sin(glm::radians(a)), glm::cos(glm::radians(a)));
 	}
-	// Import into component
-	(*GeoHandle).Import(Points);
-	// }
 
+	// Geometry component
+	GeoHandle = Engine::GetGraphics().CreateGeometry(this);
+	GeoHandle->Import(Points);
 
 	// Physics
 	FColliderShape* Shape = FColliderShape::Create<FCircleCollider>({ 0, 0 }, Scale);

@@ -4,84 +4,71 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-class CTransform
+class CTransform final
 {
 public:
-	CTransform()
-		: TRS(T* R* S)
-	{
-	}
+	CTransform() = default;
+	CTransform(glm::vec2 InPos, float ZOrder = 0.0f) : Pos(InPos.x, InPos.y, ZOrder) {}
+
 
 	// Position
-	inline void SetFullPos(glm::vec3 NewPos)
-	{
-		Pos = NewPos;
-		UpdateTranslation();
-	}
+
 	inline void SetPos(glm::vec2 NewPos)
 	{
 		Pos.x = NewPos.x;
 		Pos.y = NewPos.y;
-		UpdateTranslation();
 	}
 	inline void Translate(glm::vec2 Shift)
 	{
 		Pos.x += Shift.x;
 		Pos.y += Shift.y;
-		UpdateTranslation();
+	}
+	inline void SetZOrer(float ZOrder)
+	{
+		Pos.z = ZOrder;
 	}
 	inline glm::vec2 GetPos() const { return { Pos.x, Pos.y }; };
 
+
 	// Rotation
-	inline void SetRot(float InAngle)
+
+	inline void SetRotation(float InAngle)
 	{
-		Angle = glm::radians(InAngle);
-		UpdateRotation();
+		Rotation = glm::radians(InAngle);
 	}
-	// Rotates actor by Angle degrees CCW
+	// Rotates actor by Angle radians CCW
 	inline void Rotate(float InAngle)
 	{
-		Angle += glm::radians(InAngle);
-		UpdateRotation();
+		Rotation += InAngle;
 	}
 	// Rotate() but angle is in radians
-	inline void RotRad(float InAngle)
+	inline void RotateDeg(float InAngle)
 	{
-		Angle += InAngle;
-		UpdateRotation();
+		Rotation += glm::radians(InAngle);
 	}
+	inline float GetRotation() const { return Rotation; };
 
 	// Scale
+
 	inline void SetScale(glm::vec2 InScale)
 	{
-		S = glm::scale(glm::mat4(1.0f), { InScale.x, InScale.y, 1.0f } );
-		TRS = T * R * S;
+		Scale = { InScale.x, InScale.y, 1.0f };
 	}
 
-	// For shaders
+
+	// For rendering
 	glm::mat4x4 GetModel() const
 	{
-		return TRS;
+		glm::mat4 T = glm::translate(glm::mat4(1.0f), Pos);
+		glm::mat4 R = glm::rotate(glm::mat4(1.0f), Rotation, { 0.f, 0.f, 1.f });
+		glm::mat4 S = glm::scale(glm::mat4(1.0f), Scale);
+
+		return T * R * S;
 	}
+
 private:
-
-	inline void UpdateTranslation()
-	{
-		T = glm::translate(glm::mat4(1.0f), Pos);
-		TRS = T * R * S;
-	}
-	inline void UpdateRotation()
-	{
-		R = glm::rotate(glm::mat4(1.0f), Angle, { 0.f, 0.f, 1.f });
-		TRS = T * R * S;
-	}
-
-	glm::mat4x4 T = glm::mat4(1.0f);
-	glm::mat4x4 R = glm::mat4(1.0f);
-	glm::mat4x4 S = glm::mat4(1.0f);
-	glm::mat4x4 TRS;
-
 	glm::vec3 Pos{ 0.f, 0.f, 0.f };
-	float Angle = 0.0f;
+	float Rotation = 0.0f;
+	glm::vec3 Scale{ 1.f, 1.f, 1.f };
 
 };
