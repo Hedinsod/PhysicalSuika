@@ -9,12 +9,13 @@
 #include <GLFW/glfw3.h>
 #include <GLAD/glad.h>
 
-int32_t SOpenGLWindow::Counter;
 
 SOpenGLWindow::SOpenGLWindow(int32_t InWidth, int32_t InHeight, const std::string& InTitle)
 	: SGfxWindow(InWidth, InHeight, InTitle)
 {
 	Create();
+
+	CreateContext();
 }
 
 SOpenGLWindow::~SOpenGLWindow()
@@ -27,18 +28,11 @@ SOpenGLWindow::~SOpenGLWindow()
 
 void SOpenGLWindow::Create()
 {
-	if (Counter == 0)
-	{
-		int Success = glfwInit();
-		GAssert(Success);
-		glfwSetErrorCallback(ProcessError);
-	}
-
-	// Actual window
+	// Setting up window
 	NativeWindow = glfwCreateWindow(Width, Height, Title.c_str(), NULL, NULL);
 
 	GAssert(NativeWindow);
-	GfxContext = new SOpenGLContext(NativeWindow);
+	
 	glfwSetWindowUserPointer(NativeWindow, this);
 
 	// Input
@@ -46,14 +40,14 @@ void SOpenGLWindow::Create()
 	glfwSetWindowSizeCallback(NativeWindow, [](GLFWwindow* Window, int InWidth, int InHeight)
 		{
 			SOpenGLWindow* Self = static_cast<SOpenGLWindow*>(glfwGetWindowUserPointer(Window));
-			
+
 			Self->OnResize(InWidth, InHeight);
 		});
 	glfwSetWindowCloseCallback(NativeWindow, [](GLFWwindow* Window)
 		{
 			GApp->Quit();
 		});
-	
+
 	/*
 	glfwSetCursorPosCallback(NativeWindow, [](GLFWwindow* Window, double XPos, double YPos)
 		{
@@ -62,9 +56,16 @@ void SOpenGLWindow::Create()
 			Data->EventCallback(Event);
 		});
 	*/
+}
 
-	glfwSwapInterval(1); // enable VSync
-	Counter++;
+void SOpenGLWindow::CreateContext()
+{
+	GfxContext = MakeScoped<SOpenGLContext>(NativeWindow);
+}
+
+void SOpenGLWindow::DeleteContext()
+{
+	GfxContext.reset(nullptr);
 }
 
 void SOpenGLWindow::Destroy()
@@ -72,14 +73,7 @@ void SOpenGLWindow::Destroy()
 	glfwDestroyWindow(NativeWindow);
 	NativeWindow = nullptr;
 
-	delete GfxContext;
-	GfxContext = nullptr;
-
-	Counter--;
-	if (Counter == 0)
-	{
-		glfwTerminate();
-	}
+	DeleteContext();
 }
 
 void SOpenGLWindow::Tick()
@@ -94,13 +88,6 @@ void SOpenGLWindow::OnResize(int32_t InWidth, int32_t InHeight)
 	Height = InHeight;
 
 	GApp->OnResize(Width, Height);
-}
-
-// static callbacks
-void SOpenGLWindow::ProcessError(int32_t ErrorCode, const char* Description)
-{
-	Utility::Log("SOpenGLWindow Error");
-	Utility::Log(Description);
 }
 
 static EInputCode GetInputCode(int32_t GlfwCode)

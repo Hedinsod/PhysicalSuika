@@ -15,7 +15,8 @@ AGlass::AGlass(glm::vec2 InPos)
 		};
 
 	GeoHandle = Engine::GetGraphics().CreateGeometry(this);
-	(*GeoHandle).Import(Points);
+	GeoHandle->Import(Points);
+	GeoHandle->SetMaterial("Glass");
 
 	FColliderShape* LeftBox = FColliderShape::Create<FBoxCollider>({ -5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
 	FColliderShape* RightBox = FColliderShape::Create<FBoxCollider>({ 5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);

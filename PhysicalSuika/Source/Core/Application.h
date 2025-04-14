@@ -21,8 +21,6 @@ public:
 	void Run();
 	void Quit() { bQuit = true; };
 
-	SGfxWindow& GetWindow() { return *TheWindow; }
-
 	// Events
 	void OnResize(int32_t InScreenWidth, int32_t InScreenHeight);
 

@@ -8,16 +8,19 @@
 struct FMaterial
 {
 	FMaterial() = default;
-	FMaterial(float InDensity, float InFriction, float InGravityScale)
+	FMaterial(float InDensity, float InFriction, float InGravityScale, const glm::vec4& InColor)
 		: Density(InDensity)
 		, Friction(InFriction)
 		, GravityScale(InGravityScale)
+		, Color(InColor)
 	{ }
 
 	float Density = 0.0f;
 	float Friction = 0.0f;
 
 	float GravityScale = 0.0f;
+
+	glm::vec4 Color{ 0.0f, 0.0f, 0.0f, 1.0f };
 };
 
 class SMatirialLibrary

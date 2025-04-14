@@ -6,19 +6,24 @@ class SOpenGLGraphics : public SGraphicsApi
 {
 public:
 	SOpenGLGraphics();
-	
-	// Fabrics
-	virtual SGfxWindow* CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle) override;
+	virtual ~SOpenGLGraphics();
 
+	// Creating window & context
+	virtual StdScoped<SGfxWindow> CreateGfxWindow(uint32_t InWidth, uint32_t InHeight, const std::string& InTitle) override;
+
+	// Factories
 	virtual StdScoped<SGfxShaderFactory> GetShaderFactory() override;
 	virtual StdScoped<SGfxBufferFactory> GetBufferFactory() override;
-
-
 
 	// Render Commands
 	virtual void DrawIndexed(uint32_t IndexCount) override;
 	virtual void SetClearColor(const FColorRGB& InColor) override;
 	virtual void Clear() override;
+
+private:
+	static void ProcessError(int32_t ErrorCode, const char* Description);
+
+	void PostInit();
 
 };
 

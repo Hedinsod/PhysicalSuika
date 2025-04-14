@@ -3,8 +3,6 @@
 #include "Core/Utility.h"
 #include "GeometryComp.h"
 #include "Core/Containers/SparseArray.h"
-#include "Systems/Engine.h"
-
 #include "GeometryHandle.h"
 
 
@@ -15,8 +13,6 @@ class SGfxVertexBuffer;
 class SGfxIndexBuffer;
 
 
-
-
 class SGeometryPool
 {
 	friend FGeometryHandle;
@@ -24,6 +20,7 @@ class SGeometryPool
 	struct FVertex
 	{
 		glm::vec4 Position;
+		glm::vec4 Color;
 	};
 
 public:

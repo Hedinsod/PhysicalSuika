@@ -10,6 +10,7 @@ public:
 	CGeometry(AActor* InOwner);
 
 	void Import(const std::vector<glm::vec2>& InVertices);
+	void SetMaterial(const std::string InTag) { MaterialTag = InTag; }
 
 	void SetIndices(const std::vector<uint32_t>& InIndices);
 	void SetIndices(std::vector<uint32_t>&& InIndices);
@@ -18,5 +19,8 @@ public:
 private:
 	std::vector<glm::vec4> Vertices;
 	std::vector<uint32_t> Indices;
+
+	// Weak pointer
+	std::string MaterialTag;
 
 };

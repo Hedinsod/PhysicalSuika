@@ -8,9 +8,10 @@ class SOpenGLContext : public SGfxContext
 {
 public:
 	SOpenGLContext(GLFWwindow* InWindow);
+
 	virtual void SwapBuffers() override;
 
-	// "Events"
+	// Events
 	virtual void OnResize(int32_t InWidth, int32_t InHeight) override;
 
 private:

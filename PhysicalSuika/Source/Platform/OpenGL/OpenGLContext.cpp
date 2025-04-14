@@ -11,8 +11,12 @@ SOpenGLContext::SOpenGLContext(GLFWwindow* InWindow)
 	: Window(InWindow)
 {
 	glfwMakeContextCurrent(Window);
+
+	// Can be called only if context exists
 	int32_t Status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	GAssert(Status/*, "Failed to initialize GLAD"*/);
+
+	glfwSwapInterval(1);
 
 	GApp->AddOnResizeEventHandler(std::bind(&SOpenGLContext::OnResize, this, std::placeholders::_1, std::placeholders::_2));
 }

@@ -2,6 +2,8 @@
 
 #include "Types.h"
 #include "Core/SmartPointers.h"
+
+#include "Graphics/GfxWindow.h"
 #include "Graphics/GfxShader.h"
 #include "Graphics/GfxBuffers.h"
 
@@ -23,17 +25,14 @@ enum class EGfxApi
 class SGraphicsApi
 {
 public:
-	virtual ~SGraphicsApi();
+	virtual ~SGraphicsApi() = default;
 
-	// New API
-	// Creats window with render context. SGfxWindow should be deleted manually or assigned to a smart pointer
-	virtual SGfxWindow* CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle) = 0;
+	// Creats window with render context
+	virtual StdScoped<SGfxWindow> CreateGfxWindow(uint32_t InWidth, uint32_t InHeight, const std::string& InTitle) = 0;
 
-	// 
+	// Factories of gfx objects 
 	virtual StdScoped<SGfxShaderFactory> GetShaderFactory() = 0;
 	virtual StdScoped<SGfxBufferFactory> GetBufferFactory() = 0;
-
-
 
 	// List of render commands
 	virtual void DrawIndexed(uint32_t IndexCount) = 0;
@@ -51,12 +50,13 @@ public:
 		delete Api;
 	}
 
-	// Fabrics
-	inline static SGfxWindow* CreateGfxWindow(int InWidth, int InHeight, const std::string& InTitle)
+	// Creating window and gfx context
+	inline static StdScoped<SGfxWindow> CreateGfxWindow(uint32_t InWidth, uint32_t InHeight, const std::string& InTitle)
 	{
 		return Api->CreateGfxWindow(InWidth, InHeight, InTitle);
 	}
 
+	// Factories
 	inline static StdScoped<SGfxShaderFactory> GetShaderFactory()
 	{
 		return Api->GetShaderFactory();
@@ -65,8 +65,6 @@ public:
 	{
 		return Api->GetBufferFactory();
 	}
-
-
 
 	// Render Commands
 	inline static void DrawIndexed(uint32_t IndexCount)

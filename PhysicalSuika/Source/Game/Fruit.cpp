@@ -41,6 +41,7 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	// Geometry component
 	GeoHandle = Engine::GetGraphics().CreateGeometry(this);
 	GeoHandle->Import(Points);
+	GeoHandle->SetMaterial("Berry");
 
 	// Physics
 	FColliderShape* Shape = FColliderShape::Create<FCircleCollider>({ 0, 0 }, Scale);

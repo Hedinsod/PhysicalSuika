@@ -4,6 +4,7 @@
 #include "Game/Actor.h"
 #include "Game/Camera.h"
 
+#include "Systems/Engine.h"
 #include "Graphics/Graphics.h"
 
 
@@ -63,15 +64,20 @@ void SGeometryPool::Tick()
 {
 	if (NextIndex >= MaxIndices)
 	{
+		return;
 		// Restart
 	}
 
 	for (CGeometry& Geo : GeometryPool)
 	{
 		const glm::mat4& Model = Geo.GetOwner().GetTransform().GetModel();
+		const FMaterial& Material = Engine::GetMaterialLibrary().Get(Geo.MaterialTag);
 		for (const glm::vec4& Vertex : Geo.Vertices)
 		{
 			VertexData[NextVertex].Position = Model * Vertex;
+			GAssert(VertexData[NextVertex].Position.z == 0.0f);
+
+			VertexData[NextVertex].Color = Material.Color;
 			NextVertex++;
 		}
 
@@ -80,14 +86,15 @@ void SGeometryPool::Tick()
 			IndexData[NextIndex++] = IndexOffset + Index;
 		}
 
-		IndexOffset += static_cast<uint32_t>(Geo.Indices.size());
+		IndexOffset += static_cast<uint32_t>(Geo.Vertices.size());
 	}
 }
 
 void SGeometryPool::Finish()
 {
 	VBO->UploadVertices(VertexData, NextVertex * sizeof(FVertex));
-	VBO->SetLayout({ { "Position", EGfxShaderData::Float4 } });
+	VBO->SetLayout({ { "Position", EGfxShaderData::Float4 },
+	                 { "Color", EGfxShaderData::Float4 } });
 	IBO->UploadIndices(IndexData, NextIndex * sizeof(uint32_t));
 
 	SGraphics::DrawIndexed(NextIndex);

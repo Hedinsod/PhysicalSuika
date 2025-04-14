@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "Graphics.h"
-#include "Graphics/GfxShader.h"
-#include "Graphics/GfxBuffers.h"
 
 #include "Platform/OpenGL/OpenGLGraphics.h"
 
@@ -18,8 +16,4 @@ void SGraphics::Init(EGfxApi InApi)
 
 	default: GAssert(false); break;
 	}
-}
-
-SGraphicsApi::~SGraphicsApi()
-{
 }

@@ -26,6 +26,7 @@ void Engine::Shutdown()
 
 void Engine::LoadMaterials()
 {
-	MatirialLibrary.Add("Berry", MakeShared<FMaterial>(/*.Density*/ 0.0955f, /*.Friction*/ 0.2f, /*.GravityScale*/ 2.0f));
-	MatirialLibrary.Add("Glass", MakeShared<FMaterial>(/*.Density*/    0.0f, /*.Friction*/ 0.4f, /*.GravityScale*/ 2.0f));
+	MatirialLibrary.Add("Default", MakeShared<FMaterial>());
+	MatirialLibrary.Add("Berry", MakeShared<FMaterial>(/*.Density*/ 0.0955f, /*.Friction*/ 0.2f, /*.GravityScale*/ 2.0f, /*Color*/glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)));
+	MatirialLibrary.Add("Glass", MakeShared<FMaterial>(/*.Density*/    0.0f, /*.Friction*/ 0.4f, /*.GravityScale*/ 2.0f, /*Color*/glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)));
 }

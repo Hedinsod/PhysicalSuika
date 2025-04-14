@@ -17,9 +17,9 @@ void Application::Init()
 {
 	SGraphics::Init(EGfxApi::OpenGL);
 
-	TheWindow.reset(SGraphics::CreateGfxWindow(TheSettings.WindowWidth, TheSettings.WindowHeight, "Physical Suika"));
+	TheWindow = SGraphics::CreateGfxWindow(TheSettings.WindowWidth, TheSettings.WindowHeight, "Physical Suika");
 	GAssert(TheWindow);
-
+	
 	Engine::Init();
 
 	TheGame = MakeScoped<SGame>();
@@ -35,6 +35,7 @@ Application::~Application()
 	TheGame.reset();
 
 	Engine::Shutdown();
+
 	TheWindow->Destroy();
 
 	SGraphics::Shutdown();
