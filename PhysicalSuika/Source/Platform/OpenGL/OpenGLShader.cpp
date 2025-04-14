@@ -79,7 +79,7 @@ StdShared<SGfxShader> SOpenGLShaderFactory::Build()
 
 			glDeleteShader(Shader);
 
-			Utility::Log("Shader compilation failed.\n" + std::string(InfoLog.data()));
+			Log::Log("Shader compilation failed.\n" + std::string(InfoLog.data()));
 			continue;
 		}
 
@@ -105,7 +105,7 @@ StdShared<SGfxShader> SOpenGLShaderFactory::Build()
 		for (GLuint Shader : ShaderIds)
 			glDeleteShader(Shader);
 
-		Utility::Log("Shader link failed.\n" + std::string(InfoLog.data()));
+		Log::Log("Shader link failed.\n" + std::string(InfoLog.data()));
 		return nullptr;
 	}
 

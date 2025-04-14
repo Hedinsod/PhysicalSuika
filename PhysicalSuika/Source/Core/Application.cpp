@@ -43,20 +43,23 @@ Application::~Application()
 
 void Application::Run()
 {
-	STimestep Step(TheSettings.TargetFPS, TheSettings.MaxFrametimeMs);
+	STimestep Step(TheSettings.TargetFPS, TheSettings.MaxFrametime);
 
 	const FColorRGB Background = { 250, 250, 250 };
 	SGraphics::SetClearColor(Background);
 
 	while (!bQuit)
 	{
-		Step.FrameStart();
+		float DeltaTime = Step.FrameStart();
+		DeltaTime = glm::max(DeltaTime, 0.0001f);
+
+		//Step.FrameStart();
 
 		// Physics
-		Engine::GetPhyScene().Tick(Step);
+		Engine::GetPhyScene().Tick(DeltaTime);
 
 		// Game logic
-		TheGame->Tick(Step.GetFullStep());
+		TheGame->Tick(DeltaTime);
 
 		// Render everything
 		SGraphics::Clear();
@@ -69,6 +72,8 @@ void Application::Run()
 
 		// Delete unused
 		TheGame->CullEntities();
+
+		
 	}
 }
 

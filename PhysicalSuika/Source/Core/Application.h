@@ -21,6 +21,8 @@ public:
 	void Run();
 	void Quit() { bQuit = true; };
 
+	const FSettings& GetSettings() { return TheSettings; }
+
 	// Events
 	void OnResize(int32_t InScreenWidth, int32_t InScreenHeight);
 

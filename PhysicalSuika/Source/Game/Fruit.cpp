@@ -56,7 +56,7 @@ AFruit::~AFruit()
 	Engine::GetGraphics().RemoveGeometry(GeoHandle);
 }
 
-void AFruit::Tick(float DeltaTimeMs)
+void AFruit::Tick(float DeltaTime)
 {
 	// Theoretically spawning actor here is safe
 	// Not necessarily - we'll see

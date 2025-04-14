@@ -15,18 +15,16 @@ public:
 	{
 		TimePoint = std::chrono::high_resolution_clock::now();
 	}
-	inline float GetLapsedMilliseconds()
+	inline float GetLapsedMilliseconds() const
 	{
 		auto CurrentPoint = std::chrono::high_resolution_clock::now();
 		return std::chrono::duration_cast<std::chrono::microseconds>(CurrentPoint - TimePoint).count() * 0.001f;
 	}
 
-	inline float GetLapsedMsClamped(float MaxFrameTimeMs)
+	inline float GetLapsedSeconds() const
 	{
 		auto CurrentPoint = std::chrono::high_resolution_clock::now();
-		float LapsedMs = std::chrono::duration_cast<std::chrono::microseconds>(CurrentPoint - TimePoint).count() * 0.001f;
-
-		return LapsedMs < MaxFrameTimeMs ? LapsedMs : MaxFrameTimeMs;
+		return std::chrono::duration_cast<std::chrono::milliseconds>(CurrentPoint - TimePoint).count() * 0.001f;
 	}
 
 private:
@@ -37,42 +35,39 @@ private:
 class STimestep
 {
 public:
-	STimestep(float InTargetFPS, float InMaxFrametimeMs)
+	STimestep(float InTargetFPS, float InMaxFrametime)
 		: TargetFPS(InTargetFPS)
-		, FrametimeMs(1000.f / InTargetFPS)
-		, MaxFrametimeMs(InMaxFrametimeMs)
-		, DeltaTimeMs(0)
+		, Frametime(1.f / InTargetFPS)
+		, MaxFrametime(InMaxFrametime)
+		, DeltaTime(0)
 	{
 	}
 
-	inline void FrameStart()
+	inline float FrameStart()
 	{
-		DeltaTimeMs = Timer.GetLapsedMsClamped(MaxFrametimeMs);
+		DeltaTime = glm::min(Timer.GetLapsedSeconds(), MaxFrametime);
 		Timer.Restart();
+
+		return DeltaTime;
 	}
 
-	// Returns full delta time since last Start
-	float GetFullStep()
-	{
-		return glm::min(MaxFrametimeMs, DeltaTimeMs);
-	}
-
+	/*
 	float GetStep()
 	{
 		return glm::min(FrametimeMs, DeltaTimeMs);
 	}
-
 	bool Update()
 	{
 		DeltaTimeMs -= FrametimeMs;
 		return DeltaTimeMs > FrametimeMs;
 	}
+	*/
 
 private:
-	float TargetFPS = 60.f;
-	float FrametimeMs = 1000.f / TargetFPS;
-	float MaxFrametimeMs = 200.f;
+	const float TargetFPS;
+	const float Frametime;
+	const float MaxFrametime;
 
 	STimer Timer;
-	float DeltaTimeMs;
+	float DeltaTime;  // In seconds
 };

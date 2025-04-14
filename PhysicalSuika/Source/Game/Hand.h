@@ -12,7 +12,7 @@ public:
 	AHand(glm::vec2 InPos);
 	virtual ~AHand() override;
 
-	virtual void Tick(float DeltaTimeMs) override;
+	virtual void Tick(float DeltaTime) override;
 
 	virtual void OnCollide(const AActor* Opponent) {}
 	
@@ -21,6 +21,6 @@ private:
 
 	FGeometryHandle GeoHandle;
 
-	const float SpawnCooldownStart = 1000.0f;
+	const float SpawnCooldownStart = 1.0f;
 	float SpawnCooldown = 0.0f;
 };

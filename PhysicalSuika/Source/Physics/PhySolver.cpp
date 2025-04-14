@@ -14,8 +14,10 @@ SPhySolver::SPhySolver()
 	GenManifoldTable[1][1] = std::bind(&SPhySolver::GenManifold_CircleCircle, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 }
 
-void SPhySolver::WarmUp()
+void SPhySolver::WarmUp(float DeltaTime)
 {
+	CachedDeltaTime = DeltaTime;
+
 	for (FContact& Contact : ContactGraph)
 	{
 		CRigidBodyComp& FirstBody = Engine::GetPhyScene().GetRigidBody(Contact.FirstId);
@@ -69,12 +71,15 @@ void SPhySolver::ResolveCollision(CRigidBodyComp& First, CRigidBodyComp& Second,
 	float FirstNormalRadius = glm::dot(FirstRadius, Manifold.Normal);
 	float SecondNormalRadius = glm::dot(SecondRadius, Manifold.Normal);
 
-	// Erin Catto calls this crude, but whatever. TODO: get timestep properly!
-	float Bias = -0.2f * 1.f / (0.0041f) * glm::min(0.0f, 0.01f - Manifold.Penetration);
+	// Erin Catto calls this crude - well, he was right. TODO: get timestep properly!
+	// Using 20% arbitrary mutlipler and 0.01 unit penetration tolerance
+	const float BiasLimit = 50.f; // No more CRAZY overshooting
+	float Bias = -0.2f * 1.f / CachedDeltaTime * glm::min(0.0f, 0.01f - Manifold.Penetration);
+	Bias = glm::clamp(Bias, -BiasLimit, BiasLimit);
 
 	// Calculate relative velocity in terms of the normal direction
-	glm::vec2 RelativeVelocity = Second.Velocity + Utility::cross2(Second.AngularVelocity, SecondRadius)
-		- First.Velocity + Utility::cross2(First.AngularVelocity, FirstRadius);
+	glm::vec2 RelativeVelocity = Second.Velocity + Math::cross2(Second.AngularVelocity, SecondRadius)
+		- First.Velocity + Math::cross2(First.AngularVelocity, FirstRadius);
 	float VelAlongNormal = glm::dot(RelativeVelocity, Manifold.Normal);
 
 	// Calculate impulse scalar 
@@ -94,18 +99,18 @@ void SPhySolver::ResolveCollision(CRigidBodyComp& First, CRigidBodyComp& Second,
 
 	// Apply
 	First.Velocity -= First.InvMass * ContactImpulse;
-	First.AngularVelocity -= First.InvInertia * Utility::cross2(FirstRadius, ContactImpulse);
+	First.AngularVelocity -= First.InvInertia * Math::cross2(FirstRadius, ContactImpulse);
 
 	Second.Velocity += Second.InvMass * ContactImpulse;
-	Second.AngularVelocity += Second.InvInertia * Utility::cross2(SecondRadius, ContactImpulse);
+	Second.AngularVelocity += Second.InvInertia * Math::cross2(SecondRadius, ContactImpulse);
 
 
 
 	// Friction
 	// Recalculate velocity
-	glm::vec2 Tangent = Utility::cross2(Manifold.Normal, 1.0f);
-	RelativeVelocity = Second.Velocity + Utility::cross2(Second.AngularVelocity, SecondRadius)
-		- First.Velocity + Utility::cross2(First.AngularVelocity, FirstRadius);
+	glm::vec2 Tangent = Math::cross2(Manifold.Normal, 1.0f);
+	RelativeVelocity = Second.Velocity + Math::cross2(Second.AngularVelocity, SecondRadius)
+		- First.Velocity + Math::cross2(First.AngularVelocity, FirstRadius);
 	float TangentVelocity = glm::dot(RelativeVelocity, Tangent);
 
 	float FirstTangentRadius = glm::dot(FirstRadius, Tangent);
@@ -132,10 +137,10 @@ void SPhySolver::ResolveCollision(CRigidBodyComp& First, CRigidBodyComp& Second,
 	glm::vec2 TangentImpulse = TangentImpulseM * Tangent;
 
 	First.Velocity -= First.InvMass * TangentImpulse;
-	First.AngularVelocity -= First.InvInertia * Utility::cross2(FirstRadius, TangentImpulse);
+	First.AngularVelocity -= First.InvInertia * Math::cross2(FirstRadius, TangentImpulse);
 
 	Second.Velocity += Second.InvMass * TangentImpulse;
-	Second.AngularVelocity += Second.InvInertia * Utility::cross2(SecondRadius, TangentImpulse);
+	Second.AngularVelocity += Second.InvInertia * Math::cross2(SecondRadius, TangentImpulse);
 
 }
 

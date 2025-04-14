@@ -30,9 +30,8 @@ void SOpenGLWindow::Create()
 {
 	// Setting up window
 	NativeWindow = glfwCreateWindow(Width, Height, Title.c_str(), NULL, NULL);
-
 	GAssert(NativeWindow);
-	
+
 	glfwSetWindowUserPointer(NativeWindow, this);
 
 	// Input

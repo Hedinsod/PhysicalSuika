@@ -14,7 +14,7 @@ SOpenGLContext::SOpenGLContext(GLFWwindow* InWindow)
 
 	// Can be called only if context exists
 	int32_t Status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-	GAssert(Status/*, "Failed to initialize GLAD"*/);
+	GAssertLog(Status, "Failed to initialize GLAD");
 
 	glfwSwapInterval(1);
 

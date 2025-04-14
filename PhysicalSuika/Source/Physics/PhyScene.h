@@ -12,14 +12,18 @@
 class SPhyScene
 {
 public:
-	SPhyScene(int32_t InStepsNumber);
+	/*
+	* TargetFrametime - 1.0f / TargetFPS in seconds
+	* SubStepsCount - number of iteration per (target) frame.
+	*/
+	SPhyScene(float InTargetFrametime, uint32_t InSubStepsCount);
 
 	CBodyHandle CreateRigidBody(AActor* Owner, const std::string& MaterialTag, FColliderShape* InShape, uint32_t InLayers = 1);
 	void RemoveRigidBody(CBodyHandle Handle);
 	CRigidBodyComp& GetRigidBody(CBodyHandle Handle);
 
-	void Tick(STimestep Step);
-	void InternalTick(float DeltaTime);
+	void Tick(float DeltaTime);
+	void InternalTick(float StepTime);
 
 	// Searching for potential collisions to give to solver
 	void BroadPass();
@@ -28,8 +32,12 @@ private:
 	// Detecting AABBs' intersections to form a pair
 	bool SimpleCollision(const FBoxCollider& FirstAABB, const FBoxCollider& SecondAABB);
 
+private:
 	// Number of sub-iterations during same render frame
-	const int32_t StepsNumber = 0;
+	const uint32_t SubStepsCount;
+	const float InvStepsCount;
+	// Target frametime in seconds
+	const float TargetFrametime;
 
 	// Physics solver
 	StdScoped<SPhySolver> Solver;

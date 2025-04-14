@@ -44,10 +44,10 @@ void SGame::CullEntities()
 	}
 }
 
-void SGame::Tick(float DeltaTimeMs)
+void SGame::Tick(float DeltaTime)
 {
 	for (StdShared<AActor> Actor : Actors)
 	{
-		Actor->Tick(DeltaTimeMs);
+		Actor->Tick(DeltaTime);
 	}
 }

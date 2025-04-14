@@ -18,7 +18,8 @@ public:
 		Data = std::malloc(sizeof(ElementType) * Capacity);
 		GAssert(Data);
 
-		BitWordsNum = Capacity / BitsPerWord + 1;
+		//BitWordsNum = Capacity / BitsPerWord + 1;
+		BitWordsNum = (Capacity >> 5) + 1;
 		Bitmap = new uint32_t[BitWordsNum](~0u);
 	}
 
@@ -322,8 +323,9 @@ private:
 	{
 		// 0. Calculate
 		int32_t NewCapacity = static_cast<int32_t>(Capacity * 1.5);  // Some arbitrary multiplier
-		int32_t NewBitWordsNum = NewCapacity / BitsPerWord + 1;
-
+		//int32_t NewBitWordsNum = NewCapacity / BitsPerWord + 1;
+		int32_t NewBitWordsNum = (NewCapacity >> 5) + 1;
+ 
 		if (NewCapacity > Capacity)
 		{
 			// 1. Allocate
@@ -369,7 +371,8 @@ private:
 	//
 	bool GetBitMapValue(int32_t Index)
 	{
-		int32_t WordIndex = Index / BitsPerWord;
+		//int32_t WordIndex = Index / BitsPerWord;
+		int32_t WordIndex = Index >> 5;
 		int32_t BitIndex = Index - WordIndex * BitsPerWord;
 
 		return !(Bitmap[WordIndex] & (1 << BitIndex));
@@ -378,7 +381,8 @@ private:
 	//
 	void SetBitMapValue(int32_t Index, bool Value)
 	{
-		int32_t WordIndex = Index / BitsPerWord;
+		//int32_t WordIndex = Index / BitsPerWord;
+		int32_t WordIndex = Index >> 5;
 		int32_t BitIndex = Index - WordIndex * BitsPerWord;
 
 		Value = !Value; // Store free as 1 and 0 as taken

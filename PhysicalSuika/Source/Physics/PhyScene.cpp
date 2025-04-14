@@ -8,10 +8,12 @@
 
 
 
-SPhyScene::SPhyScene(int32_t InStepsNumber)
-	: StepsNumber(InStepsNumber)
+SPhyScene::SPhyScene(float InTargetFrametime, uint32_t InSubStepsCount)
+	: TargetFrametime(InTargetFrametime)
+	, SubStepsCount(InSubStepsCount)
+	, InvStepsCount(1.0f / InSubStepsCount)
 {
-	Solver = std::make_unique<SPhySolver>();
+	Solver = MakeScoped<SPhySolver>();
 }
 
 CBodyHandle SPhyScene::CreateRigidBody(AActor* Owner, const std::string& MaterialTag, FColliderShape* InShape, uint32_t InLayers /*= 1*/)
@@ -41,38 +43,36 @@ bool SPhyScene::SimpleCollision(const FBoxCollider& FirstAABB, const FBoxCollide
 	return true;
 }
 
-void SPhyScene::Tick(STimestep Step)
+void SPhyScene::Tick(float DeltaTime)
 {
 	if (BodyPool.Size() == 0)
 		return;
 
-	// Allow physics to catch up
-	do
+	do // Allow physics to catch up
 	{
-		float DeltaTimeMs = Step.GetStep();
-		InternalTick(DeltaTimeMs / 1000.0f);
-	} while (Step.Update());
+		InternalTick(glm::min(TargetFrametime, DeltaTime));
+		DeltaTime -= TargetFrametime;
+	} while (DeltaTime >= TargetFrametime);
 }
 
-void SPhyScene::InternalTick(float DeltaTimeS)
+void SPhyScene::InternalTick(float StepTime)
 {
-	float TimeStep = DeltaTimeS / StepsNumber;
+	float Substep = StepTime * InvStepsCount;
 
-	const float Gravity = 9.8f;
-	for (int32_t i = 0; i < StepsNumber; i++)
+	for (uint32_t i = 0; i < SubStepsCount; i++)
 	{
 		// 1. Integrate Forces & Gravity
 		for (CRigidBodyComp& Body : BodyPool)
 		{
 			if (!Body.IsStatic() && !Body.IsDisabled())
 			{
-				Body.IntegrateVelocity(TimeStep);
+				Body.IntegrateVelocity(Substep);
 			}
 		}
 
 		// 2. Solve collisions
 		BroadPass();
-		Solver->WarmUp();
+		Solver->WarmUp(Substep);
 		Solver->SolveContacts();
 
 		// 3. Integrate Position
@@ -80,7 +80,7 @@ void SPhyScene::InternalTick(float DeltaTimeS)
 		{
 			if (!Body.IsStatic() && !Body.IsDisabled())
 			{
-				Body.IntegratePosition(TimeStep);
+				Body.IntegratePosition(Substep);
 			}
 		}
 	}

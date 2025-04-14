@@ -31,7 +31,7 @@ public:
 	virtual ~AFruit() override;
 
 	// "Safe" way to spawn new entities
-	virtual void Tick(float DeltaTimeMs) override;
+	virtual void Tick(float DeltaTime) override;
 
 	// Events
 	void OnCollision(AActor* Opponent);

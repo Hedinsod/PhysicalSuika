@@ -100,7 +100,7 @@ void CRigidBodyComp::BasicCopy(const CRigidBodyComp& Other)
 
 void CRigidBodyComp::IntegrateVelocity(float TimeStep)
 {
-	static const glm::vec2 Gravity(0.f, -9.8);
+	static const glm::vec2 Gravity(0.f, -98.0f);
 
 	const FMaterial& Material = Engine::GetMaterialLibrary().Get(MaterialTag);
 
@@ -108,13 +108,17 @@ void CRigidBodyComp::IntegrateVelocity(float TimeStep)
 	glm::vec2 Acceleration = Forces * InvMass + Gravity * Material.GravityScale;
 	Velocity += Acceleration * TimeStep;
 
+	GAssert(!std::isnan(Velocity.x));
+	GAssert(!std::isnan(Velocity.y));
+
 	AngularVelocity += Torque * InvInertia * TimeStep;
 }
 
 void CRigidBodyComp::IntegratePosition(float TimeStep)
 {
+	// Log::Log("BodyVelocity," + std::to_string(Velocity.x) + "," + std::to_string(Velocity.y));
 	// A completly arbitrary value preventing disaster
-	static glm::vec2 MaxSpeed(12.0f, 12.0);
+	static glm::vec2 MaxSpeed(45.0f, 45.0);
 	Velocity = glm::clamp(Velocity, -MaxSpeed, MaxSpeed);
 
 	Owner->GetTransform().Translate(Velocity * TimeStep);

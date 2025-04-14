@@ -14,7 +14,7 @@ static EGfxShaderType GetShaderType(const std::string& Type)
 	}
 	else
 	{
-		GAssert(false/*, Unknown shader type */);
+		GAssertLog(false, "Unknown shader type");
 		return EGfxShaderType::None;
 	}
 }

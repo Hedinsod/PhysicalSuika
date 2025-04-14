@@ -31,7 +31,7 @@ AHand::~AHand()
 	Engine::GetGraphics().RemoveGeometry(GeoHandle);
 }
 
-void AHand::Tick(float DeltaTimeMs)
+void AHand::Tick(float DeltaTime)
 {
 	static const glm::vec2 Shift{ .1f, 0.f };
 	
@@ -47,12 +47,12 @@ void AHand::Tick(float DeltaTimeMs)
 
 	if (SpawnCooldown > 0.0f)
 	{
-		SpawnCooldown -= DeltaTimeMs;
+		SpawnCooldown -= DeltaTime;
 	}
 
 	if (!Preview && SpawnCooldown <= 0)
 	{
-		uint16_t TypeRand = Utility::GetRandom(1, 6);
+		uint16_t TypeRand = Math::GetRandom(1, 6);
 		Preview = GetGame()->AddEntity<AFruit>(HoldPoint, (EFruitType)TypeRand);
 		Preview->Hold();
 	}

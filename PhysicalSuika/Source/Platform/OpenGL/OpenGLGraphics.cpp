@@ -61,8 +61,7 @@ void SOpenGLGraphics::Clear()
 // static callbacks
 void SOpenGLGraphics::ProcessError(int32_t ErrorCode, const char* Description)
 {
-	Utility::Log("SOpenGLWindow Error");
-	Utility::Log(Description);
+	Log::Log("SOpenGLWindow Error: " + std::string(Description));
 }
 
 void SOpenGLGraphics::PostInit()
