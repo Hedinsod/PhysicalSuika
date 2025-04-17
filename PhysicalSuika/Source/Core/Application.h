@@ -8,7 +8,7 @@ class SGfxWindow;
 class SGame;
 
 
-using FAppEvent_OnResize = TEvent<void, int32_t, int32_t>;
+using FAppEvent_OnResize = TEvent<void, uint32_t, uint32_t>;
 
 class Application final
 {
@@ -24,7 +24,7 @@ public:
 	const FSettings& GetSettings() { return TheSettings; }
 
 	// Events
-	void OnResize(int32_t InScreenWidth, int32_t InScreenHeight);
+	void OnResize(uint32_t InScreenWidth, uint32_t InScreenHeight);
 
 	void AddOnResizeEventHandler(const FAppEvent_OnResize::EventCallbackFn& InCallback)
 	{

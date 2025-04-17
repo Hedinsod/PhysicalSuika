@@ -40,11 +40,31 @@ public:
 	virtual void Bind() override;
 	virtual void Unbind() override;
 
-	//virtual uint32_t GetCount() override { return Count; }
-
 private:
 	uint32_t BufferId;
-	//uint32_t Count;
+
+};
+
+// ****************************************************************************
+// ********** SGfxBufferFactory ***********************************************
+// ****************************************************************************
+
+class SOpenGLVertexArray : public SGfxVertexArray
+{
+public:
+	SOpenGLVertexArray();
+	virtual ~SOpenGLVertexArray();
+
+	virtual void Bind() override;
+	virtual void Unbind() override;
+
+	virtual void Attach(const StdShared<SGfxVertexBuffer>& InVertexBuffer) override;
+	virtual void Attach(const StdShared<SGfxIndexBuffer>& InIndexBuffer) override;
+
+	virtual void SetLayout(const SGfxBufferLayout& InLayout) override;
+
+private:
+	uint32_t ArrayId;
 
 };
 
@@ -66,30 +86,10 @@ public:
 
 	// Create an index buffer and upload values from a given vector
 	virtual StdShared<SGfxIndexBuffer> CreateIndexBuffer(const std::vector<uint32_t>& IndexData) override;
-
 	virtual StdShared<SGfxIndexBuffer> CreateIndexBuffer(size_t Size) override;
 
-	//	virtual void CreateVertexArray(/*VertexBuffer, IndexBuffer, Layout*/) override;    // Geometry Object
+	virtual StdShared<SGfxVertexArray> CreateVertexArray()  override;
 
 };
 
 
-/*
-class SOpenGLVertexArray : public SGfxVertexArray
-{
-public:
-	SOpenGLVertexArray();
-	virtual ~SOpenGLVertexArray();
-
-	virtual void Bind() override;
-	virtual void Unbind() override;
-
-	virtual StdShared<SGfxVertexBuffer> AddVertexData(const std::vector<float>& VertexData,
-															const SGfxBufferLayout& InLayout) override;
-	virtual void SetIndexData(const std::vector<uint32_t>& IndexData) override;
-
-private:
-	uint32_t ArrayId;
-
-};
-*/

@@ -102,6 +102,68 @@ void SOpenGLIndexBuffer::Unbind()
 }
 
 // ****************************************************************************
+// ********** SOpenGLVertexArray **********************************************
+// ****************************************************************************
+
+SOpenGLVertexArray::SOpenGLVertexArray()
+{
+	glGenVertexArrays(1, &ArrayId);
+}
+SOpenGLVertexArray::~SOpenGLVertexArray()
+{
+	glBindVertexArray(0);
+}
+
+void SOpenGLVertexArray::Bind()
+{
+	glBindVertexArray(ArrayId);
+}
+
+void SOpenGLVertexArray::Unbind()
+{
+	glBindVertexArray(0);
+}
+
+void SOpenGLVertexArray::Attach(const StdShared<SGfxVertexBuffer>& InVertexBuffer)
+{
+	SGfxVertexArray::Attach(InVertexBuffer);
+
+	glBindVertexArray(ArrayId);
+	VertexBuffer->Bind();
+}
+
+void SOpenGLVertexArray::Attach(const StdShared<SGfxIndexBuffer>& InIndexBuffer)
+{
+	SGfxVertexArray::Attach(InIndexBuffer);
+
+	glBindVertexArray(ArrayId);
+	IndexBuffer->Bind();
+
+}
+
+void SOpenGLVertexArray::SetLayout(const SGfxBufferLayout& InLayout)
+{
+	glBindVertexArray(ArrayId);
+	VertexBuffer->Bind();
+
+	int i = 0;
+	for (const auto& Element : InLayout)
+	{
+		glEnableVertexAttribArray(i);
+		glVertexAttribPointer(
+			i++,
+			Element.Count,
+			GetGLElementType(Element.Type),
+			Element.bNormalized ? GL_TRUE : GL_FALSE,
+			InLayout.GetStride(),
+			reinterpret_cast<void*>(Element.Offset));
+	}
+
+	// Unbind?
+}
+
+
+// ****************************************************************************
 // ********** SGfxBufferFactory ***********************************************
 // ****************************************************************************
 
@@ -157,48 +219,7 @@ StdShared<SGfxIndexBuffer> SOpenGLBufferFactory::CreateIndexBuffer(size_t Size)
 	return MakeShared<SOpenGLIndexBuffer>(RenderId);
 }
 
-
-// ****************************************************************************
-// ********** SOpenGLVertexArray **********************************************
-// ****************************************************************************
-
-/*
-SOpenGLVertexArray::SOpenGLVertexArray()
+StdShared<SGfxVertexArray> SOpenGLBufferFactory::CreateVertexArray()
 {
-	glGenVertexArrays(1, &ArrayId);
+	return MakeShared<SOpenGLVertexArray>();
 }
-SOpenGLVertexArray::~SOpenGLVertexArray()
-{
-	glBindVertexArray(0);
-}
-
-void SOpenGLVertexArray::Bind()
-{
-	glBindVertexArray(ArrayId);
-}
-
-void SOpenGLVertexArray::Unbind()
-{
-	glBindVertexArray(0);
-}
-
-StdShared<SGfxVertexBuffer> SOpenGLVertexArray::AddVertexData(const std::vector<float>& VertexData,
-													  const SGfxBufferLayout& InLayout)
-{
-	StdShared<SGfxVertexBuffer> NewVertexBuffer = SGfxVertexData::AddVertexData(VertexData, InLayout);
-
-	glBindVertexArray(ArrayId);
-	NewVertexBuffer->Bind();
-	NewVertexBuffer->SetLayout(InLayout);
-
-	return NewVertexBuffer;
-}
-
-void SOpenGLVertexArray::SetIndexData(const std::vector<uint32_t>& IndexData)
-{
-	SGfxVertexData::SetIndexData(IndexData);
-
-	glBindVertexArray(ArrayId);
-	IndexBuffer->Bind();
-}
-*/

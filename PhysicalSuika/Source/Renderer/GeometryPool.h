@@ -11,6 +11,7 @@ class ACamera;
 class SGfxShader;
 class SGfxVertexBuffer;
 class SGfxIndexBuffer;
+class SGfxVertexArray;
 
 
 class SGeometryPool
@@ -41,6 +42,7 @@ private:
 	StdShared<SGfxShader> Shader;
 	StdShared<SGfxVertexBuffer> VBO;
 	StdShared<SGfxIndexBuffer> IBO;
+	StdShared<SGfxVertexArray> VAO;
 
 	FVertex* VertexData;
 	uint32_t NextVertex;

@@ -53,8 +53,6 @@ void Application::Run()
 		float DeltaTime = Step.FrameStart();
 		DeltaTime = glm::max(DeltaTime, 0.0001f);
 
-		//Step.FrameStart();
-
 		// Physics
 		Engine::GetPhyScene().Tick(DeltaTime);
 
@@ -72,12 +70,10 @@ void Application::Run()
 
 		// Delete unused
 		TheGame->CullEntities();
-
-		
 	}
 }
 
-void Application::OnResize(int32_t InScreenWidth, int32_t InScreenHeight)
+void Application::OnResize(uint32_t InScreenWidth, uint32_t InScreenHeight)
 {
 	OnResizeEvent.Broadcast(InScreenWidth, InScreenHeight);
 }

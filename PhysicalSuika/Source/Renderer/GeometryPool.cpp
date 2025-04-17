@@ -8,9 +8,10 @@
 #include "Graphics/Graphics.h"
 
 
-static const int32_t MaxHexagones = 1000;
-static const int32_t MaxVertices = MaxHexagones * 6;
-static const int32_t MaxIndices = MaxHexagones * 7;
+// Just random assumption
+static const uint32_t MaxFruit = 30;
+static const uint32_t MaxVertices = MaxFruit * 14;
+static const uint32_t MaxIndices = MaxVertices * 2;
 
 SGeometryPool::SGeometryPool()
 {
@@ -22,9 +23,15 @@ SGeometryPool::SGeometryPool()
 
 	// Prepare VBO, IBO, VAO:
 	StdScoped<SGfxBufferFactory> BuffersFactory = SGraphics::GetBufferFactory();
+
+	VAO = BuffersFactory->CreateVertexArray();
 	VBO = BuffersFactory->CreateVertexBuffer(MaxVertices);
 	IBO = BuffersFactory->CreateIndexBuffer(MaxIndices);
-	//RenderVAO = BuffersFactory->CreateVertexArray(VBO, IBO, {{ "Vertices", EGfxShaderData::Float3 }});
+
+	VAO->Attach(VBO);
+	VAO->Attach(IBO);
+	VAO->SetLayout({ { "Position", EGfxShaderData::Float4 },
+					 { "Color", EGfxShaderData::Float4 } });
 
 	VertexData = new FVertex[MaxVertices];
 	IndexData = new uint32_t[MaxIndices];
@@ -62,18 +69,24 @@ void SGeometryPool::Begin(const StdShared<ACamera>& Camera)
 
 void SGeometryPool::Tick()
 {
-	if (NextIndex >= MaxIndices)
-	{
-		return;
-		// Restart
-	}
-
 	for (CGeometry& Geo : GeometryPool)
 	{
+		if (NextIndex + Geo.Indices.size() >= MaxIndices)
+		{
+			Finish();
+
+			// Reset
+			NextVertex = 0;
+			NextIndex = 0;
+			IndexOffset = 0;
+		}
+
 		const glm::mat4& Model = Geo.GetOwner().GetTransform().GetModel();
 		const FMaterial& Material = Engine::GetMaterialLibrary().Get(Geo.MaterialTag);
 		for (const glm::vec4& Vertex : Geo.Vertices)
 		{
+			GAssert(NextVertex < MaxVertices);
+
 			VertexData[NextVertex].Position = Model * Vertex;
 			GAssert(VertexData[NextVertex].Position.z == 0.0f);
 
@@ -83,6 +96,8 @@ void SGeometryPool::Tick()
 
 		for (const uint32_t& Index : Geo.Indices)
 		{
+			GAssert(NextIndex < MaxIndices);
+
 			IndexData[NextIndex++] = IndexOffset + Index;
 		}
 
@@ -93,9 +108,9 @@ void SGeometryPool::Tick()
 void SGeometryPool::Finish()
 {
 	VBO->UploadVertices(VertexData, NextVertex * sizeof(FVertex));
-	VBO->SetLayout({ { "Position", EGfxShaderData::Float4 },
-	                 { "Color", EGfxShaderData::Float4 } });
 	IBO->UploadIndices(IndexData, NextIndex * sizeof(uint32_t));
+
+	VAO->Bind();
 
 	SGraphics::DrawIndexed(NextIndex);
 }
