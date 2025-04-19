@@ -89,7 +89,7 @@ void CRigidBodyComp::BasicCopy(const CRigidBodyComp& Other)
 	Velocity = Other.Velocity;
 	Forces = Other.Forces;
 
-	Orientation = Other.Orientation;
+	DeltaRotation = Other.DeltaRotation;
 	AngularVelocity = Other.AngularVelocity;
 	Torque = Other.Torque;
 
@@ -116,11 +116,14 @@ void CRigidBodyComp::IntegrateVelocity(float TimeStep)
 
 void CRigidBodyComp::IntegratePosition(float TimeStep)
 {
-	// Log::Log("BodyVelocity," + std::to_string(Velocity.x) + "," + std::to_string(Velocity.y));
 	// A completly arbitrary value preventing disaster
 	static glm::vec2 MaxSpeed(45.0f, 45.0);
 	Velocity = glm::clamp(Velocity, -MaxSpeed, MaxSpeed);
 
-	Owner->GetTransform().Translate(Velocity * TimeStep);
-	Owner->GetTransform().Rotate(AngularVelocity * TimeStep);
+	DeltaPosition += Velocity * TimeStep;
+	Owner->GetTransform().Translate(DeltaPosition);
+	Owner->GetTransform().Rotate(DeltaRotation + AngularVelocity * TimeStep);
+
+	DeltaPosition = glm::vec2(0.0f);
+	DeltaRotation = 0.0f;
 }

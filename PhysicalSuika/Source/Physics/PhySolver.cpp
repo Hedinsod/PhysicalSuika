@@ -16,8 +16,6 @@ SPhySolver::SPhySolver()
 
 void SPhySolver::WarmUp(float DeltaTime)
 {
-	CachedDeltaTime = DeltaTime;
-
 	for (FContact& Contact : ContactGraph)
 	{
 		CRigidBodyComp& FirstBody = Engine::GetPhyScene().GetRigidBody(Contact.FirstId);
@@ -71,12 +69,6 @@ void SPhySolver::ResolveCollision(CRigidBodyComp& First, CRigidBodyComp& Second,
 	float FirstNormalRadius = glm::dot(FirstRadius, Manifold.Normal);
 	float SecondNormalRadius = glm::dot(SecondRadius, Manifold.Normal);
 
-	// Erin Catto calls this crude - well, he was right. TODO: get timestep properly!
-	// Using 20% arbitrary mutlipler and 0.01 unit penetration tolerance
-	const float BiasLimit = 50.f; // No more CRAZY overshooting
-	float Bias = -0.2f * 1.f / CachedDeltaTime * glm::min(0.0f, 0.01f - Manifold.Penetration);
-	Bias = glm::clamp(Bias, -BiasLimit, BiasLimit);
-
 	// Calculate relative velocity in terms of the normal direction
 	glm::vec2 RelativeVelocity = Second.Velocity + Math::cross2(Second.AngularVelocity, SecondRadius)
 		- First.Velocity + Math::cross2(First.AngularVelocity, FirstRadius);
@@ -88,7 +80,7 @@ void SPhySolver::ResolveCollision(CRigidBodyComp& First, CRigidBodyComp& Second,
 		+ Second.InvInertia * (glm::dot(SecondRadius, SecondRadius) - SecondNormalRadius * SecondNormalRadius);
 	CommonMass = 1.0f / CommonMass;
 
-	float NormalImpulse = (Bias - VelAlongNormal) * CommonMass;
+	float NormalImpulse = -1.0f * VelAlongNormal * CommonMass;
 
 	// Accumulate and clump
 	float OldImpulse = Manifold.NormalImpulse;
@@ -142,6 +134,17 @@ void SPhySolver::ResolveCollision(CRigidBodyComp& First, CRigidBodyComp& Second,
 	Second.Velocity += Second.InvMass * TangentImpulse;
 	Second.AngularVelocity += Second.InvInertia * Math::cross2(SecondRadius, TangentImpulse);
 
+
+
+	// Position solving
+	float positionImpulse = 0.2f * glm::max(0.0f, Manifold.Penetration);
+	First.DeltaPosition -= positionImpulse * Manifold.Normal;
+	Second.DeltaPosition += positionImpulse * Manifold.Normal;
+
+	float Rotation = Math::cross2(FirstRadius, positionImpulse * Manifold.Normal);
+	First.DeltaRotation -= Rotation;
+	Rotation = Math::cross2(SecondRadius, positionImpulse * Manifold.Normal);
+	Second.DeltaRotation += Rotation;
 }
 
 // ****************************************************************************

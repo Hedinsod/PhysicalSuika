@@ -32,7 +32,4 @@ private:
 
 	// Double virtual table of manifold generators
 	std::function<bool(CRigidBodyComp& First, CRigidBodyComp& Second, FManifold&)> GenManifoldTable[2][2];
-
-	// Cache
-	float CachedDeltaTime = 0.0f;
 };

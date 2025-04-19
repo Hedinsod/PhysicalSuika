@@ -89,10 +89,11 @@ private:
 
 	// Dynamic parameters
 	glm::vec2 Position{ 0 };
+	glm::vec2 DeltaPosition{ 0 };
 	glm::vec2 Velocity{ 0 };
 	glm::vec2 Forces{ 0 };
 
-	float Orientation = 0.0f;
+	float DeltaRotation = 0.0f;
 	float AngularVelocity = 0.0f;
 	float Torque = 0.0f;
 
