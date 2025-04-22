@@ -2,7 +2,7 @@
 #include "Fruit.h"
 #include "Game.h"
 #include "Systems/Engine.h"
-#include "Renderer/GeometryPool.h"
+#include "Renderer/Renderer.h"
 #include "Graphics/Types.h"
 
 
@@ -26,25 +26,28 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	: AActor(InPos)
 	, Type(InType)
 {
-	float Scale = 0.4f + 0.15f * ((int16_t)Type + 1);
+	float Scale = 1.0f + 0.15f * (int16_t)Type;
 	Trans.SetScale({ Scale, Scale });
-
-	// Generate points
-	std::vector<glm::vec2> Points;
-	Points.emplace_back(0.0f, 0.0f);
-	uint32_t i = 0;
-	for (float a = 0.f; a <= 360.f; a += 30.f)
-	{
-		Points.emplace_back(glm::sin(glm::radians(a)), glm::cos(glm::radians(a)));
-	}
 
 	// Geometry component
 	GeoHandle = Engine::GetGraphics().CreateGeometry(this);
-	GeoHandle->Import(Points);
+	GeoHandle->Import({
+		glm::vec2(-0.5f, -0.5f),
+		glm::vec2(0.5f, -0.5f),
+		glm::vec2(0.5f, 0.5f),
+		glm::vec2(-0.5f, 0.5f) });
+	GeoHandle->SetUVs({
+		glm::vec2(0.0f, 0.0f),
+		glm::vec2(1.0f, 0.0f),
+		glm::vec2(1.0f, 1.0f),
+		glm::vec2(0.0f, 1.0f) });
+	GeoHandle->SetIndices({ 0, 1, 2, 2, 3, 0 });
+	
 	GeoHandle->SetMaterial("Berry");
+	Trans.SetZOrer(0.2f);
 
 	// Physics
-	FColliderShape* Shape = FColliderShape::Create<FCircleCollider>({ 0, 0 }, Scale);
+	FColliderShape* Shape = FColliderShape::Create<FCircleCollider>({ 0, 0 }, Scale * 0.5f);
 	Box = Engine::GetPhyScene().CreateRigidBody(this, "Berry", Shape);
 
 	Engine::GetPhyScene().GetRigidBody(Box).SetOnCollisionEventHandler(std::bind(&AFruit::OnCollision, this, std::placeholders::_1));

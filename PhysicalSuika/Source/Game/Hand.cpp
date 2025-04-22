@@ -22,8 +22,10 @@ AHand::AHand(glm::vec2 InPos)
 	};
 
 	GeoHandle = Engine::GetGraphics().CreateGeometry(this);
-	(*GeoHandle).Import(Points);
+	GeoHandle->Import(Points);
+	GeoHandle->SetIndices({0,1,2, 1,2,3, 3,4,5, 5,6,7, 6,7,8});
 
+	Trans.SetZOrer(0.1f);
 }
 
 AHand::~AHand()

@@ -40,6 +40,12 @@ void SOpenGLShader::SetParameter(const char* ParameterName, const glm::vec4& vec
 	glUniform4f(Loc, vec.r, vec.g, vec.b, vec.a);
 }
 
+void SOpenGLShader::SetParameter(const char* ParameterName, const int32_t* vs, const uint32_t Count)
+{
+	GLint Loc = glGetUniformLocation(RenderId, ParameterName);
+	glUniform1iv(Loc, Count, vs);
+}
+
 // ****************************************************************************
 // **** SOpenGLShaderFabric ***************************************************
 // ****************************************************************************

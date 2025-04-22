@@ -6,14 +6,9 @@
 #include "Graphics/GfxWindow.h"
 #include "Graphics/GfxShader.h"
 #include "Graphics/GfxBuffers.h"
+#include "Graphics/GfxTexture.h"
 
 #include <string>
-
-class SGfxWindow;
-
-class SGfxShaderFactory;
-class SGfxBufferFactory;
-class SGfxVertexArray;
 
 
 enum class EGfxApi
@@ -33,6 +28,8 @@ public:
 	// Factories of gfx objects 
 	virtual StdScoped<SGfxShaderFactory> GetShaderFactory() = 0;
 	virtual StdScoped<SGfxBufferFactory> GetBufferFactory() = 0;
+	virtual StdScoped<SGfxTextureFactory> GetTextureFactory() = 0;
+
 
 	// List of render commands
 	virtual void DrawIndexed(uint32_t IndexCount) = 0;
@@ -64,6 +61,10 @@ public:
 	inline static StdScoped<SGfxBufferFactory> GetBufferFactory()
 	{
 		return Api->GetBufferFactory();
+	}
+	inline static StdScoped<SGfxTextureFactory> GetTextureFactory()
+	{
+		return Api->GetTextureFactory();
 	}
 
 	// Render Commands

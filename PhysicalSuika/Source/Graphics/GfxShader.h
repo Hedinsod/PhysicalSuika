@@ -20,6 +20,7 @@ public:
 
 	virtual void SetParameter(const char* ParameterName, const glm::mat4& mat) = 0;
 	virtual void SetParameter(const char* ParameterName, const glm::vec4& vec) = 0;
+	virtual void SetParameter(const char* Name, const int32_t* vs, const uint32_t Count) = 0;
 
 };
 

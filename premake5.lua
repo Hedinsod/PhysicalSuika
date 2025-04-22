@@ -6,6 +6,7 @@ workspace "PhysicalSuika"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 include "External/premake-glfw.lua"
 include "External/GLAD/premake-glad.lua"
+include "External/Stb-Image/premake-stb.lua"
 
 project "PhysicalSuika"
 	location "PhysicalSuika"
@@ -32,6 +33,7 @@ project "PhysicalSuika"
 		"External/glfw/include",
 		"External/glad/include",
 		"External/glm",
+		"External/stb-image",
 		"%{prj.name}/Source",
 	}
 	
@@ -39,6 +41,7 @@ project "PhysicalSuika"
 	{
 		"GLFW",
 		"GLAD",
+		"Stb-Image",
 	}
 
 	filter "system:windows"

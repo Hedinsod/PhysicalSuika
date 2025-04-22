@@ -2,7 +2,7 @@
 
 #include "Core/Utility.h"
 #include "Physics/PhyScene.h"
-#include "Renderer/GeometryPool.h"
+#include "Renderer/Renderer.h"
 #include "Systems/MaterialLibrary.h"
 #include <memory>
 
@@ -18,7 +18,7 @@ public:
 		GAssert(Instance);
 		return *Instance->PhyScene;
 	}
-	static SGeometryPool& GetGraphics()
+	static SRenderer& GetGraphics()
 	{
 		GAssert(Instance);
 		return *Instance->Graphics;
@@ -39,7 +39,7 @@ private:
 	static Engine* Instance;
 
 	StdScoped<SPhyScene> PhyScene;
-	StdScoped<SGeometryPool> Graphics;
+	StdScoped<SRenderer> Graphics;
 	
 	SMatirialLibrary MatirialLibrary;
 

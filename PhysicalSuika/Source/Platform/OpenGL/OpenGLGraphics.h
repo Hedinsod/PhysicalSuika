@@ -14,6 +14,7 @@ public:
 	// Factories
 	virtual StdScoped<SGfxShaderFactory> GetShaderFactory() override;
 	virtual StdScoped<SGfxBufferFactory> GetBufferFactory() override;
+	virtual StdScoped<SGfxTextureFactory> GetTextureFactory() override;
 
 	// Render Commands
 	virtual void DrawIndexed(uint32_t IndexCount) override;

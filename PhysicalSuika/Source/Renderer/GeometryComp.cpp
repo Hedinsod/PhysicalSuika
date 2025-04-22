@@ -15,11 +15,7 @@ void CGeometry::Import(const std::vector<glm::vec2>& InVertices)
 	for (int32_t i = 0; i < InVertices.size(); i++)
 	{
 		Vertices.emplace_back(InVertices[i].x, InVertices[i].y, 0.0f, 1.0f);
-	}
-	for (int32_t i = 1; i < InVertices.size(); i++)
-	{
-		Indices.emplace_back(i-1);
-		Indices.emplace_back(i);
+		UVs.emplace_back(0.0f, 0.0f);
 	}
 }
 
@@ -31,4 +27,11 @@ void CGeometry::SetIndices(const std::vector<uint32_t>& InIndices)
 void CGeometry::SetIndices(std::vector<uint32_t>&& InIndices)
 {
 	Indices = std::move(InIndices);
+}
+
+void CGeometry::SetUVs(std::vector<glm::vec2>&& InUVs)
+{
+	GAssert(InUVs.size() == Vertices.size());
+
+	UVs = std::move(InUVs);
 }

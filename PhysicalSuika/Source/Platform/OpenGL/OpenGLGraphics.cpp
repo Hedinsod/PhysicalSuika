@@ -3,6 +3,7 @@
 #include "OpenGLWindow.h"
 #include "OpenGLShader.h"
 #include "OpenGLBuffers.h"
+#include "OpenGLTexture.h"
 
 #include "OpenGLContext.h"
 
@@ -39,11 +40,15 @@ StdScoped<SGfxBufferFactory> SOpenGLGraphics::GetBufferFactory()
 {
 	return MakeScoped<SOpenGLBufferFactory>();
 }
+StdScoped<SGfxTextureFactory> SOpenGLGraphics::GetTextureFactory()
+{
+	return MakeScoped<SOpenGLTextureFactory>();
+}
 
 // Render Commands
 void SOpenGLGraphics::DrawIndexed(uint32_t IndexCount)
 {
-	glDrawElements(GL_LINES, IndexCount, GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, IndexCount, GL_UNSIGNED_INT, nullptr);
 }
 
 void SOpenGLGraphics::SetClearColor(const FColorRGB& InColor)

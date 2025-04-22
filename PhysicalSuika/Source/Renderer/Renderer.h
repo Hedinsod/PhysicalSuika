@@ -12,9 +12,10 @@ class SGfxShader;
 class SGfxVertexBuffer;
 class SGfxIndexBuffer;
 class SGfxVertexArray;
+class SGfxTexture;
 
 
-class SGeometryPool
+class SRenderer
 {
 	friend FGeometryHandle;
 
@@ -22,11 +23,13 @@ class SGeometryPool
 	{
 		glm::vec4 Position;
 		glm::vec4 Color;
+		glm::vec2 TexCoord;
+		float TexSlot;
 	};
 
 public:
-	SGeometryPool();
-	~SGeometryPool();
+	SRenderer();
+	~SRenderer();
 
 	FGeometryHandle CreateGeometry(AActor* InOwner);
 	void RemoveGeometry(FGeometryHandle);
@@ -51,5 +54,9 @@ private:
 	uint32_t NextIndex;
 
 	uint32_t IndexOffset;
+
+	uint32_t NextTexSlot = 0;
+
+	std::unordered_map<StdShared<SGfxTexture>, float> TextureToSlot;
 
 };
