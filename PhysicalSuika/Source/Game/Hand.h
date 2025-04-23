@@ -17,7 +17,11 @@ public:
 	virtual void OnCollide(const AActor* Opponent) {}
 	
 private:
+	const float HandSpeed = 0.1f;
+	const glm::vec2 FruitOffset{0.f, -1.5f};
+
 	StdShared<AFruit> Preview;
+	float HandOffset = 0.0f;
 
 	FGeometryHandle GeoHandle;
 

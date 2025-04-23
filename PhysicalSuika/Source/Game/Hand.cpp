@@ -25,7 +25,7 @@ AHand::AHand(glm::vec2 InPos)
 	GeoHandle->Import(Points);
 	GeoHandle->SetIndices({0,1,2, 1,2,3, 3,4,5, 5,6,7, 6,7,8});
 
-	Trans.SetZOrer(0.1f);
+	Trans.SetZOrder(0.1f);
 }
 
 AHand::~AHand()
@@ -35,17 +35,19 @@ AHand::~AHand()
 
 void AHand::Tick(float DeltaTime)
 {
-	static const glm::vec2 Shift{ .1f, 0.f };
-	
 	if (SInput::IsButtonPressed(EInputCode::Left))
 	{
-		Trans.Translate(-Shift);
+		HandOffset -= HandSpeed;
 	}
 	if (SInput::IsButtonPressed(EInputCode::Right))
 	{
-		Trans.Translate(Shift);
+		HandOffset += HandSpeed;
 	}
-	glm::vec2 HoldPoint = Trans.GetPos() + glm::vec2{ 0.f, -1.5f };
+
+	// TODO: Do something with size of glass
+	HandOffset = glm::clamp(HandOffset, -4.0f, 4.0f);
+	Trans.SetPos({ HandOffset, 16.0f });
+	glm::vec2 HoldPoint = Trans.GetPos() + FruitOffset;
 
 	if (SpawnCooldown > 0.0f)
 	{

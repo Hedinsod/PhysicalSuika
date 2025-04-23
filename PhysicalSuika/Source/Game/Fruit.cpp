@@ -6,19 +6,26 @@
 #include "Graphics/Types.h"
 
 
-static std::array<FColorRGB, (int16_t)EFruitType::Count> FruitColors =
+struct FruitInstance
+{
+	FColorRGB Color;
+	float Scale;
+	// UVs
+};
+
+static std::array<FruitInstance, (int16_t)EFruitType::Count> FruitInstances =
 	{
-		FColorRGB(220, 65, 80),     // Cherry
-		FColorRGB(215, 100, 60),    // Strawberry
-		FColorRGB(200, 115, 245),   // Grape
-		FColorRGB(240, 175, 75),    // Dekopon
-		FColorRGB(215, 145, 90),    // Orange
-		FColorRGB(230, 90, 90),     // Apple
-		FColorRGB(235, 220, 100),   // Pear
-		FColorRGB(230, 105, 205),   // Peach
-		FColorRGB(245, 220, 65),    // Pineapple
-		FColorRGB(170, 250, 85),    // Melon
-		FColorRGB(135, 205, 50),    // Watermelon
+		FruitInstance(FColorRGB(220, 65, 80), 1.0f),     // Cherry
+		FruitInstance(FColorRGB(215, 100, 60), 1.5f),    // Strawberry
+		FruitInstance(FColorRGB(200, 115, 245), 2.2f),   // Grape
+		FruitInstance(FColorRGB(240, 175, 75), 2.4f),    // Dekopon
+		FruitInstance(FColorRGB(215, 145, 90), 3.0f),    // Orange
+		FruitInstance(FColorRGB(230, 90, 90), 3.6f),     // Apple
+		FruitInstance(FColorRGB(235, 220, 100), 3.8f),   // Pear
+		FruitInstance(FColorRGB(230, 105, 205), 5.1f),   // Peach
+		FruitInstance(FColorRGB(245, 220, 65), 6.1f),    // Pineapple
+		FruitInstance(FColorRGB(170, 250, 85), 8.7f),    // Melon
+		FruitInstance(FColorRGB(135, 205, 50), 8.9f)    // Watermelon
 	};
 
 
@@ -26,16 +33,16 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	: AActor(InPos)
 	, Type(InType)
 {
-	float Scale = 1.0f + 0.15f * (int16_t)Type;
+	float Scale = FruitInstances[(int16_t)Type].Scale;
 	Trans.SetScale({ Scale, Scale });
 
 	// Geometry component
 	GeoHandle = Engine::GetGraphics().CreateGeometry(this);
 	GeoHandle->Import({
-		glm::vec2(-0.5f, -0.5f),
-		glm::vec2(0.5f, -0.5f),
-		glm::vec2(0.5f, 0.5f),
-		glm::vec2(-0.5f, 0.5f) });
+		glm::vec2(-0.35f, -0.35f),
+		glm::vec2(0.35f, -0.35f),
+		glm::vec2(0.35f, 0.35f),
+		glm::vec2(-0.35f, 0.35f) });
 	GeoHandle->SetUVs({
 		glm::vec2(0.0f, 0.0f),
 		glm::vec2(1.0f, 0.0f),
@@ -44,10 +51,10 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	GeoHandle->SetIndices({ 0, 1, 2, 2, 3, 0 });
 	
 	GeoHandle->SetMaterial("Berry");
-	Trans.SetZOrer(0.2f);
+	Trans.SetZOrder(0.2f);
 
 	// Physics
-	FColliderShape* Shape = FColliderShape::Create<FCircleCollider>({ 0, 0 }, Scale * 0.5f);
+	FColliderShape* Shape = FColliderShape::Create<FCircleCollider>({ 0, 0 }, Scale * 0.35f);
 	Box = Engine::GetPhyScene().CreateRigidBody(this, "Berry", Shape);
 
 	Engine::GetPhyScene().GetRigidBody(Box).SetOnCollisionEventHandler(std::bind(&AFruit::OnCollision, this, std::placeholders::_1));

@@ -23,7 +23,7 @@ public:
 		Pos.x += Shift.x;
 		Pos.y += Shift.y;
 	}
-	inline void SetZOrer(float ZOrder)
+	inline void SetZOrder(float ZOrder)
 	{
 		Pos.z = ZOrder;
 	}

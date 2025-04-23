@@ -91,6 +91,9 @@ void SRenderer::Tick()
 			NextVertex = 0;
 			NextIndex = 0;
 			IndexOffset = 0;
+
+			TextureToSlot.clear();
+			NextTexSlot = 0;
 		}
 
 		const glm::mat4& Model = Geo.GetOwner().GetTransform().GetModel();
