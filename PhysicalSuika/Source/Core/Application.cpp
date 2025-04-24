@@ -48,6 +48,8 @@ void Application::Run()
 	const FColorRGB Background = { 250, 250, 250 };
 	SGraphics::SetClearColor(Background);
 
+	Engine::Renderer().SetCamera(TheGame->GetCamera());
+
 	while (!bQuit)
 	{
 		float DeltaTime = Step.FrameStart();
@@ -61,9 +63,7 @@ void Application::Run()
 
 		// Render everything
 		SGraphics::Clear();
-		Engine::GetGraphics().Begin(TheGame->GetCamera());
-		Engine::GetGraphics().Tick();
-		Engine::GetGraphics().Finish();
+		Engine::Renderer().Tick();
 
 		// Poll input and swap buffers
 		TheWindow->Tick();

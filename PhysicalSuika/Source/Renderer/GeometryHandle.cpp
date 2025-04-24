@@ -5,20 +5,20 @@
 
 CGeometry& FGeometryHandle::operator*()
 {
-	return Engine::GetGraphics().GeometryPool[Id];
+	return Engine::Renderer().GeometryPool[Id];
 }
 
 const CGeometry& FGeometryHandle::operator*() const
 {
-	return Engine::GetGraphics().GeometryPool[Id];
+	return Engine::Renderer().GeometryPool[Id];
 }
 
 CGeometry* FGeometryHandle::operator->()
 {
-	return &Engine::GetGraphics().GeometryPool[Id];
+	return &Engine::Renderer().GeometryPool[Id];
 }
 
 const CGeometry* FGeometryHandle::operator->() const
 {
-	return &Engine::GetGraphics().GeometryPool[Id];
+	return &Engine::Renderer().GeometryPool[Id];
 }

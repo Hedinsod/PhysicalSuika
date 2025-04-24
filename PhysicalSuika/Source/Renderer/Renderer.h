@@ -34,13 +34,19 @@ public:
 	FGeometryHandle CreateGeometry(AActor* InOwner);
 	void RemoveGeometry(FGeometryHandle);
 
-	void Begin(const StdShared<ACamera>& Camera);
+	void Begin();
 	void Finish();
 
 	void Tick();
 
+	void SetCamera(const StdShared<ACamera>& Camera) { CurrentCamera = Camera; }
+
 private:
+	void RenderPool(TSparseArray<CGeometry>& Pool);
+
 	TSparseArray<CGeometry> GeometryPool;
+
+	StdShared<ACamera> CurrentCamera;
 
 	StdShared<SGfxShader> Shader;
 	StdShared<SGfxVertexBuffer> VBO;

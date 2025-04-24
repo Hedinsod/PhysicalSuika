@@ -18,7 +18,7 @@ public:
 		GAssert(Instance);
 		return *Instance->PhyScene;
 	}
-	static SRenderer& GetGraphics()
+	static SRenderer& Renderer()
 	{
 		GAssert(Instance);
 		return *Instance->Graphics;

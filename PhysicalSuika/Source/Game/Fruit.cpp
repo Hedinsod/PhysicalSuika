@@ -37,7 +37,7 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	Trans.SetScale({ Scale, Scale });
 
 	// Geometry component
-	GeoHandle = Engine::GetGraphics().CreateGeometry(this);
+	GeoHandle = Engine::Renderer().CreateGeometry(this);
 	GeoHandle->Import({
 		glm::vec2(-0.35f, -0.35f),
 		glm::vec2(0.35f, -0.35f),
@@ -51,7 +51,6 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	GeoHandle->SetIndices({ 0, 1, 2, 2, 3, 0 });
 	
 	GeoHandle->SetMaterial("Berry");
-	Trans.SetZOrder(0.2f);
 
 	// Physics
 	FColliderShape* Shape = FColliderShape::Create<FCircleCollider>({ 0, 0 }, Scale * 0.35f);
@@ -63,7 +62,7 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 AFruit::~AFruit()
 {
 	Engine::GetPhyScene().RemoveRigidBody(Box);
-	Engine::GetGraphics().RemoveGeometry(GeoHandle);
+	Engine::Renderer().RemoveGeometry(GeoHandle);
 }
 
 void AFruit::Tick(float DeltaTime)

@@ -13,12 +13,12 @@ AGlass::AGlass(glm::vec2 InPos)
 			glm::vec2(5.0f, 0.0f),
 			glm::vec2(5.0f, 16.0f)
 		};
-
-	GeoHandle = Engine::GetGraphics().CreateGeometry(this);
+		
+	GeoHandle = Engine::Renderer().CreateGeometry(this);
 	GeoHandle->Import(Points);
 	GeoHandle->SetIndices({ 0, 1, 3, 1, 2, 3 });
 	GeoHandle->SetMaterial("Glass");
-
+	
 	FColliderShape* LeftBox = FColliderShape::Create<FBoxCollider>({ -5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
 	FColliderShape* RightBox = FColliderShape::Create<FBoxCollider>({ 5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
 	FColliderShape* BottomBox = FColliderShape::Create<FBoxCollider>({ 0.f, -0.5f }, -5.0f, 0.5f, 5.0f, -0.5f);
@@ -30,7 +30,7 @@ AGlass::AGlass(glm::vec2 InPos)
 
 AGlass::~AGlass()
 {
-	Engine::GetGraphics().RemoveGeometry(GeoHandle);
+	Engine::Renderer().RemoveGeometry(GeoHandle);
 
 	Engine::GetPhyScene().RemoveRigidBody(Left);
 	Engine::GetPhyScene().RemoveRigidBody(Right);

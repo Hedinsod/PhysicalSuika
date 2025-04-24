@@ -219,8 +219,6 @@ public:
 		using iterator_category = std::forward_iterator_tag;
 		using difference_type = std::ptrdiff_t;
 		using value_type = ElementType;
-		using pointer = ElementType*;
-		using reference = ElementType&;
 
 		Iterator(TSparseArray& Array, int32_t Index)
 			: Array(Array), Index(Index)
@@ -228,8 +226,11 @@ public:
 			SkipInvalid();
 		}
 
-		reference operator*() const { return Array[Index]; }
-		pointer operator->() { return &Array[Index]; }
+		value_type& operator*() { return Array[Index]; }
+		value_type* operator->() { return &Array[Index]; }
+
+		const value_type& operator*() const { return Array[Index]; }
+		const value_type* operator->() const { return &Array[Index]; }
 
 		int32_t GetIndex() { return Index; }
 
@@ -266,11 +267,11 @@ public:
 		int32_t Index;
 	};
 
-
 	Iterator begin() { return Iterator(*this, 0); }
 	Iterator end() { return Iterator(*this, ArraySize); }
 
-	
+	const Iterator begin() const { return Iterator(*this, 0); }
+	const Iterator end() const { return Iterator(*this, ArraySize); }
 
 private:
 	//
@@ -314,6 +315,11 @@ private:
 
 	// 
 	ElementType* GetData()
+	{
+		return static_cast<ElementType*>(Data);
+	}
+
+	const ElementType* GetData() const
 	{
 		return static_cast<ElementType*>(Data);
 	}
@@ -369,7 +375,7 @@ private:
 	}
 
 	//
-	bool GetBitMapValue(int32_t Index)
+	bool GetBitMapValue(int32_t Index) const
 	{
 		//int32_t WordIndex = Index / BitsPerWord;
 		int32_t WordIndex = Index >> 5;

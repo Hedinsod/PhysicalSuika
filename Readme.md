@@ -1,6 +1,6 @@
 ﻿## 🍎 What It Is
 
-This is a clone of the popular [Suika Game](https://www.suika-game.com/).
+This is a clone of the popular [Suika Game](https://suikagame.com/).
 
 While playing the original, I often found myself frustrated by situations where two fruits were lying close together but not merging.
 I really wanted to shake the glass to force some interaction – but since that wasn’t part of the game, I decided to make my own version where it is.

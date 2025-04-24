@@ -67,9 +67,16 @@ void SRenderer::RemoveGeometry(FGeometryHandle GeoId)
 	GeometryPool.Remove(GeoId.Id);
 }
 
-void SRenderer::Begin(const StdShared<ACamera>& Camera)
+void SRenderer::Tick()
 {
-	Shader->SetParameter("u_ViewProj", Camera->GetVP());
+	Begin();
+	RenderPool(GeometryPool);
+	Finish();
+}
+
+void SRenderer::Begin()
+{
+	Shader->SetParameter("u_ViewProj", CurrentCamera->GetVP());
 
 	NextVertex = 0;
 	NextIndex = 0;
@@ -79,9 +86,9 @@ void SRenderer::Begin(const StdShared<ACamera>& Camera)
 	NextTexSlot = 0;
 }
 
-void SRenderer::Tick()
+void SRenderer::RenderPool(TSparseArray<CGeometry>& Pool)
 {
-	for (CGeometry& Geo : GeometryPool)
+	for (const CGeometry& Geo : Pool)
 	{
 		if (NextIndex + Geo.Indices.size() >= MaxIndices)
 		{
