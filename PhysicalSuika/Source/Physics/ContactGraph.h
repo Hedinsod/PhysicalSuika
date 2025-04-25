@@ -5,6 +5,7 @@
 #include <array>
 #include <unordered_set>
 
+#include "Renderer/GeometryHandle.h"
 
 // Achtung: This structure [probably] should be perfectly nullified
 struct FManifold
@@ -15,6 +16,8 @@ struct FManifold
 	float        TangentImpulse = 0.0f;
 
 	std::array<glm::vec2, 2> ContactPoints{};
+
+	FPrimitiveHandle DP;
 };
 
 struct FContact

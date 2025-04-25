@@ -281,6 +281,7 @@ bool SPhySolver::GenManifold_BoxCircle(CRigidBodyComp& First, CRigidBodyComp& Se
 
 	// Arbitrary one point of contact
 	Manifold.ContactPoints[0] = Closest + First.Position;
+	Manifold.DP = std::move(Engine::Renderer().DrawDot(Manifold.ContactPoints[0], 0.3f));
 
 	return true;
 }
@@ -312,6 +313,8 @@ bool SPhySolver::GenManifold_CircleCircle(CRigidBodyComp& First, CRigidBodyComp&
 		Manifold.ContactPoints[0] = Direction - SecondCircle.Radius * Manifold.Normal;
 		Manifold.ContactPoints[0] += First.Position;
 
+		Manifold.DP = Engine::Renderer().DrawDot(Manifold.ContactPoints[0], 0.3f);
+
 		return true;
 	}
 	else    // Circles are on same position 
@@ -322,6 +325,8 @@ bool SPhySolver::GenManifold_CircleCircle(CRigidBodyComp& First, CRigidBodyComp&
 
 		Manifold.ContactPoints[0] = Direction - SecondCircle.Radius * Manifold.Normal;
 		Manifold.ContactPoints[0] += First.Position;
+
+		Manifold.DP = Engine::Renderer().DrawDot(Manifold.ContactPoints[0], 0.3f);
 
 		return true;
 	}

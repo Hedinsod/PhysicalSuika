@@ -6,6 +6,7 @@
 
 #include "Systems/Engine.h"
 #include "Graphics/Graphics.h"
+#include "Core/Input.h"
 
 
 // Just random assumption
@@ -72,6 +73,13 @@ void SRenderer::Tick()
 	Begin();
 	RenderPool(GeometryPool);
 	Finish();
+
+	if (SInput::IsButtonPressed(EInputCode::Tab))
+	{
+		Begin();
+		RenderPool(Overlay);
+		Finish();
+	}
 }
 
 void SRenderer::Begin()
@@ -84,6 +92,44 @@ void SRenderer::Begin()
 
 	TextureToSlot.clear();
 	NextTexSlot = 0;
+}
+
+FPrimitiveHandle SRenderer::DrawDot(const glm::vec2& Point, float Size)
+{
+	static AActor Dummy(glm::vec2(0.0f, 0.0f));
+
+	int32_t Id = Overlay.Emplace(&Dummy);
+
+	glm::vec2 xShift(Size, 0.0f);
+	glm::vec2 yShift(0.0f, Size);
+
+	Overlay[Id].Import({ Point, Point + xShift, Point + yShift });
+	Overlay[Id].SetIndices({0, 1, 2});
+	Overlay[Id].MaterialTag = "Overlay";
+
+	return FPrimitiveHandle(Id);
+}
+
+FPrimitiveHandle SRenderer::DrawLine(const glm::vec2& Start, const glm::vec2& Finish, float Size)
+{
+	static AActor Dummy(glm::vec2(0.0f, 0.0f));
+	Size /= 2;
+
+	int32_t Id = Overlay.Emplace(&Dummy);
+
+	glm::vec2 yShift(0.0f, Size);
+
+	Overlay[Id].Import({ Start - yShift, Finish - yShift, Finish + yShift, Start - yShift });
+	Overlay[Id].SetIndices({ 0, 1, 2, 2, 3, 0 });
+	Overlay[Id].MaterialTag = "Overlay";
+
+	return FPrimitiveHandle(Id);
+}
+
+void SRenderer::RemovePrimitive(FPrimitiveHandle& Handle)
+{
+	Overlay.Remove(Handle.Id);
+	Handle.Id = -1;
 }
 
 void SRenderer::RenderPool(TSparseArray<CGeometry>& Pool)

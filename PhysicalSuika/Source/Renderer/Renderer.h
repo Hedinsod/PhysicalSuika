@@ -41,10 +41,17 @@ public:
 
 	void SetCamera(const StdShared<ACamera>& Camera) { CurrentCamera = Camera; }
 
+	// Primitives
+	FPrimitiveHandle DrawDot(const glm::vec2& Point, float Size);
+	FPrimitiveHandle DrawLine(const glm::vec2& Start, const glm::vec2& Finish, float Size);
+	void RemovePrimitive(FPrimitiveHandle& Handle);
+
+
 private:
 	void RenderPool(TSparseArray<CGeometry>& Pool);
 
 	TSparseArray<CGeometry> GeometryPool;
+	TSparseArray<CGeometry> Overlay;
 
 	StdShared<ACamera> CurrentCamera;
 

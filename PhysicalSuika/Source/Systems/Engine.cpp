@@ -42,4 +42,6 @@ void Engine::LoadMaterials()
 
 	MatirialLibrary.Add("Berry", MakeShared<FMaterial>(/*.Density*/ 0.0955f, /*.Friction*/ 0.2f, /*.GravityScale*/ 1.0f, /*Color*/glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), BerryTex));
 	MatirialLibrary.Add("Glass", MakeShared<FMaterial>(/*.Density*/    0.0f, /*.Friction*/ 0.4f, /*.GravityScale*/ 1.0f, /*Color*/glm::vec4(0.0f, 0.5f, 0.8f, 1.0f), WhiteTex));
+
+	MatirialLibrary.Add("Overlay", MakeShared<FMaterial>(/*.Density*/ 0.0f, /*.Friction*/ 0.0f, /*.GravityScale*/ 0.0f, /*Color*/glm::vec4(0.0f, 1.0f, 1.0f, 1.0f), WhiteTex));
 }

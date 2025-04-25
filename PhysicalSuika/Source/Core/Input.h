@@ -11,6 +11,7 @@ enum class EInputCode : uint32_t
 	Down,
 	Space,
 	Esc,
+	Tab,
 
 	InputCode_Count
 };

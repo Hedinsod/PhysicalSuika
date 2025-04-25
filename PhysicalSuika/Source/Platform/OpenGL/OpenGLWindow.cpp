@@ -99,6 +99,7 @@ static EInputCode GetInputCode(int32_t GlfwCode)
 	case GLFW_KEY_DOWN:   return EInputCode::Down;  break;
 	case GLFW_KEY_SPACE:  return EInputCode::Space; break;
 	case GLFW_KEY_ESCAPE: return EInputCode::Esc;   break;
+	case GLFW_KEY_TAB:    return EInputCode::Tab;   break;
 
 	default:              return EInputCode::None;  break;
 	};
