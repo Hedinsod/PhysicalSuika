@@ -15,7 +15,7 @@ public:
 
 	virtual void Tick(float DeltaTime) {}
 
-	// "Events"
+	void Delete() { bPendingDelete = true; }
 	bool IsPendingDelete() { return bPendingDelete; }
 
 	const CTransform& GetTransform() const { return Trans; }

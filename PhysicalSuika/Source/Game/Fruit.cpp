@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "Fruit.h"
+#include "Arbiter.h"
 #include "Game.h"
 #include "Systems/Engine.h"
 #include "Renderer/Renderer.h"
 #include "Graphics/Types.h"
-
 
 struct FruitInstance
 {
@@ -65,17 +65,6 @@ AFruit::~AFruit()
 	Engine::Renderer().RemoveGeometry(GeoHandle);
 }
 
-void AFruit::Tick(float DeltaTime)
-{
-	// Theoretically spawning actor here is safe
-	// Not necessarily - we'll see
-
-	if (bMother)
-	{
-		StdShared<AFruit> NewFruit = GetGame()->AddEntity<AFruit>(SpawnPoint, (EFruitType)((int16_t)Type + 1));
-	}
-}
-
 void AFruit::Hold()
 {
 	Engine::GetPhyScene().GetRigidBody(Box).Disable();
@@ -92,16 +81,13 @@ void AFruit::OnCollision(AActor* Opponent)
 
 	if (Other && Other->Type == Type && Type != EFruitType::Watermelon)
 	{
-		bPendingDelete = true;
-
 		// Other will be disabled by itself
 		Engine::GetPhyScene().GetRigidBody(Box).Disable();
 
 		// Spawn between frames!
 		if (Engine::GetPhyScene().GetRigidBody(Other->Box).IsDisabled())
 		{
-			bMother = true;
-			SpawnPoint = (Trans.GetPos() + Other->Trans.GetPos()) * 0.5f;
+			GetGame()->GetArbiter().AddTask(this, Other);
 		}
 	}
 }

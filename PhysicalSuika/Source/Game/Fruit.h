@@ -30,9 +30,6 @@ public:
 	AFruit(glm::vec2 InPos, EFruitType InType);
 	virtual ~AFruit() override;
 
-	// "Safe" way to spawn new entities
-	virtual void Tick(float DeltaTime) override;
-
 	// Events
 	void OnCollision(AActor* Opponent);
 
@@ -40,13 +37,14 @@ public:
 	void Hold();
 	void Release();
 
+	EFruitType GetType() { return Type; }
+
 private:
 	FGeometryHandle GeoHandle;
 	CBodyHandle Box;
 
 	EFruitType Type;
 
-	bool bMother = false;
 	glm::vec2 SpawnPoint;
 
 };

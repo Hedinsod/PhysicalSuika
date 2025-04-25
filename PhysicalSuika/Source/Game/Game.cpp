@@ -3,6 +3,7 @@
 #include "Systems/Engine.h"
 #include "Game/Game.h"
 #include "Game/Camera.h"
+#include "Game/Arbiter.h"
 #include "Game/Glass.h"
 #include "Game/Fruit.h"
 #include "Game/Hand.h"
@@ -16,12 +17,16 @@ SGame::SGame()
 {
 	Camera = AddEntity<ACamera>(glm::vec2{ 0.f, 8.f }, 1.0f, 10.0f);
 
+	Arbiter = AddEntity<AArbiter>(glm::vec2{ 0.f, 0.f });
 	AddEntity<AGlass>(glm::vec2{ 0.f, 0.f });
 	AddEntity<AHand>(glm::vec2{ 0.f, 16.0f });
 }
 
 SGame::~SGame()
 {
+	Camera.reset();
+	Arbiter.reset();
+
 	Actors.Clear();
 }
 

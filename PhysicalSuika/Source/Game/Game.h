@@ -5,6 +5,7 @@
 
 class AActor;
 class ACamera;
+class AArbiter;
 
 // Effectively it is Scene class
 // Stores all actors, adds and removes them
@@ -31,10 +32,16 @@ public:
 		return Camera;
 	};
 
+	AArbiter& GetArbiter()
+	{
+		return *Arbiter;
+	};
+
 private:
 	TSparseArray<StdShared<AActor>> Actors;
 
 	StdShared<ACamera> Camera;
+	StdShared<AArbiter> Arbiter;
 
 	// for clipping
 	float Top, Bottom, Left, Right;
