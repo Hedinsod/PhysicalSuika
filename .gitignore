@@ -4,6 +4,7 @@ Intermediate/*
 .vs/*
 External/glad/Intermediate/*
 External/glad/Bin/*
+PhysicalSuika/Raw/*
 
 # project files
 *.sln

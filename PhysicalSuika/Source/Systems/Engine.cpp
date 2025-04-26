@@ -36,7 +36,7 @@ void Engine::LoadMaterials()
 
 	uint32_t WhiteTexture = 0xffffffff;
 	StdShared<SGfxTexture> WhiteTex = TexFactory->CreateFromData(&WhiteTexture, 1, 1, TextureFormatRGBA);
-	StdShared<SGfxTexture> BerryTex = TexFactory->LoadFromFile("Content/Textures/Tamoto.png");
+	StdShared<SGfxTexture> BerryTex = TexFactory->LoadFromFile("Content/Textures/TamotoAtlas.png");
 
 	MatirialLibrary.Add("Default", MakeShared<FMaterial>(/*.Density*/ 0.0f, /*.Friction*/ 0.0f, /*.GravityScale*/ 0.0f, /*Color*/glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), WhiteTex));
 
