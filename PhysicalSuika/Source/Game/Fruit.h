@@ -2,8 +2,7 @@
 
 #include "Actor.h"
 #include "Physics/RigidBodyComp.h"
-
-#include "Renderer/GeometryHandle.h"
+#include "Renderer/GeometryHandls.h"
 
 class CGeometry;
 

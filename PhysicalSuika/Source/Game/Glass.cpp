@@ -14,8 +14,8 @@ AGlass::AGlass(glm::vec2 InPos)
 			glm::vec2(5.0f, 16.0f)
 		};
 		
-	GeoHandle = Engine::Renderer().CreateGeometry(this);
-	GeoHandle->Import(Points);
+	GeoHandle = FGeometryHandle::Create(this);
+	GeoHandle->SetVertices(Points);
 	GeoHandle->SetIndices({ 0, 1, 3, 1, 2, 3 });
 	GeoHandle->SetMaterial("Glass");
 	
@@ -30,7 +30,7 @@ AGlass::AGlass(glm::vec2 InPos)
 
 AGlass::~AGlass()
 {
-	Engine::Renderer().RemoveGeometry(GeoHandle);
+	GeoHandle.Erase();
 
 	Engine::GetPhyScene().RemoveRigidBody(Left);
 	Engine::GetPhyScene().RemoveRigidBody(Right);

@@ -3,7 +3,7 @@
 #include "Arbiter.h"
 #include "Game.h"
 #include "Systems/Engine.h"
-#include "Renderer/Renderer.h"
+#include "Renderer/GeometryComp.h"
 #include "Graphics/Types.h"
 
 struct FruitInstance
@@ -41,8 +41,8 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	Trans.SetScale({ Inst.Scale, Inst.Scale });
 
 	// Geometry component
-	GeoHandle = Engine::Renderer().CreateGeometry(this);
-	GeoHandle->Import({
+	GeoHandle = FGeometryHandle::Create(this);
+	GeoHandle->SetVertices({
 		glm::vec2(-0.35f, -0.35f),
 		glm::vec2(0.35f, -0.35f),
 		glm::vec2(0.35f, 0.35f),
@@ -69,7 +69,7 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 AFruit::~AFruit()
 {
 	Engine::GetPhyScene().RemoveRigidBody(Box);
-	Engine::Renderer().RemoveGeometry(GeoHandle);
+	GeoHandle.Erase();
 }
 
 void AFruit::Hold()

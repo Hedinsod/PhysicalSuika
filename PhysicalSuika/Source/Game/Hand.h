@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Actor.h"
-#include "Renderer/GeometryHandle.h"
+#include "Renderer/GeometryHandls.h"
 
 class AFruit;
 class CGeometry;

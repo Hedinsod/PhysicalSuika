@@ -3,7 +3,6 @@
 #include "Core/Utility.h"
 #include "GeometryComp.h"
 #include "Core/Containers/SparseArray.h"
-#include "GeometryHandle.h"
 
 
 class AActor;
@@ -15,10 +14,12 @@ class SGfxVertexArray;
 class SGfxTexture;
 
 
+// ****************************************************************************
+// ********** SRenderer *******************************************************
+// ****************************************************************************
+
 class SRenderer
 {
-	friend FGeometryHandle;
-
 	struct FVertex
 	{
 		glm::vec4 Position;
@@ -31,30 +32,11 @@ public:
 	SRenderer();
 	~SRenderer();
 
-	FGeometryHandle CreateGeometry(AActor* InOwner);
-	void RemoveGeometry(FGeometryHandle);
-
-	void Begin();
+	void Begin(const StdShared<ACamera>& Camera);
+	void RenderPool(TSparseArray<CGeometry>& Pool);
 	void Finish();
 
-	void Tick();
-
-	void SetCamera(const StdShared<ACamera>& Camera) { CurrentCamera = Camera; }
-
-	// Primitives
-	FPrimitiveHandle DrawDot(const glm::vec2& Point, float Size);
-	FPrimitiveHandle DrawLine(const glm::vec2& Start, const glm::vec2& Finish, float Size);
-	void RemovePrimitive(FPrimitiveHandle& Handle);
-
-
 private:
-	void RenderPool(TSparseArray<CGeometry>& Pool);
-
-	TSparseArray<CGeometry> GeometryPool;
-	TSparseArray<CGeometry> Overlay;
-
-	StdShared<ACamera> CurrentCamera;
-
 	StdShared<SGfxShader> Shader;
 	StdShared<SGfxVertexBuffer> VBO;
 	StdShared<SGfxIndexBuffer> IBO;

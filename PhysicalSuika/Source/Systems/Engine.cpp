@@ -16,7 +16,7 @@ void Engine::Init()
 	Instance->PhyScene = MakeScoped<SPhyScene>(Frametime, Settings.PhysicsSubStepsCount);
 	GAssert(Instance->PhyScene);
 
-	Instance->Graphics = MakeScoped<SRenderer>();
+	Instance->Graphics = MakeScoped<SRenderSystem>();
 	GAssert(Instance->Graphics);
 
 	Instance->LoadMaterials();

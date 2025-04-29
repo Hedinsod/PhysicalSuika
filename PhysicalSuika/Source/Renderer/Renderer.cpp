@@ -9,6 +9,10 @@
 #include "Core/Input.h"
 
 
+// ****************************************************************************
+// ********** SRenderer *******************************************************
+// ****************************************************************************
+
 // Just random assumption
 static const uint32_t MaxTriangles = 100;
 static const uint32_t MaxVertices = MaxTriangles * 3;
@@ -57,34 +61,9 @@ SRenderer::~SRenderer()
 	delete[] IndexData;
 }
 
-FGeometryHandle SRenderer::CreateGeometry(AActor* InOwner)
+void SRenderer::Begin(const StdShared<ACamera>& Camera)
 {
-	int32_t Id = GeometryPool.Emplace(InOwner);
-
-	return FGeometryHandle(Id);
-}
-void SRenderer::RemoveGeometry(FGeometryHandle GeoId)
-{
-	GeometryPool.Remove(GeoId.Id);
-}
-
-void SRenderer::Tick()
-{
-	Begin();
-	RenderPool(GeometryPool);
-	Finish();
-
-	if (SInput::IsButtonPressed(EInputCode::Tab))
-	{
-		Begin();
-		RenderPool(Overlay);
-		Finish();
-	}
-}
-
-void SRenderer::Begin()
-{
-	Shader->SetParameter("u_ViewProj", CurrentCamera->GetVP());
+	Shader->SetParameter("u_ViewProj", Camera->GetVP());
 
 	NextVertex = 0;
 	NextIndex = 0;
@@ -92,44 +71,6 @@ void SRenderer::Begin()
 
 	TextureToSlot.clear();
 	NextTexSlot = 0;
-}
-
-FPrimitiveHandle SRenderer::DrawDot(const glm::vec2& Point, float Size)
-{
-	static AActor Dummy(glm::vec2(0.0f, 0.0f));
-
-	int32_t Id = Overlay.Emplace(&Dummy);
-
-	glm::vec2 xShift(Size, 0.0f);
-	glm::vec2 yShift(0.0f, Size);
-
-	Overlay[Id].Import({ Point, Point + xShift, Point + yShift });
-	Overlay[Id].SetIndices({0, 1, 2});
-	Overlay[Id].MaterialTag = "Overlay";
-
-	return FPrimitiveHandle(Id);
-}
-
-FPrimitiveHandle SRenderer::DrawLine(const glm::vec2& Start, const glm::vec2& Finish, float Size)
-{
-	static AActor Dummy(glm::vec2(0.0f, 0.0f));
-	Size /= 2;
-
-	int32_t Id = Overlay.Emplace(&Dummy);
-
-	glm::vec2 yShift(0.0f, Size);
-
-	Overlay[Id].Import({ Start - yShift, Finish - yShift, Finish + yShift, Start - yShift });
-	Overlay[Id].SetIndices({ 0, 1, 2, 2, 3, 0 });
-	Overlay[Id].MaterialTag = "Overlay";
-
-	return FPrimitiveHandle(Id);
-}
-
-void SRenderer::RemovePrimitive(FPrimitiveHandle& Handle)
-{
-	Overlay.Remove(Handle.Id);
-	Handle.Id = -1;
 }
 
 void SRenderer::RenderPool(TSparseArray<CGeometry>& Pool)

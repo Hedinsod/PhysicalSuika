@@ -21,14 +21,14 @@ AHand::AHand(glm::vec2 InPos)
 			glm::vec2(1.0f, -1.5f)
 	};
 
-	GeoHandle = Engine::Renderer().CreateGeometry(this);
-	GeoHandle->Import(Points);
+	GeoHandle = FGeometryHandle::Create(this);
+	GeoHandle->SetVertices(Points);
 	GeoHandle->SetIndices({0,1,2, 1,2,3, 3,4,5, 5,6,7, 6,7,8});
 }
 
 AHand::~AHand()
 {
-	Engine::Renderer().RemoveGeometry(GeoHandle);
+	GeoHandle.Erase();
 }
 
 void AHand::Tick(float DeltaTime)

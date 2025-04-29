@@ -2,10 +2,10 @@
 
 #include "RigidBodyComp.h"
 #include "Core/Containers/SparseArray.h"
+#include "Renderer/GeometryHandls.h"
 #include <array>
 #include <unordered_set>
 
-#include "Renderer/GeometryHandle.h"
 
 // Achtung: This structure [probably] should be perfectly nullified
 struct FManifold
@@ -17,7 +17,8 @@ struct FManifold
 
 	std::array<glm::vec2, 2> ContactPoints{};
 
-	FPrimitiveHandle DP;
+	// Contact point Visualisation
+	FPrimitiveObject ContactDot;
 };
 
 struct FContact
