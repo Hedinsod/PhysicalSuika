@@ -12,4 +12,6 @@ struct FSettings
 	float MaxFrametime = 0.2f;
 
 	uint32_t PhysicsSubStepsCount = 4;
+
+	std::string FontPath = "Content/Fonts/KOMIKAX_.ttf";
 };

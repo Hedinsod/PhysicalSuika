@@ -117,7 +117,7 @@ void SRenderer::RenderPool(TSparseArray<CGeometry>& Pool)
 			GAssert(NextVertex < MaxVertices);
 
 			VertexData[NextVertex].Position = Model * Vertex;
-			VertexData[NextVertex].Color = Material.Color;
+			VertexData[NextVertex].Color = Material.Color * Geo.OverrideColor.ColorVec4;
 			VertexData[NextVertex].TexCoord = UV;
 			VertexData[NextVertex].TexSlot = TexSlot;
 			NextVertex++;

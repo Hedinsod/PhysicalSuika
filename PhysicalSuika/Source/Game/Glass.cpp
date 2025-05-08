@@ -26,10 +26,17 @@ AGlass::AGlass(glm::vec2 InPos)
 	Left = Engine::GetPhyScene().CreateRigidBody(this, "Glass", LeftBox);
 	Right = Engine::GetPhyScene().CreateRigidBody(this, "Glass", RightBox);
 	Bottom = Engine::GetPhyScene().CreateRigidBody(this, "Glass", BottomBox);
+
+	const FColorRGB TextColor(225, 175, 0);
+	TitleLabel = Engine::Renderer().DrawText("Suika", glm::vec2(-10.5f, 16.0f), TextColor);
+	ScoreLabel = Engine::Renderer().DrawText("Score: ", glm::vec2(6.0f, 15.0f), TextColor);
 }
 
 AGlass::~AGlass()
 {
+	TitleLabel.clear();
+	ScoreLabel.clear();
+
 	GeoHandle.Erase();
 
 	Engine::GetPhyScene().RemoveRigidBody(Left);

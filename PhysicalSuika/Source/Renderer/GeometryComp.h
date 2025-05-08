@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Systems/Components.h"
+#include "Graphics/Types.h"
 #include <vector>
 
 
@@ -22,7 +23,9 @@ public:
 	void SetUVs(const std::vector<glm::vec2>& InUVs);
 	void SetUVs(std::vector<glm::vec2>&& InUVs);
 
-	void SetMaterial(const std::string InTag) { MaterialTag = InTag; }
+	void SetMaterial(const std::string InTag);
+
+	void SetColor(FColorRGB Color);
 
 	bool Verify();
 
@@ -34,5 +37,7 @@ private:
 
 	// Weak pointer
 	std::string MaterialTag;
+
+	FColorLinear OverrideColor{1.0f, 1.0f, 1.0f};
 
 };

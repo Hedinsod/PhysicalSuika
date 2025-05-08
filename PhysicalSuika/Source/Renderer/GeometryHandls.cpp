@@ -44,13 +44,25 @@ const CGeometry* FGeometryHandle::operator->() const
 // ****************************************************************************
 
 FPrimitiveObject::FPrimitiveObject()
-	: Id(-1)
+	: OwningPool(nullptr)
+	, Id(-1)
+{
+	Dummy = MakeScoped<AActor>(glm::vec2(0.0, 0.0));
+}
+
+FPrimitiveObject::FPrimitiveObject(TSparseArray<CGeometry>& InOwningPool)
+	: OwningPool(&InOwningPool)
+	, Id(-1)
 {
 	Dummy = MakeScoped<AActor>(glm::vec2(0.0,0.0));
+	Id = OwningPool->Emplace(Dummy.get());
+
+	Log::Log("Created Primitive " + std::to_string(Id));
 }
 
 FPrimitiveObject::FPrimitiveObject(FPrimitiveObject&& Other) noexcept
-	: Id(Other.Id)
+	: OwningPool(Other.OwningPool)
+	, Id(Other.Id)
 	, Dummy(std::move(Other.Dummy))
 {
 	Other.Id = -1;
@@ -63,6 +75,7 @@ FPrimitiveObject& FPrimitiveObject::operator=(FPrimitiveObject&& Other) noexcept
 	Erase();
 
 	Dummy = std::move(Other.Dummy);
+	OwningPool = Other.OwningPool;
 	Id = Other.Id;
 	Other.Id = -1;
 
@@ -72,14 +85,39 @@ FPrimitiveObject::~FPrimitiveObject()
 {
 	Erase();
 }
+void FPrimitiveObject::Create(TSparseArray<CGeometry>& InOwningPool)
+{
+	OwningPool = &InOwningPool;
+	Id = OwningPool->Emplace(Dummy.get());
+}
 void FPrimitiveObject::Erase()
 {
 	if (IsValid())
 	{
-		Engine::Renderer().Overlay.Remove(Id);
+		OwningPool->Remove(Id);
 		Dummy.reset();
 		Id = -1;
 	}
+}
+
+CGeometry& FPrimitiveObject::operator*()
+{
+	return (*OwningPool)[Id];
+}
+
+const CGeometry& FPrimitiveObject::operator*() const
+{
+	return (*OwningPool)[Id];
+}
+
+CGeometry* FPrimitiveObject::operator->()
+{
+	return &(*OwningPool)[Id];
+}
+
+const CGeometry* FPrimitiveObject::operator->() const
+{
+	return &(*OwningPool)[Id];
 }
 
 void FPrimitiveObject::SetPos(const glm::vec2& InPos)

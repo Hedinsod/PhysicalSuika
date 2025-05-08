@@ -10,6 +10,9 @@ project "Stb-Image"
 	{
 		"stb_image.cpp",
 		"stb_image.h",
+		"stb_truetype.cpp",
+		"stb_truetype.h",
+
 	}
 	
 	filter "system:windows"

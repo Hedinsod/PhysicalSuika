@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <cmath>
 
+#include "Core/Application.h"
 #include "Core/Debug.h"
 #include "Core/SmartPointers.h"
 #include "Core/Math.h"

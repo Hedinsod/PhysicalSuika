@@ -38,6 +38,16 @@ void CGeometry::SetUVs(std::vector<glm::vec2>&& InUVs)
 	UVs = std::move(InUVs);
 }
 
+void CGeometry::SetColor(FColorRGB Color)
+{
+	OverrideColor = Color;
+}
+
+void CGeometry::SetMaterial(const std::string InTag)
+{
+	MaterialTag = InTag;
+}
+
 bool CGeometry::Verify()
 {
 	bool bResult = true;

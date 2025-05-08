@@ -3,6 +3,7 @@
 #include "Utility.h"
 #include "Settings.h"
 #include "Event.h"
+#include "SmartPointers.h"
 
 class SGfxWindow;
 class SGame;
