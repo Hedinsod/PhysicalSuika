@@ -2,31 +2,27 @@
 
 #include "Debug.h"
 
+#include <filesystem>
 #include <fstream>
 
 namespace Utility
 {
-    std::string LoadFileToString(const std::string& Path)
-    {
-		std::string TheFileString;
+	std::string LoadFileToString(const std::string& Path)
+	{
+		if (!std::filesystem::exists(Path))
+		{
+			Log::Log("File '" + Path + "' does not exist.");
+			return {};
+		}
 
 		std::ifstream Ifs(Path, std::ios::in | std::ios::binary);
 		if (!Ifs.is_open())
 		{
-			Log::Log("Could not open file \'" + Path + "\'");
-			return TheFileString;
+			Log::Log("Could not open file '" + Path + "': " + std::strerror(errno));
+			return {};
 		}
 
-		Ifs.seekg(0, std::ios::end);
-		size_t Length = Ifs.tellg();
-
-		TheFileString.resize(Length);
-
-		// reset position		
-		Ifs.seekg(0, std::ios::beg);
-		Ifs.read(&TheFileString[0], Length);
-		Ifs.close();
-
+		std::string TheFileString((std::istreambuf_iterator<char>(Ifs)), std::istreambuf_iterator<char>());
 		return TheFileString;
-    }
+	}
 }

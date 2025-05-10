@@ -39,3 +39,12 @@ namespace Log
 #define GAssert( ... ) ( (void)0 )
 #define GAssertLog( ... ) ( (void)0 )
 #endif
+
+#define GEnsure( Condition, Message )                                               \
+	{                                                                               \
+		if (!( Condition ))                                                         \
+		{                                                                           \
+			Log::Log( Message );                                                    \
+			GBreakPoint;                                                            \
+		}                                                                           \
+	}

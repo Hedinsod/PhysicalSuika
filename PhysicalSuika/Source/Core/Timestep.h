@@ -18,17 +18,17 @@ public:
 	inline float GetLapsedMilliseconds() const
 	{
 		auto CurrentPoint = std::chrono::high_resolution_clock::now();
-		return std::chrono::duration_cast<std::chrono::microseconds>(CurrentPoint - TimePoint).count() * 0.001f;
+		return std::chrono::duration<float, std::milli>(CurrentPoint - TimePoint).count(); 
 	}
 
 	inline float GetLapsedSeconds() const
 	{
 		auto CurrentPoint = std::chrono::high_resolution_clock::now();
-		return std::chrono::duration_cast<std::chrono::milliseconds>(CurrentPoint - TimePoint).count() * 0.001f;
+		return std::chrono::duration<float>(CurrentPoint - TimePoint).count();
 	}
 
 private:
-	std::chrono::steady_clock::time_point TimePoint;
+	std::chrono::high_resolution_clock::time_point TimePoint;
 
 };
 
@@ -39,7 +39,7 @@ public:
 		: TargetFPS(InTargetFPS)
 		, Frametime(1.f / InTargetFPS)
 		, MaxFrametime(InMaxFrametime)
-		, DeltaTime(0)
+		, DeltaTime(0.0f)
 	{
 	}
 
@@ -51,17 +51,7 @@ public:
 		return DeltaTime;
 	}
 
-	/*
-	float GetStep()
-	{
-		return glm::min(FrametimeMs, DeltaTimeMs);
-	}
-	bool Update()
-	{
-		DeltaTimeMs -= FrametimeMs;
-		return DeltaTimeMs > FrametimeMs;
-	}
-	*/
+	inline float GetDeltaTime() const { return DeltaTime; }
 
 private:
 	const float TargetFPS;

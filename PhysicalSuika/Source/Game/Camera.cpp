@@ -13,15 +13,14 @@ ACamera::ACamera(glm::vec2 InPos, float InAspectRatio, float InZoom)
 
 ACamera::~ACamera()
 {
-	// Unsubscribe !
+	// TODO: Unsubscribe !
 	// GApp->SetOnResizeEventHandler(nullptr);
 }
 
 void ACamera::OnResize(int32_t NewWidth, int32_t NewHeight)
 {
+	GAssert(NewHeight > 0);
 	AspectRatio = (float)NewWidth / NewHeight;
-
-	
 
 	UpdateProjView();
 }

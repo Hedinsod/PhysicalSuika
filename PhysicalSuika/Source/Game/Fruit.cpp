@@ -37,6 +37,7 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	: AActor(InPos)
 	, Type(InType)
 {
+	GAssert(Type < EFruitType::Count);
 	FruitInstance& Inst = FruitInstances[(int16_t)Type];
 	Trans.SetScale({ Inst.Scale, Inst.Scale });
 

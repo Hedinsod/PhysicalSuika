@@ -7,16 +7,20 @@ class SGame;
 class AActor
 {
 public:
-	AActor(const glm::vec2& InPos) : Trans(InPos) { }
+	AActor(const glm::vec2& InPos)
+		: Trans(InPos)
+		, bPendingDelete(false)
+		, Game(nullptr)
+	{ }
 	virtual ~AActor() = default;
 
 	void RegisterGame(SGame* InGame) { Game = InGame; }
-	SGame* GetGame() { return Game; }
+	SGame* GetGame() const { return Game; }
 
 	virtual void Tick(float DeltaTime) {}
 
 	void Delete() { bPendingDelete = true; }
-	bool IsPendingDelete() { return bPendingDelete; }
+	bool IsPendingDelete() const { return bPendingDelete; }
 
 	const CTransform& GetTransform() const { return Trans; }
 	CTransform& GetTransform() { return Trans; }
@@ -24,10 +28,10 @@ public:
 protected:
 	CTransform Trans;
 
-	bool bPendingDelete = false;
+	bool bPendingDelete;
 
 private:
-	SGame* Game = nullptr;
+	SGame* Game;
 
 };
 

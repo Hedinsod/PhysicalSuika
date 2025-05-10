@@ -30,7 +30,7 @@ SGame::~SGame()
 	Actors.Clear();
 }
 
-bool SGame::ClipOutOfBoundaries(StdShared<AActor> Actor)
+bool SGame::ClipOutOfBoundaries(StdShared<AActor> Actor) const
 {
 	glm::vec2 Pos = Actor->GetTransform().GetPos();
 

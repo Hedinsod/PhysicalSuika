@@ -36,14 +36,12 @@ public:
 	void Hold();
 	void Release();
 
-	EFruitType GetType() { return Type; }
+	EFruitType GetType() const { return Type; }
 
 private:
 	FGeometryHandle GeoHandle;
 	CBodyHandle Box;
 
 	EFruitType Type;
-
-	glm::vec2 SpawnPoint;
 
 };

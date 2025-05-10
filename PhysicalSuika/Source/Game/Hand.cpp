@@ -54,7 +54,7 @@ void AHand::Tick(float DeltaTime)
 
 	if (!Preview && SpawnCooldown <= 0)
 	{
-		uint16_t TypeRand = Math::GetRandom(1, 6);
+		uint16_t TypeRand = Math::GetRandom((uint16_t)EFruitType::Cherry, (uint16_t)EFruitType::Apple);
 		Preview = GetGame()->AddEntity<AFruit>(HoldPoint, (EFruitType)TypeRand);
 		Preview->Hold();
 	}

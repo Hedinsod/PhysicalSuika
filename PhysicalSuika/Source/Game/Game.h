@@ -21,7 +21,7 @@ public:
 	StdShared<TEntity> AddEntity(Args... args);
 
 	// And deleting
-	bool ClipOutOfBoundaries(StdShared<AActor> Actor);
+	bool ClipOutOfBoundaries(StdShared<AActor> Actor) const;
 	void CullEntities();
 
 	// Update logic
@@ -52,7 +52,7 @@ template <class TEntity, class... Args>
 StdShared<TEntity> SGame::AddEntity(Args... args)
 {
 	StdShared<TEntity> NewEntity = MakeShared<TEntity>(std::forward<Args>(args)...);
-	GAssert(NewEntity);
+	GEnsure(NewEntity, "Can not create entity");
 	Actors.Push(NewEntity);
 
 	NewEntity->RegisterGame(this);
