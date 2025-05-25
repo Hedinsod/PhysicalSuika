@@ -23,16 +23,21 @@ public:
 	CRigidBodyComp& GetRigidBody(CBodyHandle Handle);
 
 	void Tick(float DeltaTime);
-	void InternalTick(float StepTime);
 
-	// Searching for potential collisions to give to solver
-	void BroadPass();
+	inline void SetOnCollisionEventHandler(const FPhyEvent_OnCollision::EventCallbackFn& InCallback)
+	{
+		Solver->SetOnCollisionEventHandler(InCallback);
+	}
 
 private:
 	// Detecting AABBs' intersections to form a pair
 	bool SimpleCollision(const FBoxCollider& FirstAABB, const FBoxCollider& SecondAABB);
 
 private:
+	void InternalTick(float StepTime);
+	// Searching for potential collisions to give to solver
+	void BroadPass();
+
 	// Number of sub-iterations during same render frame
 	const uint32_t SubStepsCount;
 	const float InvStepsCount;

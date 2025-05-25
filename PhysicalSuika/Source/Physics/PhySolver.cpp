@@ -53,10 +53,7 @@ void SPhySolver::SolveContacts()
 		if (First.IsDisabled() || Second.IsDisabled())
 			continue;
 
-		// Add Slot here
-		First.OnCollision.Broadcast(Second.Owner);
-		Second.OnCollision.Broadcast(First.Owner);
-
+		OnCollision.Broadcast(First.Owner, Second.Owner);
 		ResolveCollision(First, Second, Contact.Manifold);
 	}
 }

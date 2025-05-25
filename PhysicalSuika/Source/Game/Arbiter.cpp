@@ -4,31 +4,70 @@
 #include "Fruit.h"
 #include "Game.h"
 
+#include "Systems/Engine.h"
+
+
+// ****************************************************************************
+// ********** FAddFruitTask ***************************************************
+// ****************************************************************************
+
+struct FAddFruitTask : FArbiterTask
+{
+	FAddFruitTask(glm::vec2 InSpawnPoint, EFruitType InSpawnType)
+		: SpawnPoint(InSpawnPoint)
+		, SpawnType(InSpawnType)
+	{ }
+
+	glm::vec2 SpawnPoint;
+	EFruitType SpawnType;
+
+	virtual void Execute(AArbiter& TheArbiter) override
+	{
+		TheArbiter.GetGame()->AddEntity<AFruit>(SpawnPoint, SpawnType);
+	}
+};
+
+// ****************************************************************************
+// ********** AArbiter ********************************************************
+// ****************************************************************************
+
+AArbiter::AArbiter(glm::vec2 InPos)
+	: AActor(InPos)
+{
+	Engine::GetPhyScene().SetOnCollisionEventHandler(std::bind(&AArbiter::Merge, this, std::placeholders::_1, std::placeholders::_2));
+}
+
 void AArbiter::Tick(float DeltaTime)
 {
 	while (!Tasks.empty())
 	{
-		FFruitParents Task = Tasks.front();
+		FArbiterTask* Task = Tasks.front();
 		Tasks.pop();
 
-		GAssert(Task.ParentOne->GetType() != EFruitType::Watermelon);
-
-		EFruitType ChildType = static_cast<EFruitType>(static_cast<int16_t>(Task.ParentOne->GetType()) + 1);
-
-		const CTransform& TransOne = Task.ParentOne->GetTransform();
-		const CTransform& TransTwo = Task.ParentTwo->GetTransform();
-
-		glm::vec2 SpawnPoint = (TransOne.GetPos() + TransTwo.GetPos()) * 0.5f;
-
-		Task.ParentOne->Delete();
-		Task.ParentTwo->Delete();
-		GetGame()->AddEntity<AFruit>(SpawnPoint, ChildType);
+		Task->Execute(*this);
+		delete Task;
 	}
-	
 }
 
-void AArbiter::AddTask(AFruit* InParentOne, AFruit* InParentTwo)
+void AArbiter::Merge(AActor* InLeft, AActor* InRight)
 {
-	Tasks.emplace(InParentOne, InParentTwo);
+	AFruit* LhsFruit = dynamic_cast<AFruit*>(InLeft);
+	AFruit* RhsFruit = dynamic_cast<AFruit*>(InRight);
+	
+	if (!LhsFruit || !RhsFruit)
+		return;
 
+	if (LhsFruit->GetType() == RhsFruit->GetType() && RhsFruit->GetType() != EFruitType::Watermelon)
+	{
+		LhsFruit->Delete();
+		RhsFruit->Delete();
+
+		const CTransform& LhsTrans = LhsFruit->GetTransform();
+		const CTransform& RhsTrans = RhsFruit->GetTransform();
+
+		glm::vec2 SpawnPoint = (LhsTrans.GetPos() + RhsTrans.GetPos()) * 0.5f;
+		EFruitType ChildType = static_cast<EFruitType>(static_cast<int16_t>(RhsFruit->GetType()) + 1);
+
+		Tasks.emplace(new FAddFruitTask(SpawnPoint, ChildType));
+	}
 }

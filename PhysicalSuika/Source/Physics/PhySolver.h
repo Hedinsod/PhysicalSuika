@@ -4,6 +4,7 @@
 #include "ContactGraph.h"
 #include <array>
 
+using FPhyEvent_OnCollision = TEvent<void, AActor*, AActor*>;
 
 class SPhySolver
 {
@@ -17,6 +18,11 @@ public:
 
 	void WarmUp(float DeltaTime);
 	void SolveContacts();
+
+	inline void SetOnCollisionEventHandler(const FPhyEvent_OnCollision::EventCallbackFn& InCallback)
+	{
+		OnCollision.Subscribe(InCallback);
+	}
 
 private:
 	bool GenManifold_BoxBox(CRigidBodyComp& First, CRigidBodyComp& Second, FManifold& Manifold);
@@ -32,4 +38,7 @@ private:
 
 	// Double virtual table of manifold generators
 	std::function<bool(CRigidBodyComp& First, CRigidBodyComp& Second, FManifold&)> GenManifoldTable[2][2];
+
+	// One event to rule them all
+	FPhyEvent_OnCollision OnCollision;
 };

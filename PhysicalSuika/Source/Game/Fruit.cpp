@@ -63,14 +63,18 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	// Physics
 	FColliderShape* Shape = FColliderShape::Create<FCircleCollider>({ 0, 0 }, Inst.Scale * 0.35f);
 	Box = Engine::GetPhyScene().CreateRigidBody(this, "Berry", Shape);
-
-	Engine::GetPhyScene().GetRigidBody(Box).SetOnCollisionEventHandler(std::bind(&AFruit::OnCollision, this, std::placeholders::_1));
 }
 
 AFruit::~AFruit()
 {
 	Engine::GetPhyScene().RemoveRigidBody(Box);
 	GeoHandle.Erase();
+}
+
+void AFruit::Delete()
+{
+	Engine::GetPhyScene().GetRigidBody(Box).Disable();
+	AActor::Delete();
 }
 
 void AFruit::Hold()
@@ -81,21 +85,4 @@ void AFruit::Hold()
 void AFruit::Release()
 {
 	Engine::GetPhyScene().GetRigidBody(Box).Enable();
-}
-
-void AFruit::OnCollision(AActor* Opponent)
-{
-	AFruit* Other = dynamic_cast<AFruit*>(Opponent);
-
-	if (Other && Other->Type == Type && Type != EFruitType::Watermelon)
-	{
-		// Other will be disabled by itself
-		Engine::GetPhyScene().GetRigidBody(Box).Disable();
-
-		// Spawn between frames!
-		if (Engine::GetPhyScene().GetRigidBody(Other->Box).IsDisabled())
-		{
-			GetGame()->GetArbiter().AddTask(this, Other);
-		}
-	}
 }

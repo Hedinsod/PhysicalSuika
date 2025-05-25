@@ -5,25 +5,28 @@
 #include <queue>
 
 class AFruit;
+class AArbiter;
 
-struct FFruitParents
+struct FArbiterTask
 {
-	AFruit* ParentOne;
-	AFruit* ParentTwo;
+	virtual ~FArbiterTask() = default;
+	virtual void Execute(AArbiter& TheArbiter) = 0;
 };
-
 
 class AArbiter : public AActor
 {
 public:
-	AArbiter(glm::vec2 InPos) : AActor(InPos) {}
+	AArbiter(glm::vec2 InPos);
 	virtual ~AArbiter() = default;
 
 	virtual void Tick(float DeltaTime) override;
 
-	void AddTask(AFruit* ParentOne, AFruit* ParentTwo);
+	void Merge(AActor* ParentOne, AActor* ParentTwo);
+
 
 private:
-	std::queue<FFruitParents> Tasks;
+	std::queue<FArbiterTask*> Tasks;
+
+	int32_t Score = 0;
 
 };

@@ -29,8 +29,7 @@ public:
 	AFruit(glm::vec2 InPos, EFruitType InType);
 	virtual ~AFruit() override;
 
-	// Events
-	void OnCollision(AActor* Opponent);
+	virtual void Delete() override;
 
 	// Just enable and disable physics
 	void Hold();
