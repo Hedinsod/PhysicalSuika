@@ -23,7 +23,7 @@ public:
 	void SetUVs(const std::vector<glm::vec2>& InUVs);
 	void SetUVs(std::vector<glm::vec2>&& InUVs);
 
-	void SetMaterial(const std::string InTag);
+	void SetMaterial(const std::string& InTag);
 
 	void SetColor(FColorRGB Color);
 

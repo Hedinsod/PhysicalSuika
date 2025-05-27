@@ -38,7 +38,7 @@ void Engine::LoadMaterials()
 	StdShared<SGfxTexture> WhiteTex = TexFactory->CreateFromData(&WhiteTexture, 1, 1, TextureFormatRGBA);
 	StdShared<SGfxTexture> BerryTex = TexFactory->LoadFromFile("Content/Textures/TamotoAtlas.png");
 
-	MatirialLibrary.Add("Default", MakeShared<FMaterial>(/*.Density*/ 0.0f, /*.Friction*/ 0.0f, /*.GravityScale*/ 0.0f, /*Color*/glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), WhiteTex));
+	MatirialLibrary.Add("Default", MakeShared<FMaterial>(/*.Density*/ 0.0f, /*.Friction*/ 0.0f, /*.GravityScale*/ 0.0f, /*Color*/glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), WhiteTex));
 
 	MatirialLibrary.Add("Berry", MakeShared<FMaterial>(/*.Density*/ 0.0955f, /*.Friction*/ 0.2f, /*.GravityScale*/ 1.0f, /*Color*/glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), BerryTex));
 	MatirialLibrary.Add("Glass", MakeShared<FMaterial>(/*.Density*/    0.0f, /*.Friction*/ 0.4f, /*.GravityScale*/ 1.0f, /*Color*/glm::vec4(0.0f, 0.5f, 0.8f, 1.0f), WhiteTex));

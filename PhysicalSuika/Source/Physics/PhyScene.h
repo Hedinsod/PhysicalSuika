@@ -18,7 +18,7 @@ public:
 	*/
 	SPhyScene(float InTargetFrametime, uint32_t InSubStepsCount);
 
-	CBodyHandle CreateRigidBody(AActor* Owner, const std::string& MaterialTag, FColliderShape* InShape, uint32_t InLayers = 1);
+	CBodyHandle CreateRigidBody(AActor* Owner, const std::string& MaterialTag, FColliderShape* InShape, bool bInTrigger = false, uint32_t InLayers = 1);
 	void RemoveRigidBody(CBodyHandle Handle);
 	CRigidBodyComp& GetRigidBody(CBodyHandle Handle);
 

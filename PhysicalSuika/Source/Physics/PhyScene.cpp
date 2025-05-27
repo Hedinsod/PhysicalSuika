@@ -16,9 +16,9 @@ SPhyScene::SPhyScene(float InTargetFrametime, uint32_t InSubStepsCount)
 	Solver = MakeScoped<SPhySolver>();
 }
 
-CBodyHandle SPhyScene::CreateRigidBody(AActor* Owner, const std::string& MaterialTag, FColliderShape* InShape, uint32_t InLayers /*= 1*/)
+CBodyHandle SPhyScene::CreateRigidBody(AActor* Owner, const std::string& MaterialTag, FColliderShape* InShape, bool bInTrigger /*= false*/, uint32_t InLayers /*= 1*/)
 {
-	CBodyHandle BodyId = BodyPool.Emplace(Owner, MaterialTag, InShape, InLayers);
+	CBodyHandle BodyId = BodyPool.Emplace(Owner, MaterialTag, InShape, InLayers, bInTrigger);
 	BodyPool[BodyId].SetId(BodyId);
 
 	return BodyId;

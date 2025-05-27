@@ -15,10 +15,7 @@ public:
 
 private:
 	FGeometryHandle GeoHandle;
-
-	std::vector<FPrimitiveObject> TitleLabel;
-	std::vector<FPrimitiveObject> ScoreLabel;
-
+	
 	CBodyHandle Left;
 	CBodyHandle Right;
 	CBodyHandle Bottom;

@@ -6,15 +6,44 @@
 #include "Renderer/GeometryComp.h"
 #include "Graphics/Types.h"
 
+// Helper struct storing all raw data
+static struct FFruitData
+{
+	glm::vec2 Pivot = glm::vec2(0.0f, 0.0f);
+
+	// Top, Botton, Left, Right
+	FRect Rect = FRect(1.0f, -1.0f, -1.0f, 1.0f);
+	std::vector<uint32_t> Indices = { 0, 1, 2, 2, 3, 0 };
+	float Scale = 0.35f;
+
+	std::string MaterialTag = "Berry";
+
+	const std::vector<glm::vec2> UvRect(uint32_t InUi, uint32_t InVi)
+	{
+		// sub-texture size in normalized UV-coordinates
+		static const float UvWidth = 0.25f;
+		static const float UvHeight = 0.33f;
+
+		const float U = InUi * UvWidth;
+		const float V = InVi * UvHeight;
+
+		return { glm::vec2(U, V),
+		         glm::vec2(U + UvWidth, V),
+		         glm::vec2(U + UvWidth, V + UvHeight),
+		         glm::vec2(U, V + UvHeight)
+		};
+	}
+} FruitData;
+
+
 struct FruitInstance
 {
 	FColorRGB Color;
 	float Scale;
 
+	// Index in tex atlas
 	uint32_t Ui;
 	uint32_t Vi;
-
-	// UVs
 };
 
 static std::array<FruitInstance, (int16_t)EFruitType::Count> FruitInstances =
@@ -36,33 +65,28 @@ static std::array<FruitInstance, (int16_t)EFruitType::Count> FruitInstances =
 AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	: AActor(InPos)
 	, Type(InType)
+	, bActivated(false)
+	, Life(MaxLife) // number of seconds 
 {
 	GAssert(Type < EFruitType::Count);
 	FruitInstance& Inst = FruitInstances[(int16_t)Type];
-	Trans.SetScale({ Inst.Scale, Inst.Scale });
+	Trans.SetScale({ Inst.Scale * FruitData.Scale, Inst.Scale * FruitData.Scale });
 
 	// Geometry component
 	GeoHandle = FGeometryHandle::Create(this);
 	GeoHandle->SetVertices({
-		glm::vec2(-0.35f, -0.35f),
-		glm::vec2(0.35f, -0.35f),
-		glm::vec2(0.35f, 0.35f),
-		glm::vec2(-0.35f, 0.35f) });
-
-	const float U = Inst.Ui * 0.25f;
-	const float V = Inst.Vi * 0.33f;
-	GeoHandle->SetUVs({
-		glm::vec2(U, V),
-		glm::vec2(U + 0.25f, V),
-		glm::vec2(U + 0.25f, V + 0.33f),
-		glm::vec2(U, V + 0.33f) });
-	GeoHandle->SetIndices({ 0, 1, 2, 2, 3, 0 });
-	
-	GeoHandle->SetMaterial("Berry");
+				glm::vec2(FruitData.Rect.Left, FruitData.Rect.Bottom),
+				glm::vec2(FruitData.Rect.Right, FruitData.Rect.Bottom),
+				glm::vec2(FruitData.Rect.Right, FruitData.Rect.Top),
+				glm::vec2(FruitData.Rect.Left, FruitData.Rect.Top)
+		});
+	GeoHandle->SetUVs(FruitData.UvRect(Inst.Ui, Inst.Vi));
+	GeoHandle->SetIndices(FruitData.Indices);
+	GeoHandle->SetMaterial(FruitData.MaterialTag);
 
 	// Physics
-	FColliderShape* Shape = FColliderShape::Create<FCircleCollider>({ 0, 0 }, Inst.Scale * 0.35f);
-	Box = Engine::GetPhyScene().CreateRigidBody(this, "Berry", Shape);
+	FColliderShape* Shape = FColliderShape::Create<FCircleCollider>(FruitData.Pivot, Inst.Scale * FruitData.Scale);
+	Box = Engine::GetPhyScene().CreateRigidBody(this, FruitData.MaterialTag, Shape);
 }
 
 AFruit::~AFruit()
@@ -85,4 +109,14 @@ void AFruit::Hold()
 void AFruit::Release()
 {
 	Engine::GetPhyScene().GetRigidBody(Box).Enable();
+}
+
+void AFruit::Risk()
+{
+	Life--;
+
+	if (Life == 0)
+	{
+		GetGame()->GetArbiter().Finish();
+	}
 }

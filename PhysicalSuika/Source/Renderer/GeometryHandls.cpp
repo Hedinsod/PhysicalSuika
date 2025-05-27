@@ -56,8 +56,6 @@ FPrimitiveObject::FPrimitiveObject(TSparseArray<CGeometry>& InOwningPool)
 {
 	Dummy = MakeScoped<AActor>(glm::vec2(0.0,0.0));
 	Id = OwningPool->Emplace(Dummy.get());
-
-	Log::Log("Created Primitive " + std::to_string(Id));
 }
 
 FPrimitiveObject::FPrimitiveObject(FPrimitiveObject&& Other) noexcept

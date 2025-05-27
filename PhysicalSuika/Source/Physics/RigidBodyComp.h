@@ -21,7 +21,7 @@ class CRigidBodyComp : public CComponent
 
 public:
 	// Constructors
-	CRigidBodyComp(AActor* InOwner, const std::string& MaterialTag, FColliderShape* ShapeDesc, uint32_t Layers = 1);
+	CRigidBodyComp(AActor* InOwner, const std::string& MaterialTag, FColliderShape* ShapeDesc, uint32_t Layers = 1, bool bInTrigger = false);
 	CRigidBodyComp(const CRigidBodyComp& Other);
 	CRigidBodyComp(CRigidBodyComp&& Other) noexcept;
 	
@@ -99,6 +99,7 @@ private:
 
 	// Status - should the body be solved
 	bool bDisabled = false;
+	bool bTrigger = false;
 
 	// List of all cointacts with other bodies
 	std::list<uint32_t> Contacts;

@@ -7,19 +7,19 @@
 #include "Game/Glass.h"
 #include "Game/Fruit.h"
 #include "Game/Hand.h"
+#include "Game/Hood.h"
 
 
 SGame::SGame()
-	: Top(17.0f)
-	, Bottom(-1.5f)
-	, Left(-14.0f)
-	, Right(14.0f)
+	: GameZone(21.0f, -1.5f, -14.0f, 14.0f)
 {
-	Camera = AddEntity<ACamera>(glm::vec2{ 0.f, 8.f }, 1.0f, 10.0f);
+	Camera = AddEntity<ACamera>(glm::vec2{ 0.0f, 10.0f }, 1.0f, 11.0f);
 
-	Arbiter = AddEntity<AArbiter>(glm::vec2{ 0.f, 0.f });
-	AddEntity<AGlass>(glm::vec2{ 0.f, 0.f });
-	AddEntity<AHand>(glm::vec2{ 0.f, 16.0f });
+	Arbiter = AddEntity<AArbiter>(glm::vec2{ 0.0f, 0.0f });
+
+	AddEntity<AGlass>(glm::vec2{ 0.0f, 0.0f });
+	AddEntity<AHood>(glm::vec2{ 0.0f, 16.5f });
+	AddEntity<AHand>(glm::vec2{ 0.0f, 19.0f });
 }
 
 SGame::~SGame()
@@ -30,19 +30,12 @@ SGame::~SGame()
 	Actors.Clear();
 }
 
-bool SGame::ClipOutOfBoundaries(StdShared<AActor> Actor) const
-{
-	glm::vec2 Pos = Actor->GetTransform().GetPos();
-
-	return Pos.y > Top || Pos.y < Bottom || Pos.x < Left || Pos.x > Right;
-}
-
 void SGame::CullEntities()
 {
 	for (auto It = Actors.begin(); It != Actors.end(); It++)
 	{
 		StdShared<AActor> Actor = *It;
-		if (Actor->IsPendingDelete() || ClipOutOfBoundaries(Actor))
+		if (Actor->IsPendingDelete())
 		{
 			Actors.Remove(It);
 		}
@@ -55,4 +48,21 @@ void SGame::Tick(float DeltaTime)
 	{
 		Actor->Tick(DeltaTime);
 	}
+}
+
+std::vector<AFruit*> SGame::GetFruits()
+{
+	std::vector<AFruit*> FruitsArray;
+
+	for (StdShared<AActor>& Actor : Actors)
+	{
+		AFruit* Fruit = dynamic_cast<AFruit*>(Actor.get());
+
+		if (Fruit)
+		{
+			FruitsArray.push_back(Fruit);
+		}
+	}
+
+	return FruitsArray;
 }

@@ -4,11 +4,12 @@
 #include "Systems/Engine.h"
 
 
-CRigidBodyComp::CRigidBodyComp(AActor* InOwner, const std::string& InMaterialTag, FColliderShape* InShape, uint32_t InLayers)
+CRigidBodyComp::CRigidBodyComp(AActor* InOwner, const std::string& InMaterialTag, FColliderShape* InShape, uint32_t InLayers, bool bInTrigger/*= false*/)
 	: CComponent(InOwner)
 	, Shape(InShape)
 	, MaterialTag(InMaterialTag)
 	, Layers(InLayers)
+	, bTrigger(bInTrigger)
 {
 	const FMaterial& Material = Engine::GetMaterialLibrary().Get(InMaterialTag);
 	if (Material.Density != 0)
@@ -94,6 +95,7 @@ void CRigidBodyComp::BasicCopy(const CRigidBodyComp& Other)
 	Torque = Other.Torque;
 
 	bDisabled = Other.bDisabled;
+	bTrigger = Other.bTrigger;
 	OnDestruction = Other.OnDestruction;
 	OnCollision = Other.OnCollision;
 }

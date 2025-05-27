@@ -43,7 +43,7 @@ void CGeometry::SetColor(FColorRGB Color)
 	OverrideColor = Color;
 }
 
-void CGeometry::SetMaterial(const std::string InTag)
+void CGeometry::SetMaterial(const std::string& InTag)
 {
 	MaterialTag = InTag;
 }

@@ -54,6 +54,12 @@ void SPhySolver::SolveContacts()
 			continue;
 
 		OnCollision.Broadcast(First.Owner, Second.Owner);
+		First.OnCollision.Broadcast(Second.Owner);
+		Second.OnCollision.Broadcast(First.Owner);
+
+		if (First.bTrigger || Second.bTrigger)
+			continue;
+
 		ResolveCollision(First, Second, Contact.Manifold);
 	}
 }

@@ -24,6 +24,7 @@ AHand::AHand(glm::vec2 InPos)
 	GeoHandle = FGeometryHandle::Create(this);
 	GeoHandle->SetVertices(Points);
 	GeoHandle->SetIndices({0,1,2, 1,2,3, 3,4,5, 5,6,7, 6,7,8});
+	GeoHandle->SetColor(FColorRGB(0, 0, 0));
 }
 
 AHand::~AHand()
@@ -44,7 +45,7 @@ void AHand::Tick(float DeltaTime)
 
 	// TODO: Do something with size of glass
 	HandOffset = glm::clamp(HandOffset, -4.0f, 4.0f);
-	Trans.SetPos({ HandOffset, 16.0f });
+	Trans.SetPos({ HandOffset, Trans.GetPos().y });
 	glm::vec2 HoldPoint = Trans.GetPos() + FruitOffset;
 
 	if (SpawnCooldown > 0.0f)

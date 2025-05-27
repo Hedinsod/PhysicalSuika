@@ -6,6 +6,22 @@
 class AActor;
 class ACamera;
 class AArbiter;
+class AFruit;
+
+struct FRect
+{
+	FRect(float InTop, float InBottom, float InLeft, float InRight)
+		: Top(InTop)
+		, Bottom(InBottom)
+		, Left(InLeft)
+		, Right(InRight)
+	{ }
+
+	float Top;
+	float Bottom;
+	float Left;
+	float Right;
+};
 
 // Effectively it is Scene class
 // Stores all actors, adds and removes them
@@ -21,7 +37,6 @@ public:
 	StdShared<TEntity> AddEntity(Args... args);
 
 	// And deleting
-	bool ClipOutOfBoundaries(StdShared<AActor> Actor) const;
 	void CullEntities();
 
 	// Update logic
@@ -37,15 +52,21 @@ public:
 		return *Arbiter;
 	};
 
+	const FRect& GetGameZone()
+	{
+		return GameZone;
+	}
+
+	std::vector</*weak pointer*/ AFruit*> GetFruits();
+	
 private:
 	TSparseArray<StdShared<AActor>> Actors;
 
 	StdShared<ACamera> Camera;
 	StdShared<AArbiter> Arbiter;
 
-	// for clipping
-	float Top, Bottom, Left, Right;
-
+	// Valid game field, everything out of it - delete and finish game
+	FRect GameZone;
 };
 
 template <class TEntity, class... Args>
