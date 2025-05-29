@@ -4,14 +4,25 @@
 #include "Renderer/GeometryComp.h"
 
 
+static const struct FGlassData
+{
+	float HalfWidth = 5.0f;
+	float HalfHeight = 8.0f;
+
+	// Thickness of the collision boxes of the walls
+	float HalfThick = 0.5f;
+	
+} GlassData;
+
+
 AGlass::AGlass(glm::vec2 InPos)
 	: AActor(InPos)
 {
 	std::vector<glm::vec2> Points = { 
-			glm::vec2(-5.0f, 16.0f),
-			glm::vec2(-5.0f, 0.0f),
-			glm::vec2(5.0f, 0.0f),
-			glm::vec2(5.0f, 16.0f)
+			glm::vec2(-GlassData.HalfWidth, 2 * GlassData.HalfHeight),
+			glm::vec2(-GlassData.HalfWidth, 0.0f),
+			glm::vec2(GlassData.HalfWidth, 0.0f),
+			glm::vec2(GlassData.HalfWidth, 2 * GlassData.HalfHeight)
 		};
 		
 	GeoHandle = FGeometryHandle::Create(this);
@@ -19,9 +30,27 @@ AGlass::AGlass(glm::vec2 InPos)
 	GeoHandle->SetIndices({ 0, 1, 3, 1, 2, 3 });
 	GeoHandle->SetMaterial("Glass");
 	
-	FColliderShape* LeftBox = FColliderShape::Create<FBoxCollider>({ -5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
-	FColliderShape* RightBox = FColliderShape::Create<FBoxCollider>({ 5.5f, 8.0f }, -0.5f, 8.0f, 0.5f, -8.0f);
-	FColliderShape* BottomBox = FColliderShape::Create<FBoxCollider>({ 0.f, -0.5f }, -5.0f, 0.5f, 5.0f, -0.5f);
+	FColliderShape* LeftBox = FColliderShape::Create<FBoxCollider>(
+		{ -(GlassData.HalfWidth + GlassData.HalfThick), GlassData.HalfHeight }, // Pivot position
+		-GlassData.HalfThick,     // Left
+		 GlassData.HalfHeight,    // Top
+		 GlassData.HalfThick,     // Right
+		-GlassData.HalfHeight     // Bottom
+	);
+	FColliderShape* RightBox = FColliderShape::Create<FBoxCollider>(
+		{ GlassData.HalfWidth + GlassData.HalfThick, GlassData.HalfHeight }, // Pivot position
+		-GlassData.HalfThick,     // Left
+		 GlassData.HalfHeight,    // Top
+		 GlassData.HalfThick,     // Right
+		-GlassData.HalfHeight     // Bottom
+	);
+	FColliderShape* BottomBox = FColliderShape::Create<FBoxCollider>(
+		{ 0.f, -GlassData.HalfThick }, // Pivot position
+		-GlassData.HalfWidth,     // Left
+		 GlassData.HalfThick,     // Top
+		 GlassData.HalfWidth,     // Right
+		-GlassData.HalfThick      // Bottom
+	);
 
 	Left = Engine::GetPhyScene().CreateRigidBody(this, "Glass", LeftBox);
 	Right = Engine::GetPhyScene().CreateRigidBody(this, "Glass", RightBox);

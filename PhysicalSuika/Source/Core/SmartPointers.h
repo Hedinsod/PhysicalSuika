@@ -20,3 +20,6 @@ inline StdScoped<T> MakeScoped(Args... args)
 {
 	return std::make_unique<T>(std::forward<Args>(args)...);
 }
+
+template <class T>
+using StdWeak = std::weak_ptr<T>;

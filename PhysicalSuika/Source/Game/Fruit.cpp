@@ -68,8 +68,8 @@ AFruit::AFruit(glm::vec2 InPos, EFruitType InType)
 	, bActivated(false)
 	, Life(MaxLife) // number of seconds 
 {
-	GAssert(Type < EFruitType::Count);
-	FruitInstance& Inst = FruitInstances[(int16_t)Type];
+	GAssert(Type.ToEnum() < EFruitType::Count);
+	FruitInstance& Inst = FruitInstances[Type.ToInteger()];
 	Trans.SetScale({ Inst.Scale * FruitData.Scale, Inst.Scale * FruitData.Scale });
 
 	// Geometry component

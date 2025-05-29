@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Actor.h"
+#include "Core/Enum.h"
 #include "Physics/RigidBodyComp.h"
 #include "Renderer/GeometryHandls.h"
 
 class CGeometry;
 
-enum class EFruitType : int16_t
+enum class EFruitType : int8_t
 {
 	Cherry = 0,
 	Strawberry,
@@ -42,7 +43,7 @@ public:
 	void Activate() { bActivated = true; }
 	bool IsActivated() const { return bActivated; }
 
-	EFruitType GetType() const { return Type; }
+	TEnum<EFruitType> GetType() const { return Type; }
 
 private:
 	const int32_t MaxLife = 300; // number of frames the Fruit can leave outside of the glass
@@ -50,7 +51,7 @@ private:
 	FGeometryHandle GeoHandle;
 	CBodyHandle Box;
 
-	EFruitType Type;
+	TEnum<EFruitType> Type;
 	bool bActivated;
 
 	int32_t Life;

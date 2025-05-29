@@ -19,7 +19,8 @@ SGame::SGame()
 
 	AddEntity<AGlass>(glm::vec2{ 0.0f, 0.0f });
 	AddEntity<AHood>(glm::vec2{ 0.0f, 16.5f });
-	AddEntity<AHand>(glm::vec2{ 0.0f, 19.0f });
+	StdWeak<AHand> Hand = AddEntity<AHand>(glm::vec2{ 0.0f, 19.0f });
+	Arbiter->SetHand(Hand);
 }
 
 SGame::~SGame()

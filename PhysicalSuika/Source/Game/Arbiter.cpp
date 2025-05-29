@@ -2,6 +2,7 @@
 #include "Arbiter.h"
 
 #include "Fruit.h"
+#include "Hand.h"
 #include "Game.h"
 
 #include "Systems/Engine.h"
@@ -57,15 +58,16 @@ AArbiter::AArbiter(glm::vec2 InPos)
 {
 	Engine::GetPhyScene().SetOnCollisionEventHandler(std::bind(&AArbiter::Merge, this, std::placeholders::_1, std::placeholders::_2));
 
-	const FColorRGB TextColor(225, 175, 0);
 	TitleLabel = Engine::Renderer().DrawText("Suika", glm::vec2(-10.5f, 16.0f), TextColor);
 	ScoreLabel = Engine::Renderer().DrawText("Score: ", glm::vec2(6.0f, 15.0f), TextColor);
+	ScoreValue = Engine::Renderer().DrawText("0", glm::vec2(10.0f, 15.0f), TextColor);
 }
 
 AArbiter::~AArbiter()
 {
 	TitleLabel.clear();
 	ScoreLabel.clear();
+	ScoreValue.clear();
 }
 
 void AArbiter::Tick(float DeltaTime)
@@ -99,18 +101,30 @@ void AArbiter::Merge(AActor* InLeft, AActor* InRight)
 		const CTransform& RhsTrans = RhsFruit->GetTransform();
 
 		glm::vec2 SpawnPoint = (LhsTrans.GetPos() + RhsTrans.GetPos()) * 0.5f;
-		EFruitType ChildType = static_cast<EFruitType>(static_cast<int16_t>(RhsFruit->GetType()) + 1);
 
-		Score += static_cast<int16_t>(ChildType) * 10; // 10 points per new fruit level
 
-		AddTask(new FAddFruitTask(SpawnPoint, ChildType));
+		TEnum<EFruitType> ChildType = RhsFruit->GetType() + 1;
+		Score += ChildType.ToInteger() * 10; // 10 points per new fruit level
+
+		AddTask(new FAddFruitTask(SpawnPoint, ChildType.ToEnum()));
+
+		ScoreValue = Engine::Renderer().DrawText(std::to_string(Score), glm::vec2(10.0f, 15.0f), TextColor);
 	}
 }
 
 void AArbiter::Finish()
 {
-	// Block Hand / Input
+	// Disable Hand
+	Hand.lock()->Hold();
 
+	// Freeze
+	std::vector<AFruit*> AllFruits = GetGame()->GetFruits();
+	for (AFruit* Fruit : AllFruits)
+	{
+		Fruit->Hold();
+	}
+
+	// And pop!
 	FPopFruitsTask* PopAll = new FPopFruitsTask(GetGame()->GetFruits());
 	AddTask(PopAll);
 }

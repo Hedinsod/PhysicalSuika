@@ -6,7 +6,7 @@
 #include "Arbiter.h"
 
 // Helper struct storing all raw data
-static struct FHoodData
+static const struct FHoodData
 {
 	// Top, Botton, Left, Right
 	FRect Rect = FRect(0.5f, -0.5f, -5.5f, 5.5f);

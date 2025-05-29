@@ -42,22 +42,11 @@ public:
 	// Update logic
 	void Tick(float DeltaTimeMs);
 
-	StdShared<ACamera> GetCamera()
-	{
-		return Camera;
-	};
+	StdShared<ACamera> GetCamera() { return Camera; };
+	AArbiter& GetArbiter() { return *Arbiter; };
+	const FRect& GetGameZone() { return GameZone; }
 
-	AArbiter& GetArbiter()
-	{
-		return *Arbiter;
-	};
-
-	const FRect& GetGameZone()
-	{
-		return GameZone;
-	}
-
-	std::vector</*weak pointer*/ AFruit*> GetFruits();
+	std::vector<AFruit*> GetFruits();
 	
 private:
 	TSparseArray<StdShared<AActor>> Actors;

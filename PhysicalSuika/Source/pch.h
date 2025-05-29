@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <cmath>
 
+#include "Core/Enum.h"
 #include "Core/Application.h"
 #include "Core/Debug.h"
 #include "Core/SmartPointers.h"

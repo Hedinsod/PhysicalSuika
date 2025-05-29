@@ -12,19 +12,21 @@ public:
 	AHand(glm::vec2 InPos);
 	virtual ~AHand() override;
 
+	// Enable and disable input/preview/movement
+	// for pause / gmae ending
+	void Hold();
+	void Release();
+
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void OnCollide(const AActor* Opponent) {}
-	
+	void SpawnPreview(const glm::vec2& InSpawnPoint);
+
 private:
-	const float HandSpeed = 0.1f;
-	const glm::vec2 FruitOffset{0.f, -1.5f};
-
-	StdShared<AFruit> Preview;
-	float HandOffset = 0.0f;
-
 	FGeometryHandle GeoHandle;
 
-	const float SpawnCooldownStart = 1.0f;
-	float SpawnCooldown = 0.0f;
+	StdShared<AFruit> Preview;
+	float SpawnCooldown;
+
+	float HandOffset;
+	bool bPaused;
 };
