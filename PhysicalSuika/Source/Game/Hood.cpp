@@ -21,7 +21,7 @@ static const struct FHoodData
 AHood::AHood(glm::vec2 InPos)
 	: AActor(InPos)
 {
-	GeoHandle = FGeometryHandle::Create(this);
+/*	GeoHandle = FGeometryHandle::Create(this);
 	GeoHandle->SetVertices({
 				glm::vec2(HoodData.Rect.Left, HoodData.Rect.Top),
 				glm::vec2(HoodData.Rect.Left, HoodData.Rect.Bottom),
@@ -31,7 +31,7 @@ AHood::AHood(glm::vec2 InPos)
 	GeoHandle->SetIndices(HoodData.Indices);
 	GeoHandle->SetMaterial(HoodData.MaterialTag);
 	GeoHandle->SetColor(HoodData.Color);
-
+*/
 	FColliderShape* TriggerBox = FColliderShape::Create<FBoxCollider>(HoodData.Pivot, HoodData.Rect.Left, HoodData.Rect.Top, HoodData.Rect.Right, HoodData.Rect.Bottom);
 	Trigger = Engine::GetPhyScene().CreateRigidBody(this, HoodData.MaterialTag, TriggerBox, /* bTrigger */true);
 
@@ -42,7 +42,7 @@ AHood::~AHood()
 {
 	Engine::GetPhyScene().RemoveRigidBody(Trigger);
 
-	GeoHandle.Erase();
+//	GeoHandle.Erase();
 }
 
 void AHood::OnCollision(AActor* Other)

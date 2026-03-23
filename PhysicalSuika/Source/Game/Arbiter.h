@@ -26,11 +26,14 @@ public:
 
 	void Merge(AActor* ParentOne, AActor* ParentTwo);
 	void Finish();
+	void Restart();
 
 	void AddTask(FArbiterTask* InTask);
 
 	void SetHand(StdWeak<AHand>& InHand) { Hand = InHand; }
 
+	void ShowFinalScore();
+	void HideFinalScore();
 
 private:
 	static inline const FColorRGB TextColor = FColorRGB(225, 175, 0);
@@ -38,6 +41,8 @@ private:
 	std::vector<FPrimitiveObject> TitleLabel;
 	std::vector<FPrimitiveObject> ScoreLabel;
 	std::vector<FPrimitiveObject> ScoreValue;
+
+	std::vector<FPrimitiveObject> FinalLabel;
 
 	std::vector<FArbiterTask*> Tasks;
 

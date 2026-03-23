@@ -14,7 +14,7 @@ static struct FFruitData
 	// Top, Botton, Left, Right
 	FRect Rect = FRect(1.0f, -1.0f, -1.0f, 1.0f);
 	std::vector<uint32_t> Indices = { 0, 1, 2, 2, 3, 0 };
-	float Scale = 0.35f;
+	float Scale = 0.35f*1.3f;
 
 	std::string MaterialTag = "Berry";
 
@@ -48,8 +48,8 @@ struct FruitInstance
 
 static std::array<FruitInstance, (int16_t)EFruitType::Count> FruitInstances =
 	{
-		FruitInstance(FColorRGB(220, 65, 80), 1.0f, 0, 2),     // Cherry
-		FruitInstance(FColorRGB(215, 100, 60), 1.5f, 1, 2),    // Strawberry
+		FruitInstance(FColorRGB(220, 65, 80), 1.2f, 0, 2),     // Cherry
+		FruitInstance(FColorRGB(215, 100, 60), 1.7f, 1, 2),    // Strawberry
 		FruitInstance(FColorRGB(200, 115, 245), 2.2f, 2, 2),   // Grape
 		FruitInstance(FColorRGB(240, 175, 75), 2.4f, 3, 2),    // Dekopon
 		FruitInstance(FColorRGB(215, 145, 90), 3.0f, 0, 1),    // Orange

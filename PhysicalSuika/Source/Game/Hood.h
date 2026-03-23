@@ -16,6 +16,6 @@ public:
 
 private:
 	CBodyHandle Trigger;
-	FGeometryHandle GeoHandle;
+//	FGeometryHandle GeoHandle;  // visualisation for debug purposes 
 
 };

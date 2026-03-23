@@ -30,6 +30,32 @@ struct FAddFruitTask : FArbiterTask
 	}
 };
 
+struct FPostGameTask : FArbiterTask
+{
+	explicit FPostGameTask(AArbiter& TheArbiter)
+	{
+		TheArbiter.ShowFinalScore();
+	}
+
+	STimer Timer;
+
+	virtual bool Execute(AArbiter& TheArbiter) override
+	{
+		float Lapsed = Timer.GetLapsedSeconds();
+
+		const FSettings& Settings = GApp->GetSettings();
+		if (Lapsed > Settings.RestartTime)
+		{
+			TheArbiter.HideFinalScore();
+			TheArbiter.Restart();
+
+			return true;
+		}
+
+		return false;
+	}
+};
+
 struct FPopFruitsTask : FArbiterTask
 {
 	explicit FPopFruitsTask(std::vector<AFruit*>&& FruitsToPop)
@@ -44,8 +70,17 @@ struct FPopFruitsTask : FArbiterTask
 
 	virtual bool Execute(AArbiter& TheArbiter) override
 	{
-		Victims[Index++]->Delete(); // TODO: pop!
-		return Index == Victims.size();
+		Victims[Index++]->Delete(); // TODO: pop animation!
+		
+		if (Index == Victims.size())
+		{
+			TheArbiter.AddTask(new FPostGameTask(TheArbiter));
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 };
 
@@ -68,6 +103,7 @@ AArbiter::~AArbiter()
 	TitleLabel.clear();
 	ScoreLabel.clear();
 	ScoreValue.clear();
+	FinalLabel.clear();
 }
 
 void AArbiter::Tick(float DeltaTime)
@@ -127,6 +163,23 @@ void AArbiter::Finish()
 	// And pop!
 	FPopFruitsTask* PopAll = new FPopFruitsTask(GetGame()->GetFruits());
 	AddTask(PopAll);
+}
+
+void AArbiter::Restart()
+{
+	Hand.lock()->Release();
+	Score = 0;
+}
+
+void AArbiter::ShowFinalScore()
+{
+	std::string FinalScoreText = std::format("Game Finished: {0} points", Score);
+	FinalLabel = Engine::Renderer().DrawText(FinalScoreText, glm::vec2(-3.0f, 10.0f), FColorRGB(225, 75, 0));
+}
+
+void AArbiter::HideFinalScore()
+{
+	FinalLabel.clear();
 }
 
 void AArbiter::AddTask(FArbiterTask* InTask)

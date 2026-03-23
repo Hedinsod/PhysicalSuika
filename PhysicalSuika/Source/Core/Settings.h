@@ -14,4 +14,6 @@ struct FSettings
 	uint32_t PhysicsSubStepsCount = 4;
 
 	std::string FontPath = "Content/Fonts/KOMIKAX_.ttf";
+
+	float RestartTime = 5.0f;
 };
