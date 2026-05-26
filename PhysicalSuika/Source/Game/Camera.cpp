@@ -19,9 +19,12 @@ ACamera::~ACamera()
 
 void ACamera::OnResize(int32_t NewWidth, int32_t NewHeight)
 {
-	GAssert(NewHeight > 0);
-	AspectRatio = (float)NewWidth / NewHeight;
+	if (NewHeight == 0)
+	{
+		return;
+	}
 
+	AspectRatio = (float)NewWidth / NewHeight;
 	UpdateProjView();
 }
 
